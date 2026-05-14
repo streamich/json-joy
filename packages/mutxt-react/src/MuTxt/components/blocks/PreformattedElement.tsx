@@ -11,7 +11,7 @@ import type {PreformattedElement as PreformattedElementType} from '../../types';
 
 const preClass = rule({
   pos: 'relative',
-  m: '14px 0',
+  mr: '1em 0',
   pd: '12px 14px',
   bdrad: '8px',
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace,' + font.mono.mid.ff,

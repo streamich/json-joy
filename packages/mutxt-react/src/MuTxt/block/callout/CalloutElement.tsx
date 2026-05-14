@@ -182,7 +182,7 @@ const titleStripSlotClass = rule({
 
 const bodyClass = rule({
   pos: 'relative',
-  m: '0',
+  mr: '0',
   fz: '0.98em',
   lh: 1.6,
 });

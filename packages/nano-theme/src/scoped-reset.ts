@@ -1,41 +1,30 @@
 import {put} from './css';
 import {ROOT_DECLS, DESCENDANT_RULES, KEYFRAMES} from './reset-rules';
+import {loadGoogleFonts} from './fonts';
 
 const CLASS = 'jj-reset';
 
-// Specificity bump: `.jj-reset.jj-reset` matches the same elements as
-// `.jj-reset` (the class only needs to be applied once in the DOM) but with
-// specificity (0,2,0) instead of (0,1,0).
-const SELECTOR = `.${CLASS}.${CLASS}`;
+// Two scopes with different cascade weight:
+//
+//  - Root decls (`font-family`, `color`, `accent-color`, etc.) apply only to
+//  the boundary element itself. Doubled-class specificity `(0,2,0)` so
+//  host rules at `(0,0,1)` / `(0,1,0)` lose.
+//  - Descendant decls (`:where(h1,...) {margin: 0}`, `a,button {bdrad: 2px}`,
+//  `button:focus-visible {outline}`, etc.) need to STAY OUT OF THE WAY of
+//  component classes inside mu-txt.
+const ROOT_SELECTOR = `.${CLASS}.${CLASS}`;
+const DESCENDANT_SCOPE = `:where(.${CLASS})`;
 
 let emitted = false;
 
-/**
- * Returns a stable class name that, when applied to an element, gives its
- * subtree the same baseline normalization that `global-reset.ts` installs
- * page-wide and, additionally, defends against host-page CSS leaking in:
- *
- *  1. `all: revert` on the boundary + descendants rolls back every host
- *  author-stylesheet declaration to user-agent defaults. Our own reset
- *  rules then redeclare what we need on top.
- *  2. `contain: layout style` on the boundary stops layout and
- *  counter-reset scoping from leaking out into the host page.
- *  3. The reset selectors carry doubled specificity so equal-specificity
- *  host rules lose regardless of stylesheet load order.
- */
 export const getScopedResetClass = (): string => {
   if (emitted) return CLASS;
   emitted = true;
 
-  // Inbound fence. Emitted BEFORE our own rules so that at equal
-  // specificity our redeclarations win on source order.
-  put(`${SELECTOR}, ${SELECTOR} *`, {all: 'revert'});
+  loadGoogleFonts();
 
-  put(SELECTOR, {
-    contain: 'layout style',
-    ...ROOT_DECLS,
-    ...DESCENDANT_RULES,
-  });
+  put(ROOT_SELECTOR, ROOT_DECLS);
+  put(DESCENDANT_SCOPE, DESCENDANT_RULES);
 
   // Keyframes are name-scoped globally by definition; emit once.
   put('', KEYFRAMES);

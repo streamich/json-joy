@@ -10,7 +10,7 @@ import type {TwoColumnsElement as TwoColumnsElementType} from '../../types';
 
 const twoColumnsClass = rule({
   pos: 'relative',
-  m: '0 0 18px',
+  mr: '0 0 1.2em',
   lh: lhVar('1.8'),
   columnCount: 2,
   columnGap: '36px',
