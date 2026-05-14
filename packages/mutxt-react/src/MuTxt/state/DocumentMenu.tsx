@@ -120,7 +120,7 @@ const WidthIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <WidthIcon__svg width={16} height={16} {...props} />
 );
 const ShareIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <ShareIcon__svg width={16} height={16} {...props} />
+  <ShareIcon__svg width={16} height={16} fill="currentColor" {...props} />
 );
 const ShareCheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <ShareCheckIcon__svg width={16} height={16} {...props} />
