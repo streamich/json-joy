@@ -4,6 +4,7 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
 import {fontFamilyOf} from '../../behavior/font';
+import {fgVar} from '../../custom-style/css';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {PreformattedElement as PreformattedElementType} from '../../types';
@@ -40,7 +41,7 @@ export const PreformattedElement: React.FC<PreformattedElementProps> = ({attribu
         marginInlineEnd: 0,
         fontFamily: fontFamilyOf(element.font),
         background: styles.g(0, 0.04),
-        color: styles.g(0.16),
+        color: fgVar(16, styles.g(0.16)),
       }}
     >
       {children}

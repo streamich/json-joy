@@ -2,8 +2,8 @@ import type {FontKind} from '../types';
 
 /**
  * `CustomStyle` is a per-field optional bag of typography (and, at block
- * scope, layout) declarations. Every field is optional — a value expresses
- * an *override*, absence means "inherit from the next-higher scope".
+ * scope, layout) declarations. Every field is optional. A value expresses
+ * an override, absence means "inherit from the next-higher scope".
  */
 export interface CustomStyle {
   // --------------------------------------------------------------------- Font

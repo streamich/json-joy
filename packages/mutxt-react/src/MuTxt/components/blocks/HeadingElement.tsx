@@ -4,6 +4,7 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
 import {fontFamilyOf} from '../../behavior/font';
+import {fgVar} from '../../custom-style/css';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {HeadingElement as HeadingElementType} from '../../types';
@@ -23,7 +24,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
     textAlign: element.align,
     paddingInlineStart: indentPadding(element.indent),
     fontFamily: fontFamilyOf(element.font),
-    color: styles.g(0.08),
+    color: fgVar(8, styles.g(0.08)),
   };
 
   switch (element.type) {
@@ -56,7 +57,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 300,
             margin: '0 0 28px',
             lineHeight: 1.55,
-            color: styles.g(0.4),
+            color: fgVar(40, styles.g(0.4)),
           }}
         >
           {children}
@@ -108,7 +109,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '26px 0 12px',
             lineHeight: 1.3,
-            color: styles.g(0.16),
+            color: fgVar(16, styles.g(0.16)),
           }}
         >
           {children}
@@ -126,7 +127,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '22px 0 10px',
             lineHeight: 1.4,
-            color: styles.g(0.24),
+            color: fgVar(24, styles.g(0.24)),
           }}
         >
           {children}
@@ -144,7 +145,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '18px 0 8px',
             lineHeight: 1.5,
-            color: styles.g(0.32),
+            color: fgVar(32, styles.g(0.32)),
           }}
         >
           {children}
@@ -162,7 +163,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '14px 0 6px',
             lineHeight: 1.6,
-            color: styles.g(0.4),
+            color: fgVar(40, styles.g(0.4)),
           }}
         >
           {children}

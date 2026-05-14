@@ -4,13 +4,14 @@ import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
 import {fontFamilyOf} from '../../behavior/font';
 import {isEmptyBlock} from '../../util';
+import {lhVar} from '../../custom-style/css';
 import type {RenderElementProps} from 'slate-react';
 import type {TwoColumnsElement as TwoColumnsElementType} from '../../types';
 
 const twoColumnsClass = rule({
   pos: 'relative',
   m: '0 0 18px',
-  lh: '1.8',
+  lh: lhVar('1.8'),
   columnCount: 2,
   columnGap: '36px',
   columnFill: 'balance',

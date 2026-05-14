@@ -2,9 +2,8 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import type {CustomStyle} from './types';
 
 /**
- * Hard-coded fallback used as the bottom of the cascade. Also used as the
- * shown "default" value in the panel — the user sees this when a field is
- * in default (`def: true`) mode and can override it from there.
+ * Hard-coded fallback at the bottom of the cascade. Also displayed in
+ * the panel as the "default" value when a field is in def: true mode.
  */
 export const DEFAULTS: Required<CustomStyle> = {
   ff: 'sans',

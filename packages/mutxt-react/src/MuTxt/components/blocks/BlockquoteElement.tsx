@@ -4,6 +4,7 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
 import {fontFamilyOf} from '../../behavior/font';
+import {fgVar} from '../../custom-style/css';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {BlockquoteElement as BlockquoteElementType} from '../../types';
@@ -45,7 +46,7 @@ export const BlockquoteElement: React.FC<BlockquoteElementProps> = ({attributes,
         textAlign: element.align,
         marginInlineStart: indentPadding(element.indent) ?? 0,
         fontFamily: fontFamilyOf(element.font),
-        color: styles.g(0.3),
+        color: fgVar(30, styles.g(0.3)),
       }}
     >
       {children}

@@ -25,6 +25,7 @@ import {SelectAllGuardState} from '../guard/SelectAllGuardState';
 import {DocumentMenu} from './DocumentMenu';
 import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
+import {CustomStyleState} from '../custom-style/CustomStyleState';
 import {MuTxtTranslit} from '../translit/MuTxtTranslit';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
@@ -114,6 +115,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly indicator = new IndicatorState(this);
   public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
+  public readonly customStyle = new CustomStyleState(this);
   public readonly translit: MuTxtTranslit;
 
   /** Whether the keyboard-shortcuts modal is open. */
@@ -220,6 +222,7 @@ export class MuTxtState implements UiLifeCycles {
     const stopSelectAllGuard = this.selectAllGuard.start();
     const stopIndicator = this.indicator.start();
     const stopThings = this.things.start();
+    const stopCustomStyle = this.customStyle.start();
     const stopTranslit = this.translit.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
@@ -255,6 +258,7 @@ export class MuTxtState implements UiLifeCycles {
       stopSelectAllGuard();
       stopIndicator();
       stopThings();
+      stopCustomStyle();
       stopTranslit();
       unbindShortcuts();
       if (typeof document !== 'undefined') document.removeEventListener('fullscreenchange', onFullscreenChange);

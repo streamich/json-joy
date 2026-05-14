@@ -299,6 +299,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         ref={(el) => {
           state.editableBox.setEl(el ?? undefined);
           state.bindKbdSource(el);
+          state.customStyle.setEditableEl((el as HTMLElement | null) ?? undefined);
         }}
         decorate={decorate}
         renderElement={renderElement}
@@ -368,7 +369,12 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   content = (
     <>
       <MuTxtHeader editor={editor} />
-      {content}
+      <div
+        ref={(el) => state.customStyle.setBodyEl(el ?? undefined)}
+        style={heightFit ? {flex: '1 1 0%', minHeight: 0, display: 'flex', flexDirection: 'column'} : undefined}
+      >
+        {content}
+      </div>
       <MuTxtFooter />
       {shortcutsOpen && (
         <React.Suspense fallback={null}>

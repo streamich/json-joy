@@ -213,9 +213,10 @@ export class DocumentMenu implements UiLifeCycles {
       name: 'Document',
       minWidth: 288,
       noHeader: true,
-      icon: () => <DocumentIcon />,
+      icon: documentIcon,
       children: [
         this.itemTypesetting(),
+        this.itemCustomStyles(),
         this.itemEditableWidth(),
         {name: 'sep-export', sep: true},
         this.menuExport(),
@@ -383,6 +384,24 @@ export class DocumentMenu implements UiLifeCycles {
         this.itemFontOption('slab', 'Slab', 'slab egyptian thick serif'),
         this.itemFontOption('mono', 'Monospace', 'mono fixed code typewriter courier'),
       ],
+    };
+  }
+
+  public itemCustomStyles(): MenuItem {
+    const mutxt = this.mutxt;
+    const OverrideCount: React.FC = () => {
+      const cs = mutxt.customStyle.cs.use();
+      const n = Object.keys(cs).length;
+      if (!n) return null;
+      return <Sidetip small>{`${n} ${n === 1 ? 'style' : 'styles'}`}</Sidetip>;
+    };
+    return {
+      name: 'Custom Styles',
+      text: 'custom style typography font size weight color background line height letter spacing',
+      icon: () => <CustomStylesIcon />,
+      right: () => <OverrideCount />,
+      minWidth: 330,
+      panel: () => <CustomStylesPanel />,
     };
   }
 

@@ -80,7 +80,17 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
     if (leaf.italic) content = <em>{content}</em>;
   }
 
-  if (leaf.underline) content = <u style={{textUnderlineOffset: '3px'}}>{content}</u>;
+  if (leaf.underline)
+    content = (
+      <u
+        style={{
+          textUnderlineOffset: 'var(--mutxt-uo, 3px)',
+          textDecorationThickness: 'var(--mutxt-dt, auto)',
+        }}
+      >
+        {content}
+      </u>
+    );
   if (leaf.overline) content = <span style={{textDecoration: 'overline'}}>{content}</span>;
   if (leaf.strikethrough) content = <span style={{textDecoration: 'line-through'}}>{content}</span>;
   if (leaf.mark) {
