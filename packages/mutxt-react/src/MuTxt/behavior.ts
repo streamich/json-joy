@@ -360,6 +360,7 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
     const inHeading = activeBlock && HEADING_TYPES.has(activeBlock.type);
     const inHeadingOrBlockquoteOrCallout = activeBlock && ['blockquote', 'callout'].includes(activeBlock.type);
     const atEndOfTitle = isAtEndOfBlock(editor, 'title');
+    const inStepperLi = isInStepperLi(editor);
     let convertPreviousSibling = false;
     if (inHeading || inHeadingOrBlockquoteOrCallout) {
       const entry = getCurrentBlockEntry(editor);
@@ -368,19 +369,50 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
         convertPreviousSibling = Editor.isStart(editor, sel.anchor, entry[1]);
       }
     }
+    const inCallout = activeBlock && activeBlock.type === 'callout';
     insertBreak();
     if (inHeading || inHeadingOrBlockquoteOrCallout) {
       const nextType: CustomElement['type'] = atEndOfTitle ? 'subtitle' : 'p';
+      let targetPath: Path | undefined;
       if (convertPreviousSibling) {
         const cursorEntry = getCurrentBlockEntry(editor);
         if (cursorEntry && Path.hasPrevious(cursorEntry[1])) {
-          Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>, {
-            at: Path.previous(cursorEntry[1]),
-          });
+          targetPath = Path.previous(cursorEntry[1]);
+          Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>, {at: targetPath});
         }
       } else {
         Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>);
       }
+      // Drop callout-specific attributes so the new <p> doesn't inherit them
+      // when the user breaks out of a callout.
+      if (inCallout) {
+        const unsetOpts = targetPath ? {at: targetPath} : undefined;
+        Transforms.unsetNodes(editor, ['variant', 'icon', 'title', 'color'], unsetOpts);
+      }
+    }
+    if (inStepperLi) {
+      Transforms.unsetNodes(
+        editor,
+        [
+          'stepTitle',
+          'stepDesc',
+          'stepState',
+          'stepIndicator',
+          'stepChar',
+          'stepCol',
+          'stepBg',
+          'ring',
+          'ringCol',
+          'ringWidth',
+          'halo',
+          'haloCol',
+          'haloWidth',
+          'line',
+          'lineCol',
+          'lineWidth',
+        ],
+        {match: (node) => isElement(node) && (node as CustomElement).type === 'li'},
+      );
     }
   };
 

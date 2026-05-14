@@ -4,7 +4,7 @@ import type {CustomElement} from '../../types';
 import {ParagraphElement} from './ParagraphElement';
 import {HeadingElement} from './HeadingElement';
 import {BlockquoteElement} from './BlockquoteElement';
-import {CalloutElement} from './callout/CalloutElement';
+import {CalloutElement} from '../../block/callout/CalloutElement';
 import {CodeBlock} from './code-block/CodeBlock';
 import {PreformattedElement} from './PreformattedElement';
 import {EmbedElement} from './EmbedElement';

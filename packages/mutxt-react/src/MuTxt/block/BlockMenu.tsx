@@ -256,11 +256,26 @@ export class BlockMenu implements UiLifeCycles {
     });
   }
   public itemCallout(): MenuItem {
-    return this.blockItem('callout', {
+    const mutxt = this.mutxt;
+    const base = this.blockItem('callout', {
       name: 'Callout',
       text: 'admonition alert info note warning tip box',
       icon: () => <CalloutIcon />,
     });
+    return {
+      ...base,
+      onSelect: this.exec(() => {
+        const wasActive = this.currentBlockFormat() === 'callout';
+        toggleBlock(mutxt.editor, 'callout');
+        if (wasActive) return;
+        const seed: Partial<CalloutElement> = {
+          variant: DEFAULT_VARIANT,
+        };
+        Transforms.setNodes(mutxt.editor, seed as Partial<CustomElement>, {
+          match: (n) => SlateElement.isElement(n) && Editor.isBlock(mutxt.editor, n) && n.type === 'callout',
+        });
+      }),
+    };
   }
   public itemColumns(): MenuItem {
     return this.blockItem('columns', {
