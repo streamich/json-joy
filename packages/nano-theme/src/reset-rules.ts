@@ -1,4 +1,4 @@
-type Rules = Record<string, any>;
+export type Rules = Record<string, any>;
 
 export const ROOT_DECLS: Rules = {
   ff: '"Trebuchet MS","Lucida Grande","Lucida Sans Unicode","Lucida Sans",sans-serif',
