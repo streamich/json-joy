@@ -15,6 +15,7 @@ export class Styles {
   public accent2: ThemeColor;
   public positive: ThemeColor;
   public negative: ThemeColor;
+  public important: ThemeColor;
   public warning: ThemeColor;
   public info: ThemeColor;
   public ai: ThemeColor;
@@ -39,6 +40,7 @@ export class Styles {
     const accent2 = new ThemeColor(new HslColor(0.097, 0.85, 0.55), lightSurface);
     const positive = new ThemeColor(new HslColor(0.42, 0.69, 0.42), lightSurface);
     const negative = new ThemeColor(new HslColor(0.02, 0.75, 0.5), lightSurface);
+    const important = new ThemeColor(new HslColor(0.75, 0.62, 0.55), lightSurface);
     const warning = new ThemeColor(new HslColor(0.105, 0.85, 0.5), lightSurface);
     const info = new ThemeColor(new HslColor(0.555, 0.8, 0.5), lightSurface);
     const ai = new ThemeColor(new HslColor(0.842, 0.75, 0.58), lightSurface);
@@ -50,6 +52,7 @@ export class Styles {
     this.accent2 = this.light ? accent2 : accent2.toDarkTheme(surface);
     this.positive = this.light ? positive : positive.toDarkTheme(surface);
     this.negative = this.light ? negative : negative.toDarkTheme(surface);
+    this.important = this.light ? important : important.toDarkTheme(surface);
     this.warning = this.light ? warning : warning.toDarkTheme(surface);
     this.info = this.light ? info : info.toDarkTheme(surface);
     this.ai = this.light ? ai : ai.toDarkTheme(surface);
