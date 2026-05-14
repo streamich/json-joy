@@ -51,7 +51,7 @@ const ThemeAutoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <ThemeAutoIcon__svg width={16} height={16} {...props} />
 );
 const ThemeLightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <ThemeLightIcon__svg width={16} height={16} {...props} />
+  <ThemeLightIcon__svg width={16} height={16} fill="currentColor" {...props} />
 );
 const ThemeDarkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <ThemeDarkIcon__svg width={16} height={16} {...props} />
