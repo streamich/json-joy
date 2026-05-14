@@ -10,7 +10,7 @@ import type {ParagraphElement as ParagraphElementType} from '../../types';
 
 const paragraphClass = rule({
   pos: 'relative',
-  m: '0 0 14px',
+  mr: '0 0 1.2em',
   lh: lhVar('1.8'),
 });
 

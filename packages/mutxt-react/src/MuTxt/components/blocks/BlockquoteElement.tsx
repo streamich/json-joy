@@ -11,7 +11,7 @@ import type {BlockquoteElement as BlockquoteElementType} from '../../types';
 
 const blockquoteClass = rule({
   pos: 'relative',
-  m: '18px 0',
+  mr: '18px 0',
   pd: '24px 18px',
   paddingInlineStart: '42px',
   fz: '1.05em',

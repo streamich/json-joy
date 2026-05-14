@@ -18,25 +18,25 @@ import type {
 } from '../../types';
 
 const listClass = rule({
-  m: '0 0 16px',
+  mr: '0 0 16px',
   paddingInlineStart: '24px',
 });
 
 const checklistClass = rule({
-  m: '0 0 16px',
+  mr: '0 0 16px',
   paddingInlineStart: '24px',
   listStyle: 'none',
 });
 
 const itemClass = rule({
   pos: 'relative',
-  m: '0 0 11px',
+  mr: '1px 0',
   lh: lhVar('1.7'),
 });
 
 const checklistItemClass = rule({
   pos: 'relative',
-  m: '0 0 11px',
+  mr: '1px 0',
   lh: lhVar('1.7'),
   listStyle: 'none',
 });
@@ -85,7 +85,7 @@ const checklistContentClass = rule({
 });
 
 const stepperClass = rule({
-  m: '0 0 16px',
+  mr: '0 0 16px',
   pad: '4px 0 0 0',
   listStyle: 'none',
 });
