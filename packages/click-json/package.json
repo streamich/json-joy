@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.22.0",
+  "version": "18.23.0",
   "description": "Interactive JSON and JSON CRDT viewer and editor",
   "author": {
     "name": "streamich",
