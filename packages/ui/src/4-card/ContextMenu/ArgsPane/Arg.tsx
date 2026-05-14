@@ -26,7 +26,7 @@ export const Arg: React.FC<ArgControlProps> = ({param, value, onChange, onSubmit
       return (
         <ArgStr
           param={param}
-          value={(value as string) ?? ''}
+          value={value as any}
           onChange={onChange}
           onEnter={onSubmit}
           focus={focus}
@@ -73,7 +73,7 @@ export const Arg: React.FC<ArgControlProps> = ({param, value, onChange, onSubmit
       return (
         <ArgChar
           param={param}
-          value={(value as string) ?? ''}
+          value={value as any}
           onChange={onChange}
           focus={focus}
           compact={compact}
