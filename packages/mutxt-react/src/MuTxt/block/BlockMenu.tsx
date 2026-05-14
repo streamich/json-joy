@@ -2,8 +2,11 @@ import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
+import {Editor, Element as SlateElement, Transforms} from 'slate';
 import {ReactEditor} from 'slate-react';
 import {formatKeys} from '../util/keys';
+import {DEFAULT_VARIANT} from './callout/settings';
+import type {CalloutElement, CustomElement} from '../types';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {dedentBlock, getActiveIndent, indentBlock, MAX_INDENT} from '../behavior/indentation';
 import {isAlignmentActive, setAlignment, toggleBlock} from '../behavior';
@@ -53,6 +56,7 @@ const OLIcon = makeIcon({set: 'lucide_v1', icon: 'list-ordered', width: 16, heig
 // const ChecklistIcon = makeIcon({set: 'ibm_32', icon: 'list--checked', width: 16, height: 16});
 // const ChecklistIcon = makeIcon({set: 'vscode', icon: 'checklist', width: 16, height: 16});
 const ChecklistIcon = makeIcon({set: 'lucide_v1', icon: 'list-todo', width: 16, height: 16});
+const StepperIcon = makeIcon({set: 'tabler', icon: 'stairs-up', width: 16, height: 16});
 
 // Layout icons
 const AlignLeftIcon = makeIcon({set: 'lucide', icon: 'align-left', width: 16, height: 16});
@@ -150,7 +154,7 @@ export class BlockMenu implements UiLifeCycles {
       name: 'Lists',
       expand: 8,
       sepBefore: true,
-      children: [this.itemUL(), this.itemOL(), this.itemChecklist()],
+      children: [this.itemUL(), this.itemOL(), this.itemChecklist(), this.itemStepper()],
     };
   }
 
@@ -432,6 +436,13 @@ export class BlockMenu implements UiLifeCycles {
       icon: () => <ChecklistIcon />,
     });
   }
+  public itemStepper(): MenuItem {
+    return this.blockItem('stepper', {
+      name: 'Stepper',
+      text: 'stepper steps progress wizard timeline milestones flow',
+      icon: () => <StepperIcon />,
+    });
+  }
 
   // ------------------------------------------------------------------- Layout
 
@@ -575,6 +586,8 @@ export class BlockMenu implements UiLifeCycles {
         return this.itemOL();
       case 'checklist':
         return this.itemChecklist();
+      case 'stepper':
+        return this.itemStepper();
       case 'columns':
         return this.itemColumns();
       default:

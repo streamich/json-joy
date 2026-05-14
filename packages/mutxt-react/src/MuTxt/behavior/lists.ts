@@ -1,7 +1,7 @@
 import {Editor, Element as SlateElement, type Path, Transforms} from 'slate';
 import type {BulletedListElement, CustomElement, ListElementType, NumberedListElement, OlType, UlType} from '../types';
 
-export const LIST_TYPES: ListElementType[] = ['ul', 'ol', 'checklist'];
+export const LIST_TYPES: ListElementType[] = ['ul', 'ol', 'checklist', 'stepper'];
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
 export const isListType = (format: string): format is ListElementType => LIST_TYPES.includes(format as ListElementType);

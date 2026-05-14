@@ -122,6 +122,13 @@ const describeScrollMapElement = (
         height: 3,
         proportional: true,
       };
+    case 'stepper':
+      return {
+        el: element,
+        color: light ? 'rgba(75,110,175,.6)' : 'rgba(130,165,225,.5)',
+        height: 3,
+        proportional: true,
+      };
     case 'checklist': {
       const {checkedCount, totalCount} = getChecklistProgress(element);
       const complete = totalCount > 0 && checkedCount === totalCount;

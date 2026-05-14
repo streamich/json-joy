@@ -1,4 +1,5 @@
 import {
+  exitStepperList,
   insertCodeBlockBreak,
   insertCodeBlockExit,
   redo,
@@ -87,7 +88,7 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     [
       'Shift+Enter',
       (key: Key) => {
-        if (insertCodeBlockExit(editor)) consume(key);
+        if (insertCodeBlockExit(editor) || exitStepperList(editor)) consume(key);
       },
     ],
 

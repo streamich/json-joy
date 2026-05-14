@@ -233,6 +233,44 @@ export const insertCodeBlockExit = (editor: Editor): boolean => {
 };
 
 /**
+ * If the caret is anywhere inside a `stepper` list, drop a fresh paragraph
+ * after the list and move the caret there — an explicit way to "exit" the
+ * stepper without having to land on an empty step.
+ */
+export const exitStepperList = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection) return false;
+  const match = Editor.above(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && (node as CustomElement).type === 'stepper',
+    mode: 'lowest',
+  });
+  if (!match) return false;
+  const [, path] = match as [CustomElement, Path];
+  const afterPath = Path.next(path);
+  Transforms.insertNodes(editor, {type: 'p', children: [{text: ''}]} as CustomElement, {at: afterPath});
+  Transforms.select(editor, afterPath);
+  return true;
+};
+
+const isInStepperLi = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection) return false;
+  const li = Editor.above(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && (node as CustomElement).type === 'li',
+    mode: 'lowest',
+  });
+  if (!li) return false;
+  const stepper = Editor.above(editor, {
+    at: li[1],
+    match: (node) => isElement(node) && (node as CustomElement).type === 'stepper',
+    mode: 'lowest',
+  });
+  return !!stepper;
+};
+
+/**
  * If the caret is at the end of a code-block or pre block and the block's
  * text content already ends with `\n\n`, strip those trailing newlines and
  * exit the block into a new paragraph below.
