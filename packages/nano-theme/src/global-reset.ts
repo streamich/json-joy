@@ -1,10 +1,8 @@
 import {put} from './css';
 import {ROOT_DECLS, DESCENDANT_RULES, KEYFRAMES} from './reset-rules';
+import {loadGoogleFonts} from './fonts';
 
-export const googleFonts =
-  'https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800|Roboto+Mono|Merriweather:300,400,700|Roboto+Slab:300,400,700|Roboto:300,500|Ubuntu:400&subset=cyrillic';
-
-const isClient = typeof window === 'object';
+export {googleFonts} from './fonts';
 
 let applied = false;
 
@@ -16,13 +14,7 @@ export const applyGlobalReset = (): void => {
   if (applied) return;
   applied = true;
 
-  if (isClient) {
-    const el = document.createElement('link');
-    el.href = googleFonts;
-    el.rel = 'stylesheet';
-    el.type = 'text/css';
-    document.head.appendChild(el);
-  }
+  loadGoogleFonts();
 
   put('', {
     ':root': {colorScheme: 'light dark'},
