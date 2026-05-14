@@ -8,7 +8,6 @@ import type {CustomStyle} from './types';
 
 /**
  * Manages the document-level `CustomStyle` stored at `/cs` on `MuTxtState.obj`.
- * `/cs` is created lazily on first write and removed once empty.
  */
 export class CustomStyleState implements UiLifeCycles {
   public readonly cs = rsync.val<CustomStyle>({});
@@ -141,36 +140,29 @@ export class CustomStyleState implements UiLifeCycles {
       if (current[key] === undefined) return;
       const next: CustomStyle = {...current};
       delete next[key];
-      if (isEmptyCustomStyle(next)) {
-        this.mutxt.obj.del(['cs']);
-        this._obj = undefined;
-      } else {
-        const obj = this.read();
-        if (obj) obj.del([key as string]);
-      }
+      const obj = this.read();
+      if (obj) obj.del([key as string]);
       this.cs.next(next);
       return;
     }
     if (current[key] === value) return;
     const obj = this.ensure();
-    obj.mergeKeys({[key]: value} as any);
+    obj.add('/' + (key as string), value);
     this.cs.next({...current, [key]: value});
   };
 
   public readonly replace = (next: CustomStyle): void => {
     if (this.mutxt.readOnly.value) return;
+    const current = this.cs.value;
+    const keysToRemove: string[] = [];
+    for (const k in current) if (!(k in next)) keysToRemove.push(k);
     if (isEmptyCustomStyle(next)) {
-      if (this.mutxt.obj.has('cs')) {
-        this.mutxt.obj.del(['cs']);
-        this._obj = undefined;
-      }
+      const obj = this.read();
+      if (obj && keysToRemove.length) obj.del(keysToRemove);
       this.cs.next({});
       return;
     }
     const obj = this.ensure();
-    const current = this.cs.value;
-    const keysToRemove: string[] = [];
-    for (const k in current) if (!(k in next)) keysToRemove.push(k);
     if (keysToRemove.length) obj.del(keysToRemove);
     obj.mergeKeys(next as any);
     this.cs.next({...next});
