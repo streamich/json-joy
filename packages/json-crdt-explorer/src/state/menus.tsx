@@ -2,13 +2,15 @@ import * as React from 'react';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
 import type {JsonCrdtExplorerState} from '.';
+import ApartmentIcon__svg from 'iconista/lib/react/ant_outline/apartment';
+import VisTextIcon__svg from 'iconista/lib/react/elastic/vis_text';
+import HighlightIcon__svg from 'iconista/lib/react/ant_outline/highlight';
 
-const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment'});
-const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
-const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
+const ApartmentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ApartmentIcon__svg {...props} />;
+const VisTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VisTextIcon__svg {...props} />;
+const HighlightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HighlightIcon__svg {...props} />;
 
 const traceIcon = (trace: traces.TraceDefinition) => {
   switch (trace.type) {

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {type InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Spoiler} from './Spoiler';
+import Icon__svg from 'iconista/lib/react/tabler/lock-password';
 
 export const name = 'Spoiler';
-export const Icon = makeIcon({set: 'tabler', icon: 'lock-password'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 export const behavior = spanOne(SliceTypeCon.spoiler, name, {
   menuId: 'fmt-common',
   menu: () => ({

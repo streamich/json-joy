@@ -6,7 +6,6 @@ import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {syncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {Dot} from '@jsonjoy.com/ui/lib/1-inline/Dot';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem, Param} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {BorderStyleIcon, type BorderStyleIconStyle} from './BorderStyleIcon';
 import {getStepStateColors, pickGlyphColor, toHex} from './colors';
@@ -32,11 +31,15 @@ import {
 } from './settings';
 import type {LineStyle, StepIndicator, StepState} from './types';
 import type {ListItemElement} from '../../types';
+import NumberIcon__svg from 'iconista/lib/react/tabler/numbers';
+import SymbolIcon__svg from 'iconista/lib/react/tabler_filled/alert-triangle';
+import CharsIcon__svg from 'iconista/lib/react/tabler/letter-case';
+import EraserIcon__svg from 'iconista/lib/react/tabler/eraser';
 
-const NumberIcon = makeIcon({set: 'tabler', icon: 'numbers', width: 16, height: 16});
-const SymbolIcon = makeIcon({set: 'tabler_filled', icon: 'alert-triangle', width: 16, height: 16});
-const CharsIcon = makeIcon({set: 'tabler', icon: 'letter-case', width: 16, height: 16});
-const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
+const NumberIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NumberIcon__svg width={16} height={16} {...props} />;
+const SymbolIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SymbolIcon__svg width={16} height={16} {...props} />;
+const CharsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CharsIcon__svg width={16} height={16} {...props} />;
+const EraserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EraserIcon__svg width={16} height={16} {...props} />;
 
 const INDICATOR_ICONS: Record<StepIndicator, () => React.ReactNode> = {
   number: () => <NumberIcon />,

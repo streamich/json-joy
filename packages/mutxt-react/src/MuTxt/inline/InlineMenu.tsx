@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Range} from 'slate';
 import {rsync} from '@jsonjoy.com/ui';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
@@ -14,39 +13,58 @@ import {getActiveBg, getActiveFg, getActiveMarkColor} from '../behavior/color';
 import {MarkSwatchPanel} from './MarkSwatchPanel';
 import {ColorPickerPanel} from './ColorPickerPanel';
 import {getActiveMathInlineEntry} from '../behavior/math';
+import BoldIcon__svg from 'iconista/lib/react/radix/font-bold';
+import ItalicIcon__svg from 'iconista/lib/react/lucide/italic';
+import UnderlineIcon__svg from 'iconista/lib/react/tabler/underline';
+import OverlineIcon__svg from 'iconista/lib/react/tabler/overline';
+import StrikethroughIcon__svg from 'iconista/lib/react/tabler/strikethrough';
+import HighlightIcon__svg from 'iconista/lib/react/tabler/highlight';
+import SpoilerIcon__svg from 'iconista/lib/react/tabler/lock-password';
+import CodeIcon__svg from 'iconista/lib/react/tabler/code';
+import SupIcon__svg from 'iconista/lib/react/tabler/superscript';
+import SubIcon__svg from 'iconista/lib/react/tabler/subscript';
+import KeyIcon__svg from 'iconista/lib/react/lucide/keyboard';
+import InsertionIcon__svg from 'iconista/lib/react/tabler/pencil-plus';
+import DeletionIcon__svg from 'iconista/lib/react/tabler/pencil-minus';
+import LinkIcon__svg from 'iconista/lib/react/lucide/link';
+import FgIcon__svg from 'iconista/lib/react/lucide/paintbrush';
+import BgIcon__svg from 'iconista/lib/react/lucide/paint-bucket';
+import MathIcon__svg from 'iconista/lib/react/tabler/math-function';
+import ClearFormattingIcon__svg from 'iconista/lib/react/tabler/eraser';
+import TypographyIcon__svg from 'iconista/lib/react/tabler/typography';
 
 export interface InlineMenuItem extends MenuItem {
   mark: MarkFormat;
 }
 
 // Formatting: common
-const BoldIcon = makeIcon({set: 'radix', icon: 'font-bold', width: 15, height: 15});
-const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic', width: 16, height: 16});
-const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline', width: 16, height: 16});
-const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline', width: 16, height: 16});
-const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough', width: 16, height: 16});
-const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight', width: 16, height: 16});
-const SpoilerIcon = makeIcon({set: 'tabler', icon: 'lock-password', width: 16, height: 16});
+const BoldIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BoldIcon__svg width={15} height={15} {...props} />;
+const ItalicIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ItalicIcon__svg width={16} height={16} {...props} />;
+const UnderlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <UnderlineIcon__svg width={16} height={16} {...props} />;
+const OverlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OverlineIcon__svg width={16} height={16} {...props} />;
+const StrikethroughIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <StrikethroughIcon__svg width={16} height={16} {...props} />;
+const HighlightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HighlightIcon__svg width={16} height={16} {...props} />;
+const SpoilerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SpoilerIcon__svg width={16} height={16} {...props} />;
 
 // Formatting: technical
-const CodeIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
-const SupIcon = makeIcon({set: 'tabler', icon: 'superscript', width: 16, height: 16});
-const SubIcon = makeIcon({set: 'tabler', icon: 'subscript', width: 16, height: 16});
-const KeyIcon = makeIcon({set: 'lucide', icon: 'keyboard', width: 16, height: 16});
-const InsertionIcon = makeIcon({set: 'tabler', icon: 'pencil-plus', width: 16, height: 16});
-const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus', width: 16, height: 16});
+const CodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CodeIcon__svg width={16} height={16} {...props} />;
+const SupIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SupIcon__svg width={16} height={16} {...props} />;
+const SubIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SubIcon__svg width={16} height={16} {...props} />;
+const KeyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <KeyIcon__svg width={16} height={16} {...props} />;
+const InsertionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <InsertionIcon__svg width={16} height={16} {...props} />;
+const DeletionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DeletionIcon__svg width={16} height={16} {...props} />;
 
 // Annotations
-const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
-const FgIcon = makeIcon({set: 'lucide', icon: 'paintbrush', width: 16, height: 16});
-const BgIcon = makeIcon({set: 'lucide', icon: 'paint-bucket', width: 16, height: 16});
-const MathIcon = makeIcon({set: 'tabler', icon: 'math-function', width: 16, height: 16});
+const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LinkIcon__svg width={15} height={15} {...props} />;
+const FgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FgIcon__svg width={16} height={16} {...props} />;
+const BgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BgIcon__svg width={16} height={16} {...props} />;
+const MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MathIcon__svg width={16} height={16} {...props} />;
 
 // Modify
-const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
+const ClearFormattingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClearFormattingIcon__svg width={16} height={16} {...props} />;
 
 // Typesetting
-const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg width={16} height={16} {...props} />;
 
 const RECENT_LIMIT = 4;
 

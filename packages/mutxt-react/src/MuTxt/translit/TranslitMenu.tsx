@@ -1,19 +1,22 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
 import type {MenuItem} from '../types';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import type {MuTxtTranslit} from './MuTxtTranslit';
+import TranslitIcon__svg from 'iconista/lib/react/tabler/language';
+import SchemeIcon__svg from 'iconista/lib/react/tabler/keyboard';
+import OffIcon__svg from 'iconista/lib/react/tabler/circle-off';
+import MapIcon__svg from 'iconista/lib/react/tabler/map';
 
 const SHOW_MAPS_KEYS = ['Primary', 'Alt', 'Shift', 't'];
 const SHOW_MAPS_KEYS_FORMATTED = formatKeys(SHOW_MAPS_KEYS);
 
-const TranslitIcon = makeIcon({set: 'tabler', icon: 'language', width: 16, height: 16});
-const SchemeIcon = makeIcon({set: 'tabler', icon: 'keyboard', width: 16, height: 16});
-const OffIcon = makeIcon({set: 'tabler', icon: 'circle-off', width: 16, height: 16});
-const MapIcon = makeIcon({set: 'tabler', icon: 'map', width: 16, height: 16});
+const TranslitIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TranslitIcon__svg width={16} height={16} {...props} />;
+const SchemeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SchemeIcon__svg width={16} height={16} {...props} />;
+const OffIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OffIcon__svg width={16} height={16} {...props} />;
+const MapIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MapIcon__svg width={16} height={16} {...props} />;
 
 /** Split `"Russian (translit)"` into `["Russian", "translit"]`. */
 const splitName = (name: string): [label: string, suffix: string | null] => {

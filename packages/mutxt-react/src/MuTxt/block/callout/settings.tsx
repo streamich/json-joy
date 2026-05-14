@@ -1,13 +1,18 @@
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import type * as React from 'react';
+import * as React from 'react';
 import type {Styles} from '@jsonjoy.com/ui/lib/styles/Styles';
+import NoteIcon__svg from 'iconista/lib/react/lineicons/notebook-1';
+import TipIcon__svg from 'iconista/lib/react/lucide/lightbulb';
+import WarningIcon__svg from 'iconista/lib/react/lucide/triangle-alert';
+import DangerIcon__svg from 'iconista/lib/react/lucide/octagon-alert';
+import ImportantIcon__svg from 'iconista/lib/react/lucide/star';
+import QuoteIcon__svg from 'iconista/lib/react/lucide/quote';
 
-const NoteIcon = makeIcon({set: 'lineicons', icon: 'notebook-1', width: 16, height: 16});
-const TipIcon = makeIcon({set: 'lucide', icon: 'lightbulb', width: 16, height: 16});
-const WarningIcon = makeIcon({set: 'lucide', icon: 'triangle-alert', width: 16, height: 16});
-const DangerIcon = makeIcon({set: 'lucide', icon: 'octagon-alert', width: 16, height: 16});
-const ImportantIcon = makeIcon({set: 'lucide', icon: 'star', width: 16, height: 16});
-const QuoteIcon = makeIcon({set: 'lucide', icon: 'quote', width: 16, height: 16});
+const NoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NoteIcon__svg width={16} height={16} {...props} />;
+const TipIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TipIcon__svg width={16} height={16} {...props} />;
+const WarningIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WarningIcon__svg width={16} height={16} {...props} />;
+const DangerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DangerIcon__svg width={16} height={16} {...props} />;
+const ImportantIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ImportantIcon__svg width={16} height={16} {...props} />;
+const QuoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <QuoteIcon__svg width={16} height={16} {...props} />;
 
 /**
  * Semantic flavor of a callout. Each variant maps to one of the `Styles`

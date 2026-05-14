@@ -1,19 +1,28 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {LeafBlock} from 'json-joy/lib/json-crdt-extensions';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
+import _LayoutIcon__svg from 'iconista/lib/react/tabler/layout';
+import _TableIcon__svg from 'iconista/lib/react/tabler/table';
+import _ColumnsIcon__svg from 'iconista/lib/react/tabler/columns';
+import ImageInPictureIcon__svg from 'iconista/lib/react/tabler/image-in-picture';
+import PhotoScanIcon__svg from 'iconista/lib/react/tabler/photo-scan';
+import TablerFileIcon__svg from 'iconista/lib/react/tabler/file';
+import _ListBulletedIcon__svg from 'iconista/lib/react/ibm_32/list--bulleted';
+import _ListNumberedIcon__svg from 'iconista/lib/react/ibm_32/list--numbered';
+import _ListCheckedIcon__svg from 'iconista/lib/react/ibm_32/list--checked';
+import CursorTextIcon__svg from 'iconista/lib/react/bootstrap/cursor-text';
 
-const _LayoutIcon = makeIcon({set: 'tabler', icon: 'layout'});
-const _TableIcon = makeIcon({set: 'tabler', icon: 'table'});
-const _ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns'});
-const ImageInPictureIcon = makeIcon({set: 'tabler', icon: 'image-in-picture'});
-const PhotoScanIcon = makeIcon({set: 'tabler', icon: 'photo-scan'});
-const TablerFileIcon = makeIcon({set: 'tabler', icon: 'file'});
-const _ListBulletedIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted'});
-const _ListNumberedIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered'});
-const _ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
-const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
+const _LayoutIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_LayoutIcon__svg {...props} />;
+const _TableIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_TableIcon__svg {...props} />;
+const _ColumnsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_ColumnsIcon__svg {...props} />;
+const ImageInPictureIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ImageInPictureIcon__svg {...props} />;
+const PhotoScanIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PhotoScanIcon__svg {...props} />;
+const TablerFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TablerFileIcon__svg {...props} />;
+const _ListBulletedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_ListBulletedIcon__svg {...props} />;
+const _ListNumberedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_ListNumberedIcon__svg {...props} />;
+const _ListCheckedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_ListCheckedIcon__svg {...props} />;
+const CursorTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CursorTextIcon__svg {...props} />;
 
 export interface LeafBlockMenuCtx {
   leaf: LeafBlock;

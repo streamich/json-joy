@@ -4,14 +4,18 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {JsonBlockState} from '../JsonBlockState';
+import CodeIcon__svg from 'iconista/lib/react/auth0/code';
+import PaintBrushIcon__svg from 'iconista/lib/react/auth0/paint-brush';
+import PencilIcon__svg from 'iconista/lib/react/auth0/pencil';
+import MergeIcon__svg from 'iconista/lib/react/elastic/merge';
+import _HighlightIcon__svg from 'iconista/lib/react/ant_outline/highlight';
 
-const CodeIcon = makeIcon({set: 'auth0', icon: 'code'});
-const PaintBrushIcon = makeIcon({set: 'auth0', icon: 'paint-brush'});
-const PencilIcon = makeIcon({set: 'auth0', icon: 'pencil'});
-const MergeIcon = makeIcon({set: 'elastic', icon: 'merge'});
-const _HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
+const CodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CodeIcon__svg {...props} />;
+const PaintBrushIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PaintBrushIcon__svg {...props} />;
+const PencilIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PencilIcon__svg {...props} />;
+const MergeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MergeIcon__svg {...props} />;
+const _HighlightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_HighlightIcon__svg {...props} />;
 
 export interface JsonBlockTabsProps {
   state: JsonBlockState;

@@ -8,7 +8,6 @@ import {
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
 import {SpanBehavior} from '../../SpanBehavior';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
 import {isValid} from '../../../util/color';
@@ -16,9 +15,10 @@ import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {EditorState} from '../../../state';
 import type {DynamicCommandDefinition} from '../../../state/commands/types';
+import Icon__svg from 'iconista/lib/react/lucide/paintbrush';
 
 export const name = 'Color';
-export const Icon = makeIcon({set: 'lucide', icon: 'paintbrush'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 
 export const schema = s.obj({
   col: s.str<string>(''),

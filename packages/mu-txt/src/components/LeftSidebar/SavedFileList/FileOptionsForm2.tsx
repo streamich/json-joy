@@ -1,22 +1,29 @@
 import * as React from 'react';
 import {ArgsPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ArgsPane';
 import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {syncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useT} from 'use-t';
 import {useExplorer} from '../../../context';
 import type {MenuItem, Param} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import type {FileMetadataDto, OpenFile} from '../../../state/file';
+import NameIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-binary';
+import HashIcon__svg from 'iconista/lib/react/bootstrap/hash';
+import ClockIcon__svg from 'iconista/lib/react/bootstrap/clock';
+import FileIcon__svg from 'iconista/lib/react/bootstrap/file-earmark';
+import LinkIcon__svg from 'iconista/lib/react/bootstrap/link-45deg';
+import FolderIcon__svg from 'iconista/lib/react/bootstrap/folder2-open';
+import DownloadIcon__svg from 'iconista/lib/react/auth0/download';
+import TrashIcon__svg from 'iconista/lib/react/bootstrap/trash2';
 
-const NameIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-binary', width: 16, height: 16});
-const HashIcon = makeIcon({set: 'bootstrap', icon: 'hash', width: 16, height: 16});
-const ClockIcon = makeIcon({set: 'bootstrap', icon: 'clock', width: 16, height: 16});
-const FileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark', width: 16, height: 16});
-const LinkIcon = makeIcon({set: 'bootstrap', icon: 'link-45deg', width: 16, height: 16});
-const FolderIcon = makeIcon({set: 'bootstrap', icon: 'folder2-open', width: 16, height: 16});
-const DownloadIcon = makeIcon({set: 'auth0', icon: 'download', width: 16, height: 16});
-const TrashIcon = makeIcon({set: 'bootstrap', icon: 'trash2', width: 16, height: 16});
+const NameIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NameIcon__svg width={16} height={16} {...props} />;
+const HashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HashIcon__svg width={16} height={16} {...props} />;
+const ClockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClockIcon__svg width={16} height={16} {...props} />;
+const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileIcon__svg width={16} height={16} {...props} />;
+const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LinkIcon__svg width={16} height={16} {...props} />;
+const FolderIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FolderIcon__svg width={16} height={16} {...props} />;
+const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DownloadIcon__svg width={16} height={16} {...props} />;
+const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TrashIcon__svg width={16} height={16} {...props} />;
 
 const renderNameIcon = () => <NameIcon />;
 const renderHashIcon = () => <HashIcon />;

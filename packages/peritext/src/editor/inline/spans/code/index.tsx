@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {type InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Code} from './Code';
+import Icon__svg from 'iconista/lib/react/tabler/code';
 
 export const name = 'Code';
-export const Icon = makeIcon({set: 'tabler', icon: 'code'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 export const behavior = spanOne(SliceTypeCon.code, name, {
   keys: ['Primary', 'e'],
   menuId: 'fmt-technical',

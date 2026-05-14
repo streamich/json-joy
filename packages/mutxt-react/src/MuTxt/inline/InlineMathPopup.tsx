@@ -5,7 +5,6 @@ import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {ArgsPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ArgsPane';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {convertLatexToAsciiMath, convertLatexToMarkup, convertLatexToMathMl} from 'mathlive';
 import {useT} from 'use-t';
@@ -14,6 +13,8 @@ import type {MenuItem, Param} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/ty
 import type {MathSize} from '../types';
 import type {MathfieldElement} from 'mathlive';
 import type {InlineMathState} from './InlineMathState';
+import SizeIcon__svg from 'iconista/lib/react/bootstrap/aspect-ratio';
+import LabelIcon__svg from 'iconista/lib/react/bootstrap/tag';
 
 import 'mathlive';
 import 'mathlive/fonts.css';
@@ -66,8 +67,8 @@ const mathFieldClass = rule({
   },
 });
 
-const SizeIcon = makeIcon({set: 'bootstrap', icon: 'aspect-ratio', width: 16, height: 16});
-const LabelIcon = makeIcon({set: 'bootstrap', icon: 'tag', width: 16, height: 16});
+const SizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SizeIcon__svg width={16} height={16} {...props} />;
+const LabelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LabelIcon__svg width={16} height={16} {...props} />;
 
 const renderSizeIcon = () => <SizeIcon />;
 const renderLabelIcon = () => <LabelIcon />;

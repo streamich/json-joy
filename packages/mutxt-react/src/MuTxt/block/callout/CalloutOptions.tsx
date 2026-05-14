@@ -5,7 +5,6 @@ import {ArgsPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ArgsPane';
 import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {syncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem, Param} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {toHex} from './colors';
 import {
@@ -20,8 +19,9 @@ import {
   isCalloutVariant,
 } from './settings';
 import type {CalloutElement} from '../../types';
+import CharsIcon__svg from 'iconista/lib/react/tabler/letter-case';
 
-const CharsIcon = makeIcon({set: 'tabler', icon: 'letter-case', width: 16, height: 16});
+const CharsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CharsIcon__svg width={16} height={16} {...props} />;
 
 const renderCharsIcon = () => <CharsIcon />;
 

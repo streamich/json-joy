@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {rsync} from '@jsonjoy.com/ui';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ShareDocumentForm} from '../chrome/ShareDocumentPane';
 import {copyDefaultShareLink} from '../util/share';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -11,21 +11,47 @@ import {ReactEditor} from 'slate-react';
 import {canRedo, canUndo, redo, undo} from '../behavior';
 import {formatKeys} from '../util/keys';
 import {EditableWidthButton, LABELS} from '../chrome/EditableWidthButton';
+import {CustomStylesPanel} from '../custom-style/CustomStylesPanel';
 import type {DisplayMode, EditableWidth, FontKind, MenuItem} from '../types';
 import type {MuTxtState, ThemeOverride} from './MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import {default as DocumentIcon2} from 'iconista/lib/react/tabler/file-text';
+import KeyboardIcon__svg from 'iconista/lib/react/tabler/keyboard';
+import ThemeIcon__svg from 'iconista/lib/react/tabler/palette';
+import ThemeAutoIcon__svg from 'iconista/lib/react/tabler/automatic-gearbox';
+import ThemeLightIcon__svg from 'iconista/lib/react/ibm_32/light';
+import ThemeDarkIcon__svg from 'iconista/lib/react/lucide/lamp-desk';
+import ThemeDefaultIcon__svg from 'iconista/lib/react/tabler/restore';
+import MaximizeIcon__svg from 'iconista/lib/react/tabler/maximize';
+import MinimizeIcon__svg from 'iconista/lib/react/tabler/minimize';
+import FullscreenIcon__svg from 'iconista/lib/react/tabler/arrows-maximize';
+import TypographyIcon__svg from 'iconista/lib/react/tabler/typography';
+import CustomStylesIcon__svg from 'iconista/lib/react/tabler/brush';
+import GoToIcon__svg from 'iconista/lib/react/bootstrap/list-columns-reverse';
+import ExportIcon__svg from 'iconista/lib/react/tabler/file-export';
+import SaveIcon__svg from 'iconista/lib/react/tabler/device-floppy';
+import DevelopersIcon__svg from 'iconista/lib/react/tabler/tools';
+import EmbedIcon__svg from 'iconista/lib/react/tabler/code';
+import BracesIcon__svg from 'iconista/lib/react/tabler/braces';
+import PlainTextIcon__svg from 'iconista/lib/react/tabler/align-left';
+import WidthIcon__svg from 'iconista/lib/react/tabler/arrows-horizontal';
+import ShareIcon__svg from 'iconista/lib/react/ant_outline/share-alt';
+import ShareCheckIcon__svg from 'iconista/lib/react/atlaskit/check';
+import CopyLinkIcon__svg from 'iconista/lib/react/tabler/link';
+import ShareOptionsIcon__svg from 'iconista/lib/react/tabler/adjustments';
 
-const DocumentIcon = makeIcon({set: 'tabler', icon: 'file-text', width: 16, height: 16});
-const KeyboardIcon = makeIcon({set: 'tabler', icon: 'keyboard', width: 16, height: 16});
-const ThemeIcon = makeIcon({set: 'tabler', icon: 'palette', width: 16, height: 16});
-const ThemeAutoIcon = makeIcon({set: 'tabler', icon: 'automatic-gearbox', width: 16, height: 16});
-const ThemeLightIcon = makeIcon({set: 'ibm_32', icon: 'light', width: 16, height: 16});
-const ThemeDarkIcon = makeIcon({set: 'lucide', icon: 'lamp-desk', width: 16, height: 16});
-const ThemeDefaultIcon = makeIcon({set: 'tabler', icon: 'restore', width: 16, height: 16});
-const MaximizeIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, height: 16});
-const MinimizeIcon = makeIcon({set: 'tabler', icon: 'minimize', width: 16, height: 16});
-const FullscreenIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
-const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+const documentIcon = () => <DocumentIcon2 width={16} height={16} />;
+const KeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <KeyboardIcon__svg width={16} height={16} {...props} />;
+const ThemeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeIcon__svg width={16} height={16} {...props} />;
+const ThemeAutoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeAutoIcon__svg width={16} height={16} {...props} />;
+const ThemeLightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeLightIcon__svg width={16} height={16} {...props} />;
+const ThemeDarkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeDarkIcon__svg width={16} height={16} {...props} />;
+const ThemeDefaultIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeDefaultIcon__svg width={16} height={16} {...props} />;
+const MaximizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MaximizeIcon__svg width={16} height={16} {...props} />;
+const MinimizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MinimizeIcon__svg width={16} height={16} {...props} />;
+const FullscreenIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FullscreenIcon__svg width={16} height={16} {...props} />;
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg width={16} height={16} {...props} />;
+const CustomStylesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CustomStylesIcon__svg width={16} height={16} {...props} />;
 
 const rtlMirrorClass = rule({
   d: 'inline-flex',
@@ -45,20 +71,20 @@ const RedoIcon: React.FC = () => (
     <Iconista set="lucide" icon="redo" width={16} height={16} />
   </span>
 );
-const GoToIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
-const ExportIcon = makeIcon({set: 'tabler', icon: 'file-export', width: 16, height: 16});
-const SaveIcon = makeIcon({set: 'tabler', icon: 'device-floppy', width: 16, height: 16});
-const DevelopersIcon = makeIcon({set: 'tabler', icon: 'tools', width: 16, height: 16});
-const EmbedIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
+const GoToIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <GoToIcon__svg width={16} height={16} {...props} />;
+const ExportIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ExportIcon__svg width={16} height={16} {...props} />;
+const SaveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SaveIcon__svg width={16} height={16} {...props} />;
+const DevelopersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DevelopersIcon__svg width={16} height={16} {...props} />;
+const EmbedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EmbedIcon__svg width={16} height={16} {...props} />;
 // const BugIcon = makeIcon({set: 'tabler', icon: 'bug', width: 16, height: 16});
-const BracesIcon = makeIcon({set: 'tabler', icon: 'braces', width: 16, height: 16});
+const BracesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BracesIcon__svg width={16} height={16} {...props} />;
 // const TerminalIcon = makeIcon({set: 'tabler', icon: 'terminal-2', width: 16, height: 16});
-const PlainTextIcon = makeIcon({set: 'tabler', icon: 'align-left', width: 16, height: 16});
-const WidthIcon = makeIcon({set: 'tabler', icon: 'arrows-horizontal', width: 16, height: 16});
-const ShareIcon = makeIcon({set: 'ant_outline', icon: 'share-alt', width: 16, height: 16});
-const ShareCheckIcon = makeIcon({set: 'atlaskit', icon: 'check', width: 16, height: 16});
-const CopyLinkIcon = makeIcon({set: 'tabler', icon: 'link', width: 16, height: 16});
-const ShareOptionsIcon = makeIcon({set: 'tabler', icon: 'adjustments', width: 16, height: 16});
+const PlainTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PlainTextIcon__svg width={16} height={16} {...props} />;
+const WidthIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WidthIcon__svg width={16} height={16} {...props} />;
+const ShareIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShareIcon__svg width={16} height={16} {...props} />;
+const ShareCheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShareCheckIcon__svg width={16} height={16} {...props} />;
+const CopyLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CopyLinkIcon__svg width={16} height={16} {...props} />;
+const ShareOptionsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShareOptionsIcon__svg width={16} height={16} {...props} />;
 
 const SHARE_COPIED_RESET_MS = 2000;
 

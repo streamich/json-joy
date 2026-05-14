@@ -3,18 +3,21 @@ import {ReactEditor, useSlateStatic} from 'slate-react';
 import {Transforms} from 'slate';
 import {ArgsPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ArgsPane';
 import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {convertLatexToAsciiMath, convertLatexToMarkup, convertLatexToMathMl} from 'mathlive';
 import {useT} from 'use-t';
 import {useMuTxt} from '../../../context';
 import {MATH_SIZES, MATH_SIZE_LABEL, getMathSize, getStoredMathSize} from './settings';
 import type {MenuItem, Param} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import type {MathElement as MathElementType, MathThing} from '../../../types';
+import SizeIcon__svg from 'iconista/lib/react/bootstrap/aspect-ratio';
+import CaptionIcon__svg from 'iconista/lib/react/bootstrap/chat-square-text';
+import NameIcon__svg from 'iconista/lib/react/bootstrap/pen';
+import LabelIcon__svg from 'iconista/lib/react/bootstrap/tag';
 
-const SizeIcon = makeIcon({set: 'bootstrap', icon: 'aspect-ratio', width: 16, height: 16});
-const CaptionIcon = makeIcon({set: 'bootstrap', icon: 'chat-square-text', width: 16, height: 16});
-const NameIcon = makeIcon({set: 'bootstrap', icon: 'pen', width: 16, height: 16});
-const LabelIcon = makeIcon({set: 'bootstrap', icon: 'tag', width: 16, height: 16});
+const SizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SizeIcon__svg width={16} height={16} {...props} />;
+const CaptionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CaptionIcon__svg width={16} height={16} {...props} />;
+const NameIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NameIcon__svg width={16} height={16} {...props} />;
+const LabelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LabelIcon__svg width={16} height={16} {...props} />;
 
 const renderSizeIcon = () => <SizeIcon />;
 const renderCaptionIcon = () => <CaptionIcon />;

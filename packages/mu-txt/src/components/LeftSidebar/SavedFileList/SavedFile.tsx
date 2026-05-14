@@ -3,14 +3,14 @@ import {useExplorer} from '../../../context';
 import {Bytes} from '@jsonjoy.com/ui/lib/1-inline/Bytes';
 import {TimeAgo} from '@jsonjoy.com/ui/lib/1-inline/TimeAgo';
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FileOptionsForm2 as FileOptionsForm} from './FileOptionsForm2';
 import type {FileMetadataDto} from '../../../state/file';
+import GhostFileIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-font';
 
-const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-font', width: 16, height: 16});
+const GhostFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <GhostFileIcon__svg width={16} height={16} {...props} />;
 const icon = <GhostFileIcon />;
 
 export interface SavedFileProps {

@@ -2,7 +2,6 @@ import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useT} from 'use-t';
 import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useExplorer} from '../../context';
@@ -10,10 +9,13 @@ import {host} from '../../util/host';
 import {BrandLogo} from '../LeftSidebar/BrandLogo';
 import {ActionCard} from './ActionCard';
 import {RecentFiles} from './RecentFiles';
+import NewDocIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-plus';
+import TemplateIcon__svg from 'iconista/lib/react/bootstrap/collection';
+import FolderIcon__svg from 'iconista/lib/react/bootstrap/folder2-open';
 
-const NewDocIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-plus', width: 18, height: 18});
-const TemplateIcon = makeIcon({set: 'bootstrap', icon: 'collection', width: 18, height: 18});
-const FolderIcon = makeIcon({set: 'bootstrap', icon: 'folder2-open', width: 18, height: 18});
+const NewDocIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NewDocIcon__svg width={18} height={18} {...props} />;
+const TemplateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TemplateIcon__svg width={18} height={18} {...props} />;
+const FolderIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FolderIcon__svg width={18} height={18} {...props} />;
 
 const blockClass = rule({
   d: 'flex',

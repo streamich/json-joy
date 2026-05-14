@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
+import UndoIcon__svg from 'iconista/lib/react/lucide/undo';
+import RedoIcon__svg from 'iconista/lib/react/lucide/redo';
 
-const UndoIcon = makeIcon({set: 'lucide', icon: 'undo'});
-const RedoIcon = makeIcon({set: 'lucide', icon: 'redo'});
+const UndoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <UndoIcon__svg {...props} />;
+const RedoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <RedoIcon__svg {...props} />;
 
 export class DocMenu {
   constructor(public readonly state: EditorState) {}

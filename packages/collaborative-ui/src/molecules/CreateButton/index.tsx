@@ -1,9 +1,9 @@
 import {Button, type ButtonProps} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as React from 'react';
+import PlusIcon__svg from 'iconista/lib/react/bootstrap/plus-square-dotted';
 
 // const PlusIcon = makeIcon({set: 'auth0', icon: 'plus'});
-const PlusIcon = makeIcon({set: 'bootstrap', icon: 'plus-square-dotted'});
+const PlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PlusIcon__svg {...props} />;
 
 export interface CreateButtonProps extends ButtonProps {
   primary?: boolean;

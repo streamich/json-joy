@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import TurnIntoIcon__svg from 'iconista/lib/react/tabler/transform';
+import FormatIcon__svg from 'iconista/lib/react/tabler/typography';
 
-const TurnIntoIcon = makeIcon({set: 'tabler', icon: 'transform', width: 16, height: 16});
-const FormatIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+const TurnIntoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TurnIntoIcon__svg width={16} height={16} {...props} />;
+const FormatIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FormatIcon__svg width={16} height={16} {...props} />;
 
 export class OmniMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}

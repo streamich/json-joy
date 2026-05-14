@@ -3,11 +3,11 @@ import {useT} from 'use-t';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextItem, ContextPane, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {ThemeContextItem} from './ThemeContextItem';
+import GitHubIcon__svg from 'iconista/lib/react/fontawesome_brands/github';
 
-const GitHubIcon = makeIcon({set: 'fontawesome_brands', icon: 'github'});
+const GitHubIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <GitHubIcon__svg {...props} />;
 
 export type Props = Record<string, never>;
 

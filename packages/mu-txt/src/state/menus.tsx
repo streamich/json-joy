@@ -2,12 +2,13 @@ import * as React from 'react';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {templates} from './templates';
 import type {MuTxtAppState} from '.';
+import FileMuTxtIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-text';
+import FileJsonIcon__svg from 'iconista/lib/react/bootstrap/filetype-json';
 
-const FileMuTxtIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-text', width: 16, height: 16});
-const FileJsonIcon = makeIcon({set: 'bootstrap', icon: 'filetype-json', width: 16, height: 16});
+const FileMuTxtIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileMuTxtIcon__svg width={16} height={16} {...props} />;
+const FileJsonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileJsonIcon__svg width={16} height={16} {...props} />;
 
 export class Menus {
   constructor(public readonly state: MuTxtAppState) {}

@@ -1,53 +1,86 @@
 import * as React from 'react';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import type {MenuItem} from '../types';
+import SecondBrainIcon__svg from 'iconista/lib/react/tabler/brain';
+import MakeShorterIcon__svg from 'iconista/lib/react/tabler/viewport-short';
+import MakeLongerIcon__svg from 'iconista/lib/react/tabler/viewport-tall';
+import TypographyIcon__svg from 'iconista/lib/react/tabler/typography';
+import FontStyleIcon__svg from 'iconista/lib/react/radix/font-style';
+import FontFamilyIcon__svg from 'iconista/lib/react/radix/font-family';
+import FontSizeIcon__svg from 'iconista/lib/react/radix/font-size';
+import LetterSpacingIcon__svg from 'iconista/lib/react/radix/letter-spacing';
+import LetterCaseUppercaseIcon__svg from 'iconista/lib/react/radix/letter-case-uppercase';
+import LetterCaseLowercaseIcon__svg from 'iconista/lib/react/radix/letter-case-lowercase';
+import LayersIcon__svg from 'iconista/lib/react/radix/layers';
+import EraserIcon__svg from 'iconista/lib/react/tabler/eraser';
+import TrashIcon__svg from 'iconista/lib/react/tabler/trash';
+import CopyIcon__svg from 'iconista/lib/react/lucide/copy';
+import ClipboardCopyIcon__svg from 'iconista/lib/react/radix/clipboard-copy';
+import MarkdownIcon__svg from 'iconista/lib/react/simple/markdown';
+import Html5Icon__svg from 'iconista/lib/react/simple/html5';
+import ScissorsIcon__svg from 'iconista/lib/react/tabler/scissors';
+import ClipboardIcon__svg from 'iconista/lib/react/radix/clipboard';
+import BetweenVerticalEndIcon__svg from 'iconista/lib/react/lucide/between-vertical-end';
+import ButtonIcon__svg from 'iconista/lib/react/radix/button';
+import CalendarIcon__svg from 'iconista/lib/react/radix/calendar';
+import WalletIcon__svg from 'iconista/lib/react/tabler/wallet';
+import DropdownMenuIcon__svg from 'iconista/lib/react/radix/dropdown-menu';
+import PlusIcon__svg from 'iconista/lib/react/radix/plus';
+import LinkIcon__svg from 'iconista/lib/react/radix/link-2';
+import SewingPinIcon__svg from 'iconista/lib/react/radix/sewing-pin';
+import FileIcon__svg from 'iconista/lib/react/radix/file';
+import TemplateIcon__svg from 'iconista/lib/react/tabler/template';
+import RadixKeyboardIcon__svg from 'iconista/lib/react/radix/keyboard';
+import SmilePlusIcon__svg from 'iconista/lib/react/lucide/smile-plus';
+import OmegaIcon__svg from 'iconista/lib/react/lucide/omega';
+import VariableIcon__svg from 'iconista/lib/react/lucide/variable';
+import SquareChevronRightIcon__svg from 'iconista/lib/react/lucide/square-chevron-right';
 
 // Second brain icons
-const SecondBrainIcon = makeIcon({set: 'tabler', icon: 'brain'});
-const MakeShorterIcon = makeIcon({set: 'tabler', icon: 'viewport-short'});
-const MakeLongerIcon = makeIcon({set: 'tabler', icon: 'viewport-tall'});
+const SecondBrainIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SecondBrainIcon__svg {...props} />;
+const MakeShorterIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MakeShorterIcon__svg {...props} />;
+const MakeLongerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MakeLongerIcon__svg {...props} />;
 
 // Typesetting icons
-const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography'});
-const FontStyleIcon = makeIcon({set: 'radix', icon: 'font-style'});
-const FontFamilyIcon = makeIcon({set: 'radix', icon: 'font-family'});
-const FontSizeIcon = makeIcon({set: 'radix', icon: 'font-size'});
-const LetterSpacingIcon = makeIcon({set: 'radix', icon: 'letter-spacing'});
-const LetterCaseUppercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-uppercase'});
-const LetterCaseLowercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-lowercase'});
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg {...props} />;
+const FontStyleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontStyleIcon__svg {...props} />;
+const FontFamilyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontFamilyIcon__svg {...props} />;
+const FontSizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontSizeIcon__svg {...props} />;
+const LetterSpacingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterSpacingIcon__svg {...props} />;
+const LetterCaseUppercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterCaseUppercaseIcon__svg {...props} />;
+const LetterCaseLowercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterCaseLowercaseIcon__svg {...props} />;
 
 // Modify icons
-const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
-const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
-const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
+const LayersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LayersIcon__svg {...props} />;
+const EraserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EraserIcon__svg {...props} />;
+const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TrashIcon__svg {...props} />;
 
 // Clipboard icons
-const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
-const ClipboardCopyIcon = makeIcon({set: 'radix', icon: 'clipboard-copy'});
-const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
-const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
-const ScissorsIcon = makeIcon({set: 'tabler', icon: 'scissors'});
-const ClipboardIcon = makeIcon({set: 'radix', icon: 'clipboard'});
+const CopyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CopyIcon__svg {...props} />;
+const ClipboardCopyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClipboardCopyIcon__svg {...props} />;
+const MarkdownIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MarkdownIcon__svg {...props} />;
+const Html5Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Html5Icon__svg {...props} />;
+const ScissorsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ScissorsIcon__svg {...props} />;
+const ClipboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClipboardIcon__svg {...props} />;
 
 // Insert icons
-const BetweenVerticalEndIcon = makeIcon({set: 'lucide', icon: 'between-vertical-end'});
-const ButtonIcon = makeIcon({set: 'radix', icon: 'button'});
-const CalendarIcon = makeIcon({set: 'radix', icon: 'calendar'});
-const WalletIcon = makeIcon({set: 'tabler', icon: 'wallet'});
-const DropdownMenuIcon = makeIcon({set: 'radix', icon: 'dropdown-menu'});
-const PlusIcon = makeIcon({set: 'radix', icon: 'plus'});
-const LinkIcon = makeIcon({set: 'radix', icon: 'link-2'});
-const SewingPinIcon = makeIcon({set: 'radix', icon: 'sewing-pin'});
-const FileIcon = makeIcon({set: 'radix', icon: 'file'});
-const TemplateIcon = makeIcon({set: 'tabler', icon: 'template'});
-const RadixKeyboardIcon = makeIcon({set: 'radix', icon: 'keyboard'});
-const SmilePlusIcon = makeIcon({set: 'lucide', icon: 'smile-plus'});
-const OmegaIcon = makeIcon({set: 'lucide', icon: 'omega'});
-const VariableIcon = makeIcon({set: 'lucide', icon: 'variable'});
-const SquareChevronRightIcon = makeIcon({set: 'lucide', icon: 'square-chevron-right'});
+const BetweenVerticalEndIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BetweenVerticalEndIcon__svg {...props} />;
+const ButtonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ButtonIcon__svg {...props} />;
+const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CalendarIcon__svg {...props} />;
+const WalletIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WalletIcon__svg {...props} />;
+const DropdownMenuIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DropdownMenuIcon__svg {...props} />;
+const PlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PlusIcon__svg {...props} />;
+const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LinkIcon__svg {...props} />;
+const SewingPinIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SewingPinIcon__svg {...props} />;
+const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileIcon__svg {...props} />;
+const TemplateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TemplateIcon__svg {...props} />;
+const RadixKeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <RadixKeyboardIcon__svg {...props} />;
+const SmilePlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SmilePlusIcon__svg {...props} />;
+const OmegaIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OmegaIcon__svg {...props} />;
+const VariableIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VariableIcon__svg {...props} />;
+const SquareChevronRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SquareChevronRightIcon__svg {...props} />;
 
 export const secondBrain = (): MenuItem => {
   return {

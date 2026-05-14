@@ -6,7 +6,7 @@ import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {TextBlock} from '@jsonjoy.com/ui/lib/5-block/TextBlock';
 import {FormRow} from '@jsonjoy.com/ui/lib/3-list-item/FormRow';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useMuTxt} from '../context';
 import {encodeShareBlob, encodeEncryptedShareBlob} from '../util/shareEncoding';
@@ -15,8 +15,9 @@ import type {MuTxtState} from '../state/MuTxtState';
 import {useT} from 'use-t';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import LockIcon__svg from 'iconista/lib/react/tabler/lock';
 
-const LockIcon = makeIcon({set: 'tabler', icon: 'lock', width: 16, height: 16});
+const LockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LockIcon__svg width={16} height={16} {...props} />;
 
 const stopKeyDown = (e: React.KeyboardEvent): void => {
   e.stopPropagation();

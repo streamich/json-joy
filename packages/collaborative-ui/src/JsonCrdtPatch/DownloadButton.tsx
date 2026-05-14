@@ -8,14 +8,14 @@ import {ContextItem, ContextSep, ContextPane, ContextTitle} from '@jsonjoy.com/u
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {DownloadIcon} from '../icons/DownloadIcon';
 import {downloadBlob} from '../util/downloadBlob';
 import {encode as encodeCbor} from '@jsonjoy.com/json-pack/lib/cbor/shared';
 import {encode as encodeVerbose} from 'json-joy/lib/json-crdt-patch/codec/verbose/encode';
 import {encode as encodeCompact} from 'json-joy/lib/json-crdt-patch/codec/compact/encode';
+import ExternalLinkIcon__svg from 'iconista/lib/react/auth0/external-link';
 
-const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
+const ExternalLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ExternalLinkIcon__svg {...props} />;
 
 export interface DownloadButtonProps {
   patch: Patch;

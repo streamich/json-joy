@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {Editor, Element as SlateElement, Transforms} from 'slate';
 import {ReactEditor} from 'slate-react';
@@ -22,16 +21,40 @@ import type {BlockFormat, FontKind, ListElementType, MenuItem, OlType, SlateText
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import {isBlockFontActive, setBlockFont} from '../behavior/font';
+import ParagraphIcon__svg from 'iconista/lib/react/tabler/pilcrow';
+import BlockquoteIcon__svg from 'iconista/lib/react/tabler/quote';
+import CodeBlockIcon__svg from 'iconista/lib/react/tabler/code';
+import PreIcon__svg from 'iconista/lib/react/lucide/wrap-text';
+import CalloutIcon__svg from 'iconista/lib/react/tabler/message-2-exclamation';
+import ColumnsIcon__svg from 'iconista/lib/react/tabler/columns';
+import H1Icon__svg from 'iconista/lib/react/lucide/heading-1';
+import H2Icon__svg from 'iconista/lib/react/lucide/heading-2';
+import H3Icon__svg from 'iconista/lib/react/lucide/heading-3';
+import H4Icon__svg from 'iconista/lib/react/lucide/heading-4';
+import H5Icon__svg from 'iconista/lib/react/lucide/heading-5';
+import H6Icon__svg from 'iconista/lib/react/lucide/heading-6';
+import TitleIcon__svg from 'iconista/lib/react/lucide/type';
+import ULIcon__svg from 'iconista/lib/react/lucide/list';
+import OLIcon__svg from 'iconista/lib/react/lucide/list-ordered';
+import ChecklistIcon__svg from 'iconista/lib/react/lucide/list-todo';
+import StepperIcon__svg from 'iconista/lib/react/tabler/stairs-up';
+import AlignLeftIcon__svg from 'iconista/lib/react/lucide/align-left';
+import AlignCenterIcon__svg from 'iconista/lib/react/lucide/align-center';
+import AlignRightIcon__svg from 'iconista/lib/react/lucide/align-right';
+import AlignJustifyIcon__svg from 'iconista/lib/react/lucide/align-justify';
+import IndentIcon__svg from 'iconista/lib/react/lucide/indent-increase';
+import DedentIcon__svg from 'iconista/lib/react/lucide/indent-decrease';
+import TypographyIcon__svg from 'iconista/lib/react/tabler/typography';
 
 // Block icons
-const ParagraphIcon = makeIcon({set: 'tabler', icon: 'pilcrow', width: 16, height: 16});
-const BlockquoteIcon = makeIcon({set: 'tabler', icon: 'quote', width: 16, height: 16});
-const CodeBlockIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
-const PreIcon = makeIcon({set: 'lucide', icon: 'wrap-text', width: 16, height: 16});
+const ParagraphIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ParagraphIcon__svg width={16} height={16} {...props} />;
+const BlockquoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BlockquoteIcon__svg width={16} height={16} {...props} />;
+const CodeBlockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CodeBlockIcon__svg width={16} height={16} {...props} />;
+const PreIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PreIcon__svg width={16} height={16} {...props} />;
 // const CalloutIcon = makeIcon({set: 'lucide', icon: 'message-square-warning', width: 16, height: 16});
 // const CalloutIcon = makeIcon({set: 'vscode', icon: 'note', width: 16, height: 16});
-const CalloutIcon = makeIcon({set: 'tabler', icon: 'message-2-exclamation', width: 16, height: 16});
-const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns', width: 16, height: 16});
+const CalloutIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CalloutIcon__svg width={16} height={16} {...props} />;
+const ColumnsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ColumnsIcon__svg width={16} height={16} {...props} />;
 
 // Heading icons
 // const H1Icon = makeIcon({set: 'tabler', icon: 'h-1', width: 16, height: 16});
@@ -40,32 +63,32 @@ const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns', width: 16, height:
 // const H4Icon = makeIcon({set: 'tabler', icon: 'h-4', width: 16, height: 16});
 // const H5Icon = makeIcon({set: 'tabler', icon: 'h-5', width: 16, height: 16});
 // const H6Icon = makeIcon({set: 'tabler', icon: 'h-6', width: 16, height: 16});
-const H1Icon = makeIcon({set: 'lucide', icon: 'heading-1', width: 16, height: 16});
-const H2Icon = makeIcon({set: 'lucide', icon: 'heading-2', width: 16, height: 16});
-const H3Icon = makeIcon({set: 'lucide', icon: 'heading-3', width: 16, height: 16});
-const H4Icon = makeIcon({set: 'lucide', icon: 'heading-4', width: 16, height: 16});
-const H5Icon = makeIcon({set: 'lucide', icon: 'heading-5', width: 16, height: 16});
-const H6Icon = makeIcon({set: 'lucide', icon: 'heading-6', width: 16, height: 16});
-const TitleIcon = makeIcon({set: 'lucide', icon: 'type', width: 16, height: 16});
+const H1Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H1Icon__svg width={16} height={16} {...props} />;
+const H2Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H2Icon__svg width={16} height={16} {...props} />;
+const H3Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H3Icon__svg width={16} height={16} {...props} />;
+const H4Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H4Icon__svg width={16} height={16} {...props} />;
+const H5Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H5Icon__svg width={16} height={16} {...props} />;
+const H6Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H6Icon__svg width={16} height={16} {...props} />;
+const TitleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TitleIcon__svg width={16} height={16} {...props} />;
 
 // List icons
 // const ULIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted', width: 16, height: 16});
-const ULIcon = makeIcon({set: 'lucide_v1', icon: 'list', width: 16, height: 16});
+const ULIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ULIcon__svg width={16} height={16} {...props} />;
 // const OLIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered', width: 16, height: 16});
-const OLIcon = makeIcon({set: 'lucide_v1', icon: 'list-ordered', width: 16, height: 16});
+const OLIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OLIcon__svg width={16} height={16} {...props} />;
 // const ChecklistIcon = makeIcon({set: 'ibm_32', icon: 'list--checked', width: 16, height: 16});
 // const ChecklistIcon = makeIcon({set: 'vscode', icon: 'checklist', width: 16, height: 16});
-const ChecklistIcon = makeIcon({set: 'lucide_v1', icon: 'list-todo', width: 16, height: 16});
-const StepperIcon = makeIcon({set: 'tabler', icon: 'stairs-up', width: 16, height: 16});
+const ChecklistIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ChecklistIcon__svg width={16} height={16} {...props} />;
+const StepperIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <StepperIcon__svg width={16} height={16} {...props} />;
 
 // Layout icons
-const AlignLeftIcon = makeIcon({set: 'lucide', icon: 'align-left', width: 16, height: 16});
-const AlignCenterIcon = makeIcon({set: 'lucide', icon: 'align-center', width: 16, height: 16});
-const AlignRightIcon = makeIcon({set: 'lucide', icon: 'align-right', width: 16, height: 16});
-const AlignJustifyIcon = makeIcon({set: 'lucide', icon: 'align-justify', width: 16, height: 16});
-const IndentIcon = makeIcon({set: 'lucide', icon: 'indent-increase', width: 16, height: 16});
-const DedentIcon = makeIcon({set: 'lucide', icon: 'indent-decrease', width: 16, height: 16});
-const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+const AlignLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignLeftIcon__svg width={16} height={16} {...props} />;
+const AlignCenterIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignCenterIcon__svg width={16} height={16} {...props} />;
+const AlignRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignRightIcon__svg width={16} height={16} {...props} />;
+const AlignJustifyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignJustifyIcon__svg width={16} height={16} {...props} />;
+const IndentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <IndentIcon__svg width={16} height={16} {...props} />;
+const DedentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DedentIcon__svg width={16} height={16} {...props} />;
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg width={16} height={16} {...props} />;
 
 export class BlockMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}

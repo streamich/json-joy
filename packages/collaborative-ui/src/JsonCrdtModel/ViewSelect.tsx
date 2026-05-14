@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ContextItem, ContextSep, ContextPane, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -9,10 +8,13 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtModelState} from './JsonCrdtModelState';
+import CubeIcon__svg from 'iconista/lib/react/auth0/cube';
+import HooksIcon__svg from 'iconista/lib/react/auth0/hooks';
+import VisTextIcon__svg from 'iconista/lib/react/elastic/vis_text';
 
-const CubeIcon = makeIcon({set: 'auth0', icon: 'cube'});
-const HooksIcon = makeIcon({set: 'auth0', icon: 'hooks'});
-const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
+const CubeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CubeIcon__svg {...props} />;
+const HooksIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HooksIcon__svg {...props} />;
+const VisTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VisTextIcon__svg {...props} />;
 
 export interface ViewSelectProps {
   state: JsonCrdtModelState;

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
+import Icon__svg from 'iconista/lib/react/lucide/italic';
 
 export const name = 'Italic';
-export const Icon = makeIcon({set: 'lucide', icon: 'italic'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 export const behavior = spanOne(SliceTypeCon.i, name, {
   keys: ['Primary', 'i'],
   menuId: 'fmt-common',

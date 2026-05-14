@@ -1,16 +1,19 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {CommonSliceType, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import * as a from '../../inline/spans/a';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import LayersIcon__svg from 'iconista/lib/react/radix/layers';
+import BoxAlignRightIcon__svg from 'iconista/lib/react/tabler/box-align-right';
+import EraserIcon__svg from 'iconista/lib/react/tabler/eraser';
+import TrashIcon__svg from 'iconista/lib/react/tabler/trash';
 
-const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
-const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
-const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
-const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
+const LayersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LayersIcon__svg {...props} />;
+const BoxAlignRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BoxAlignRightIcon__svg {...props} />;
+const EraserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EraserIcon__svg {...props} />;
+const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TrashIcon__svg {...props} />;
 
 export class RangeMenu implements UiLifeCycles {
   public recent: MenuItem[] = [];

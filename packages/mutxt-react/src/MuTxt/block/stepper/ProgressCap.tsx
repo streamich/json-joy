@@ -2,12 +2,12 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {ReactEditor, useReadOnly, useSlateStatic} from 'slate-react';
 import {Transforms} from 'slate';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useT} from 'use-t';
 import type {ListItemElement, StepperListElement} from '../../types';
+import CloseIcon__svg from 'iconista/lib/react/lucide/x';
 
-const CloseIcon = makeIcon({set: 'lucide', icon: 'x', width: 14, height: 14});
+const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CloseIcon__svg width={14} height={14} {...props} />;
 
 const rowClass = rule({
   d: 'flex',

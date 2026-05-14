@@ -1,10 +1,12 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {StepIndicator, StepState} from './types';
+import CheckIcon__svg from 'iconista/lib/react/lucide/check';
+import AlertIcon__svg from 'iconista/lib/react/tabler_filled/alert-triangle';
+import OptionalIcon__svg from 'iconista/lib/react/tabler/circle-dashed';
 
-const CheckIcon = makeIcon({set: 'lucide', icon: 'check', width: 16, height: 16});
-const AlertIcon = makeIcon({set: 'tabler_filled', icon: 'alert-triangle', width: 16, height: 16});
-const OptionalIcon = makeIcon({set: 'tabler', icon: 'circle-dashed', width: 16, height: 16});
+const CheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CheckIcon__svg width={16} height={16} {...props} />;
+const AlertIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlertIcon__svg width={16} height={16} {...props} />;
+const OptionalIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OptionalIcon__svg width={16} height={16} {...props} />;
 
 export interface BulletGlyphProps {
   state: StepState;

@@ -7,7 +7,6 @@ import {
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
 import {SpanBehavior} from '../../SpanBehavior';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
 import {Span} from './components/Span';
@@ -16,8 +15,9 @@ import type {Fmt} from '../../../state/formattings';
 import type {InlineAttrStack, Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {RenderInlineProps} from '../../RenderInline';
 import type {EditorState} from '../../../state';
+import Icon__svg from 'iconista/lib/react/tabler/math-integral-x';
 
-export const Icon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 
 export const schema = s.obj(
   {},

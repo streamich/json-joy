@@ -8,13 +8,13 @@ import {
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
 import {SpanBehavior} from '../../SpanBehavior';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {behavior as col} from '../col';
 import type {EditorState} from '../../../state/EditorState';
 import type {DynamicCommandDefinition} from '../../../state/commands/types';
+import Icon__svg from 'iconista/lib/react/lucide/paint-bucket';
 
 export const name = 'Background';
-export const Icon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 
 export const schema = s.obj({
   col: s.str<string>(''),

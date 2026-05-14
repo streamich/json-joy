@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Tabs} from '@jsonjoy.com/ui/lib/3-list-item/Tabs';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
@@ -11,8 +10,9 @@ import {ModalOverlay} from '../chrome/ModalOverlay';
 import {useMuTxt} from '../context';
 import type {TranslitRule, TranslitScheme} from '../../translit/types';
 import {useT} from 'use-t';
+import EmptyIcon__svg from 'iconista/lib/react/tabler/language';
 
-const EmptyIcon = makeIcon({set: 'tabler', icon: 'language', width: 32, height: 32});
+const EmptyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EmptyIcon__svg width={32} height={32} {...props} />;
 
 const splitName = (name: string): [label: string, suffix: string | null] => {
   const m = /^(.+?)\s*\(([^)]+)\)\s*$/.exec(name);
