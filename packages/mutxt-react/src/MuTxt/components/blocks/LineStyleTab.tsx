@@ -36,6 +36,7 @@ export interface LineStyleTabLabelProps {
 
 export const LineStyleTabLabel: React.FC<LineStyleTabLabelProps> = ({style, label, strokeWidth = 2}) => (
   <span
+    role="img"
     title={label}
     aria-label={label}
     style={{display: 'inline-flex', alignItems: 'center', justifyContent: 'center'}}

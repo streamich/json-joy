@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {context as popupContext} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
 import {ClickAway} from '@jsonjoy.com/ui/lib/utils/ClickAway';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';

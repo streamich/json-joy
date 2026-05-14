@@ -1,5 +1,5 @@
 import {rsync} from '@jsonjoy.com/ui';
-import {Range, Transforms, type Path} from 'slate';
+import {type Range, Transforms, type Path} from 'slate';
 import {insertMathInline, removeMathInlineAtPath} from '../behavior/math';
 import type {MathInlineElement, MathSize, MathThing} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';

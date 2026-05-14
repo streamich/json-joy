@@ -38,6 +38,13 @@ export const AutoValue: React.FC<AutoValueProps> = ({onClick, children}) => {
         e.stopPropagation();
         onClick();
       }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          onClick();
+        }
+      }}
     >
       {children}
     </span>

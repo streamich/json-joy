@@ -1,10 +1,9 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {BasicButton, BasicButtonProps} from '../../2-inline-block/BasicButton';
+import {BasicButton, type BasicButtonProps} from '../../2-inline-block/BasicButton';
 import {WithShortcut} from '../../2-inline-block/WithShortcut';
 import {MiniTitle} from '../../3-list-item/MiniTitle';
 import {ContextPane} from '../ContextMenu';
-import {useStyles} from '../../styles/context';
 
 const containerClass = rule({
   d: 'flex',
@@ -99,8 +98,6 @@ export const ConfirmPrompt: React.FC<ConfirmPromptProps> = ({
   captureKeysGlobally = true,
   width = 444,
 }) => {
-  const styles = useStyles();
-
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent) => {
       if (event.key === 'Enter') {

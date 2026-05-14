@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
-import {SliderHandle as Component, type SliderHandleProps} from '.';
+import {SliderHandle as Component} from '.';
 
 const meta: Meta<typeof Component> = {
   title: '1. Inline/SliderHandle',

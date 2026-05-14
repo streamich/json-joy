@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {type InputProps} from '../../../../2-inline-block/Input';
+import type {InputProps} from '../../../../2-inline-block/Input';
 import {FormRow} from '../../../../3-list-item/FormRow';
 import {argBlockCss} from './css';
 import {InputNumber} from '../../../../2-inline-block/InputNumber';

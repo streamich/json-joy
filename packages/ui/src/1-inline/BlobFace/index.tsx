@@ -663,6 +663,15 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
   const rootStyle: React.CSSProperties = {width: size, height: size, ...style};
   if (interactive && !rootStyle.cursor) rootStyle.cursor = 'pointer';
 
+  const onKeyDown = interactive
+    ? (event: React.KeyboardEvent<HTMLSpanElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onClick?.(event as unknown as React.MouseEvent<HTMLSpanElement>);
+        }
+      }
+    : undefined;
+
   const bodyAnimation = hovered
     ? `${hoverAnimation} 900ms ease-in-out infinite`
     : `${idleAnimation} 3200ms ease-in-out infinite`;
@@ -711,6 +720,7 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      onKeyDown={onKeyDown}
     >
       <svg
         viewBox="0 0 64 64"

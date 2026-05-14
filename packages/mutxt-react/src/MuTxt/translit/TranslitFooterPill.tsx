@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useMuTxt} from '../context';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';

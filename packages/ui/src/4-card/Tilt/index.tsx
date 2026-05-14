@@ -40,20 +40,26 @@ export const Tilt: React.FC<TiltProps> = ({
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
-  const apply = (rx: number, ry: number, s: number) => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.transform = `perspective(${perspective}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${s})`;
-  };
+  const apply = React.useCallback(
+    (rx: number, ry: number, s: number) => {
+      const el = ref.current;
+      if (!el) return;
+      el.style.transform = `perspective(${perspective}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${s})`;
+    },
+    [perspective],
+  );
 
-  const compute = (cx: number, cy: number, rect: DOMRect) => {
-    const px = (cx - rect.left) / rect.width - 0.5;
-    const py = (cy - rect.top) / rect.height - 0.5;
-    const sign = reverse ? -1 : 1;
-    const rx = clamp(sign * -py * 2 * max, -max, max);
-    const ry = clamp(sign * px * 2 * max, -max, max);
-    return {rx, ry};
-  };
+  const compute = React.useCallback(
+    (cx: number, cy: number, rect: DOMRect) => {
+      const px = (cx - rect.left) / rect.width - 0.5;
+      const py = (cy - rect.top) / rect.height - 0.5;
+      const sign = reverse ? -1 : 1;
+      const rx = clamp(sign * -py * 2 * max, -max, max);
+      const ry = clamp(sign * px * 2 * max, -max, max);
+      return {rx, ry};
+    },
+    [reverse, max],
+  );
 
   React.useEffect(() => {
     if (!reach || disabled) return;
@@ -74,8 +80,7 @@ export const Tilt: React.FC<TiltProps> = ({
     };
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach, disabled, max, perspective, scale, reverse]);
+  }, [reach, disabled, scale, apply, compute]);
 
   const onMove = reach
     ? undefined

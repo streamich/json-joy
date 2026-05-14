@@ -1,4 +1,4 @@
-import {createEditor, Editor, Transforms} from 'slate';
+import {createEditor, type Editor} from 'slate';
 import {withTranslit} from '../bindings/slate';
 import {TranslitService} from '../TranslitService';
 import {ruTranslit} from '../schemes/ru-translit';

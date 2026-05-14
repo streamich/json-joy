@@ -10,7 +10,7 @@ import {useLockScrolling} from '../../../../hooks/useLockScrolling';
 import {useSingletonPopup} from '../../../../hooks/useSingletonPopup';
 import {ColorPickerInput} from '../../../ColorPicker/ColorPickerInput';
 import {useStyles} from '../../../../styles/context';
-import {HslColor} from '../../../../styles/color/HslColor';
+import type {HslColor} from '../../../../styles/color/HslColor';
 import {RgbColor} from '../../../../styles/color/RgbColor';
 import {OptionalBadge} from './OptionalBadge';
 import {DefaultableToggle} from './DefaultableToggle';
@@ -102,6 +102,16 @@ export const ArgColorCompact: React.FC<ArgColorProps> = ({param, value, onChange
       onMouseEnter={active ? undefined : () => setAutoHover(true)}
       onMouseLeave={active ? undefined : () => setAutoHover(false)}
       onClick={active ? undefined : enterCustom}
+      onKeyDown={
+        active
+          ? undefined
+          : (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                enterCustom();
+              }
+            }
+      }
     >
       <span
         style={{

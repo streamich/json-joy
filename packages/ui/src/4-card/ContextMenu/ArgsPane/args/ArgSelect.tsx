@@ -41,11 +41,11 @@ const unwrapSelect = (v: ArgSelectProps['value']): string => {
 };
 
 export const ArgSelect: React.FC<ArgSelectProps> = (props) => {
+  const styles = useStyles();
   if (props.compact) return <ArgSelectCompact {...props} />;
   const {param, value, onChange, onSubmit} = props;
   const v = unwrapSelect(value);
   const options = param.options ?? [];
-  const styles = useStyles();
   const optionCls = optionClass({
     '&:hover': {bg: styles.g(0, 0.06)},
   });

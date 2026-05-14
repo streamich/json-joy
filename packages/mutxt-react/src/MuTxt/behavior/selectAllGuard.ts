@@ -1,4 +1,4 @@
-import {Editor, Node, Path, Range, Transforms} from 'slate';
+import {Editor, type Node, Path, Range, Transforms} from 'slate';
 import type {CustomElement} from '../types';
 
 /** Returns `true` when the selection is an expanded range that covers the

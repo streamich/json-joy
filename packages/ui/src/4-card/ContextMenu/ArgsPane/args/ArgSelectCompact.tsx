@@ -46,6 +46,7 @@ export const ArgSelectCompact: React.FC<ArgSelectProps> = ({param, value, onChan
   const selected = options.find((o) => (o.id ?? o.name) === displayId);
   const selectedLabel = selected ? (selected.display?.() ?? selected.name ?? selected.id ?? '') : '—';
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setValue identity not material
   const menu = React.useMemo<MenuItem>(
     () => ({
       name: param.name ?? param.id ?? '',
@@ -61,7 +62,6 @@ export const ArgSelectCompact: React.FC<ArgSelectProps> = ({param, value, onChan
         };
       }),
     }),
-    // biome-ignore lint/correctness/useExhaustiveDependencies: setValue identity not material
     [options, param.name, param.id, s.value],
   );
 

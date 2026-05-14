@@ -3,7 +3,6 @@ import {TranslitService} from '../../translit/TranslitService';
 import {TranslitMenu} from './TranslitMenu';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import type {MuTxtState} from '../state/MuTxtState';
-import type {TranslitScheme} from '../../translit/types';
 
 export class MuTxtTranslit extends TranslitService implements UiLifeCycles {
   public state?: MuTxtState;
@@ -18,10 +17,6 @@ export class MuTxtTranslit extends TranslitService implements UiLifeCycles {
   public readonly closeMap = (): void => {
     this.mapOpen.set(null);
   };
-
-  constructor(schemes?: Iterable<TranslitScheme>) {
-    super(schemes);
-  }
 
   public bindState(state: MuTxtState): void {
     this.state = state;

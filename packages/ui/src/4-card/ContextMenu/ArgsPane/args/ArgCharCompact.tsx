@@ -92,19 +92,16 @@ export const ArgCharCompact: React.FC<ArgCharProps> = ({param, value, onChange, 
   const enterCustom = () => emit({def: false, value: s.value});
   const revertToAuto = () => emit({def: true, value: s.value});
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setText/emit closure intentionally pinned by listed deps
   const handleTextChange = React.useCallback(
     (text: string) => {
       setText(takeLastCodePoints(text, maxLen));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [maxLen, onChange, defaultable, s.value],
   );
 
-  const handlePick = React.useCallback(
-    (picked: string) => setText(picked),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onChange, defaultable, s.value],
-  );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setText/emit closure intentionally pinned by listed deps
+  const handlePick = React.useCallback((picked: string) => setText(picked), [onChange, defaultable, s.value]);
 
   const handleFocus = React.useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     const input = event.target;

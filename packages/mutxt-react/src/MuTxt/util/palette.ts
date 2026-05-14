@@ -1,5 +1,4 @@
 import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
-import type {Styles} from '@jsonjoy.com/ui/lib/styles/Styles';
 import type {MarkColor} from '../types';
 
 const REG_VALID = /^#?([0-9A-F]{3}|([0-9A-F]{6}([0-9a-f]{2})?))$/i;

@@ -53,6 +53,7 @@ export const MathInlineElement: React.FC<MathInlineElementProps> = ({attributes,
   );
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard entry is handled by the Slate editor cursor
     <span
       {...attributes}
       className={inlineClass}

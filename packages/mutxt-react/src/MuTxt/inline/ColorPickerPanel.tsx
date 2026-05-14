@@ -50,13 +50,6 @@ const sectionClass = rule({
   gap: '12px',
 });
 
-const sectionLabelClass = rule({
-  fz: '11px',
-  fw: 600,
-  letterSpacing: '0.04em',
-  textTransform: 'uppercase',
-});
-
 const gridClass = rule({
   d: 'grid',
   gap: '6px',
@@ -114,7 +107,6 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
   const [t] = useT();
   const popup = usePopup();
   const styles = useStyles();
-  mutxt.version.use();
   const recent = mutxt.inline.recentColors.use();
   const editorFont = mutxt.font.use();
   const editorFontFamily = FONT_FAMILIES[editorFont];
@@ -135,11 +127,8 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
     normalizeHex(HslColor.from(initial)?.toRgb().hex() || initial),
   );
 
-  const docColors = React.useMemo(
-    () => collectDocumentColors(mutxt.editor, kind, 10),
-    // biome-ignore lint/correctness/useExhaustiveDependencies: re-scan on version change
-    [mutxt.editor, kind, mutxt.version.use()],
-  );
+  mutxt.version.use();
+  const docColors = collectDocumentColors(mutxt.editor, kind, 10);
 
   const closePopup = () => popup?.close();
 

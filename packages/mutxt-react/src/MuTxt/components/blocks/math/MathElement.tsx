@@ -110,6 +110,7 @@ export const MathElement: React.FC<MathElementProps> = ({attributes, children, e
     [readOnly, tex, thingId],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: sync field only when toggling edit mode
   React.useEffect(() => {
     if (!editing) return;
     const el = fieldRef.current as any;
@@ -122,7 +123,6 @@ export const MathElement: React.FC<MathElementProps> = ({attributes, children, e
       } catch {}
     });
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editing]);
 
   const commitDraft = React.useCallback(
@@ -289,12 +289,14 @@ export const MathElement: React.FC<MathElementProps> = ({attributes, children, e
             background: selected && !editing ? styles.g(0, 0.05) : 'transparent',
           }}
         >
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard entry is handled by the Slate editor cursor */}
           <div
             className={equationWrapClass}
             onClick={editing ? undefined : enterEdit}
             style={{padding, cursor: editing ? 'text' : 'default', fontSize: sizeFontSize}}
           >
             {editing ? (
+              // biome-ignore lint/a11y/useKeyWithClickEvents: math-field manages its own keyboard handling
               <div
                 ref={wrapperRef}
                 className={fieldWrapClass}

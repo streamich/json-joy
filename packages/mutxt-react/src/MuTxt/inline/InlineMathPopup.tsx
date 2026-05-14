@@ -103,6 +103,7 @@ export const InlineMathPopup: React.FC<InlineMathPopupProps> = ({state}) => {
   const editingPath = state.editingPath.use();
   const fieldRef = React.useRef<MathfieldElement | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount only
   React.useEffect(() => {
     const el = fieldRef.current as any;
     if (!el) return;
@@ -115,8 +116,7 @@ export const InlineMathPopup: React.FC<InlineMathPopupProps> = ({state}) => {
       } catch {}
     });
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // mount only
+  }, []);
 
   React.useEffect(() => {
     const el = fieldRef.current as any;
