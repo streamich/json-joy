@@ -247,16 +247,21 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   const [mathKbdHostEl, setMathKbdHostEl] = React.useState<HTMLElement | null>(null);
 
   // MathLive's `<math-field>` virtual keyboard mounts into `document.body` by
-  // default. In `fullwindow` and `fullscreen` we mount it inside the shell instead,
-  // to ensure it appears above the editor content.
+  // default. In `fullwindow` and `fullscreen` we mount it inside the shell
+  // instead, to ensure it appears above the editor content.
   useEffect(() => {
     const vk = (globalThis as any).window?.mathVirtualKeyboard;
     if (!vk) return;
     const needsHost = displayMode === 'fullwindow' || displayMode === 'fullscreen';
     const next = needsHost && mathKbdHostEl ? mathKbdHostEl : document.body;
-    vk.container = next;
+    // MathLive throws when
+    try {
+      vk.container = next;
+    } catch {}
     return () => {
-      vk.container = document.body;
+      try {
+        vk.container = document.body;
+      } catch {}
     };
   }, [displayMode, mathKbdHostEl]);
 
