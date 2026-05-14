@@ -29,6 +29,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   const id = item.id ?? item.name;
   const children = !!item.children && !!item.children.length ? item.children : void 0;
   const hasPane = !!item.pane;
+  const hasPanel = !!item.panel;
   const hasArgs = !!item.params?.length;
   const popupArgs = hasArgs && !!item.popupArgs;
   const display = item.display?.() ?? t(item.name);
@@ -57,7 +58,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       )
     : undefined;
 
-  const showsPopup = !!children || hasPane || popupArgs;
+  const showsPopup = !!children || hasPane || popupArgs || hasPanel;
 
   return (
     <div data-menu-row data-menu-id={id}>
@@ -88,17 +89,21 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
               ? () => {
                   state.selectArgs(path, item);
                 }
-              : hasPane
+              : hasPanel
                 ? () => {
                     state.select(path, item);
                   }
-                : item.onSelect
-                  ? (event) => state.execute(item, event)
-                  : children
-                    ? () => {
-                        state.select(path, item);
-                      }
-                    : void 0
+                : hasPane
+                  ? () => {
+                      state.select(path, item);
+                    }
+                  : item.onSelect
+                    ? (event) => state.execute(item, event)
+                    : children
+                      ? () => {
+                          state.select(path, item);
+                        }
+                      : void 0
         }
         onMouseDown={item.onMouseDown}
         renderPane={popupArgsRenderPane ?? (showsPopup && renderPane ? renderPane : void 0)}

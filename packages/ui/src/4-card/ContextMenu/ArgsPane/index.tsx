@@ -6,6 +6,8 @@ import {ContextHeader} from '../ContextHeader';
 import {ContextSep} from '../ContextSep';
 import {ContextPaneHeaderSep} from '../ContextPaneHeaderSep';
 import {ContextPaneFooterSep} from '../ContextPaneFooterSep';
+import {Scrollbox} from '../../Scrollbox';
+import {useAnchorPoint} from '../../../utils/popup';
 import {BasicButtonBack} from '../../../2-inline-block/BasicButton/BasicButtonBack';
 import {Flex} from '../../../3-list-item/Flex';
 import {Arg} from './Arg';
@@ -72,9 +74,15 @@ const useVisibilityVersion = (params: ArgsPaneProps['params']): number => {
   return v;
 };
 
+// Approx fixed-chrome heights (header row, separators, apply footer).
+const HEADER_H = 40;
+const SEPARATOR_H = 7;
+const FOOTER_H = 56;
+
 export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
   const {item, params, onCancel, minWidth} = props;
   const [t] = useT();
+  const anchor = useAnchorPoint();
   const state = React.useMemo(() => new ArgsState(props), [props]);
   const args = state.args.use();
   useVisibilityVersion(params);
@@ -247,6 +255,14 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
   // `item.maxWidth` is set explicitly. Honors `item.maxWidth` either way.
   const paneMaxWidth = item.maxWidth ?? (item.compact ? 480 : undefined);
 
+  const footerHeight = submitFooter ? FOOTER_H : 0;
+  const maxScrollHeight =
+    (anchor?.maxHeight() ?? (typeof window !== 'undefined' ? window.innerHeight : 600)) -
+    HEADER_H -
+    SEPARATOR_H -
+    SEPARATOR_H -
+    footerHeight;
+
   return (
     <ContextPane
       style={{
@@ -263,7 +279,7 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
       </ContextHeader>
       <ContextPaneHeaderSep />
       <ContextSep />
-      {rows}
+      <Scrollbox style={{maxHeight: maxScrollHeight}}>{rows}</Scrollbox>
       {!submitFooter && (
         <>
           {lastRendered?.heading ? <div style={{height: 2}} aria-hidden /> : <ContextSep />}

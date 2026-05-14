@@ -48,6 +48,13 @@ export interface MenuItem {
   pane?: () => React.ReactNode;
 
   /**
+   * Like `pane`, but the content is rendered *inside* the standard
+   * ContextMenu chrome — breadcrumb header (with back navigation) at the
+   * top, scrollable viewport for the body.
+   */
+  panel?: () => React.ReactNode;
+
+  /**
    * If true, wrap the display in a `<code>` element and use monospace font.
    * Used when the item represents some code or a literal value.
    *
