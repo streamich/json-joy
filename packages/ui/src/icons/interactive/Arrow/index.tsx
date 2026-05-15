@@ -4,9 +4,10 @@ import {drule} from 'nano-theme';
 const h = React.createElement;
 const style = drule({
   trs: 'transform .3s',
+  o: 0.7,
   path: {
     fill: 'none',
-    stroke: 'rgba(128,128,128,0.75)',
+    stroke: 'currentColor',
     strokeWidth: '2px',
     strokeLinecap: 'round',
   },
@@ -14,9 +15,10 @@ const style = drule({
 
 export interface IArrowProps extends React.SVGAttributes<SVGElement> {
   direction?: 'u' | 'r' | 'd' | 'l';
+  size?: number;
 }
 
-const Arrow: React.FC<IArrowProps> = ({direction, ...rest}) => {
+const Arrow: React.FC<IArrowProps> = ({direction, size = 16, ...rest}) => {
   const css: any = {};
 
   if (direction !== 'u') {
@@ -38,7 +40,13 @@ const Arrow: React.FC<IArrowProps> = ({direction, ...rest}) => {
 
   return h(
     'svg',
-    {...rest, className: (rest.className ?? '') + className, viewBox: '0 0 32 32'},
+    {
+      width: size,
+      height: size,
+      ...rest,
+      className: (rest.className ?? '') + className,
+      viewBox: '0 0 32 32',
+    },
     h(
       'path',
       {d: 'M10 18 L16 12 L22 18'},
