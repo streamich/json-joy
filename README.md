@@ -21,6 +21,7 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - [**Website**](https://jsonjoy.com)
 - [**Documentation**](https://jsonjoy.com/libs/json-joy-js)
 - [**JSON CRDT Explorer**](https://explorer.jsoncrdt.org)
+- [**_μ txt_ (mu-txt) rich-text editor**](https://mutxt.com) powered by JSON CRDT
 - Integrations
   - [**React.js**](./packages/collaborative-react/README.md)
   - [React.js **`<CollaborativeInput>`**](./packages/collaborative-input-react/README.md)

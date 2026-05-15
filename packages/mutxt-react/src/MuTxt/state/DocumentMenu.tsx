@@ -146,6 +146,11 @@ const shareIconLayerClass = rule({
   pos: 'absolute',
   t: 0,
   l: 0,
+  w: '16px',
+  h: '16px',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
   trs: 'transform 150ms ease-in-out',
 });
 
