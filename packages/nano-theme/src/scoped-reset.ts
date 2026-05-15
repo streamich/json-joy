@@ -1,10 +1,5 @@
 import {put} from './css';
-import {
-  ROOT_DECLS,
-  DESCENDANT_RULES,
-  KEYFRAMES,
-  Rules,
-} from './reset-rules';
+import {ROOT_DECLS, DESCENDANT_RULES, KEYFRAMES, type Rules} from './reset-rules';
 import {loadGoogleFonts} from './fonts';
 
 const CLASS = 'jj-reset';
