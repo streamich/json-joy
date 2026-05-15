@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.23.0",
+  "version": "18.24.0",
   "description": "A rich-text editor built for the AI age, native support for multi-user collaboration and AI co-authoring.",
   "author": {
     "name": "streamich",

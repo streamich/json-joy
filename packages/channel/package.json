@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.23.0",
+  "version": "18.24.0",
   "description": "Communication channel between processes or even different machines.",
   "author": {
     "name": "streamich",
