@@ -1,4 +1,4 @@
-import {NodeType} from './constants';
+import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
 import * as id from './id';
 import type {ITimestampStruct, StrApi, StrNode, Model} from 'json-joy/lib/json-crdt';
 import type {PresenceIdShorthand, PresencePoint, RgaSelection, PresenceCursor} from './types';
@@ -49,7 +49,7 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
     }
     cursors.push(cursor);
   }
-  const selection: RgaSelection = ['', '', sid, clock.time, {}, NodeType.str, nodeId, cursors];
+  const selection: RgaSelection = ['', '', sid, clock.time, {}, JsonCrdtDataType.str, nodeId, cursors];
   return selection;
 };
 
@@ -57,15 +57,41 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
  * Convert a CRDT ID to a view offset (the cursor position after that
  * character). Returns 0 when the ID matches the node itself (i.e. before
  * the first character).
+ *
+ * When `senderSid` and `presenceTime` are provided, the offset is advanced
+ * past any characters the same peer inserted *after* the presence was sent.
+ * This compensates for the common case where a remote patch arrives before
+ * the updated presence message: without advancement the cursor would render
+ * to the *left* of the newly inserted text instead of to its right.
  */
-const findOffset = (str: StrNode, tsId: ITimestampStruct): number => {
+const findOffset = (str: StrNode, tsId: ITimestampStruct, senderSid?: number, presenceTime?: number): number => {
   const nodeId = str.id;
   if (nodeId.sid === tsId.sid && nodeId.time === tsId.time) return 0;
   const chunk = str.findById(tsId);
   if (!chunk) return 0;
   const pos = str.pos(chunk);
   const charIndex = pos + (chunk.del ? 0 : tsId.time - chunk.id.time);
-  return charIndex + 1;
+  let offset = charIndex + 1;
+  // Advance past characters the same peer inserted after this presence was
+  // sent. Only consider chunks immediately following the cursor's chunk — if
+  // the cursor character is in the middle of its chunk there can be no new
+  // inserts at the cursor position (the chunk would have been split).
+  if (senderSid !== undefined && presenceTime !== undefined) {
+    const atEndOfChunk = tsId.time - chunk.id.time === chunk.span - 1;
+    if (atEndOfChunk) {
+      let c = str.next(chunk);
+      while (c) {
+        if (c.del) { c = str.next(c); continue; }
+        if (c.id.sid === senderSid && c.id.time > presenceTime) {
+          offset += c.span;
+          c = str.next(c);
+        } else {
+          break;
+        }
+      }
+    }
+  }
+  return offset;
 };
 
 /**
@@ -78,19 +104,19 @@ const findOffset = (str: StrNode, tsId: ITimestampStruct): number => {
  *     node is not found or is not a "str" node.
  */
 export const fromDto = (model: Model<any>, selection: RgaSelection): StrSelectionStrict[] => {
-  const [_documentId, _uiLocationId, sid, _time, _meta, type, nodeIdDto, cursors] = selection;
+  const [_documentId, _uiLocationId, sid, time, _meta, type, nodeIdDto, cursors] = selection;
   const result: StrSelectionStrict[] = [];
-  if (type !== NodeType.str) return result;
+  if (type !== JsonCrdtDataType.str) return result;
   const nodeId = id.fromDto(sid, nodeIdDto);
   const str = model.index.get(nodeId) as StrNode | undefined;
   if (!str || str.name() !== 'str') return result;
   for (const cursor of cursors) {
     const [anchorPointDto, focusPointDto] = cursor;
     const anchorId = id.fromDto(sid, anchorPointDto[0]);
-    const anchorOffset = findOffset(str, anchorId);
+    const anchorOffset = findOffset(str, anchorId, sid, time);
     if (focusPointDto) {
       const focusId = id.fromDto(sid, focusPointDto[0]);
-      const focusOffset = findOffset(str, focusId);
+      const focusOffset = findOffset(str, focusId, sid, time);
       result.push([anchorOffset, focusOffset]);
     } else {
       result.push([anchorOffset]);
