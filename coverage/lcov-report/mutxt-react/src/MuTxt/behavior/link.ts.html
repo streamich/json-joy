@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">18.48% </span>
+                <span class="strong">19.51% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/119</span>
+                <span class='fraction'>24/123</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">15.55% </span>
+                <span class="strong">16.3% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>14/90</span>
+                <span class='fraction'>15/92</span>
             </div>
         
             
@@ -214,7 +214,8 @@
 <a name='L149'></a><a href='#L149'>149</a>
 <a name='L150'></a><a href='#L150'>150</a>
 <a name='L151'></a><a href='#L151'>151</a>
-<a name='L152'></a><a href='#L152'>152</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
@@ -344,6 +345,17 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -355,17 +367,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Editor, Path, Range, Text, Transforms} from 'slate';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Editor, Node, Path, Range, Text, Transforms} from 'slate';
 import type {CustomText, LinkAttributes} from '../types';
 &nbsp;
 const isText = <span class="fstat-no" title="function not covered" >(n</span>ode: unknown): node is CustomText =&gt; <span class="cstat-no" title="statement not covered" >Text.isText(node);</span>
@@ -492,16 +494,17 @@ export const upsertLink = <span class="fstat-no" title="function not covered" >(
 <span class="cstat-no" title="statement not covered" >  return getActiveLink(editor);</span>
 };
 &nbsp;
-export const removeLink = <span class="fstat-no" title="function not covered" >(e</span>ditor: Editor, at?: Range): boolean =&gt; {
-<span class="cstat-no" title="statement not covered" >  if (at) {</span>
-<span class="cstat-no" title="statement not covered" >    Transforms.unsetNodes(editor, 'a', {</span>
-      at,
-      match: <span class="fstat-no" title="function not covered" >(n</span>ode) =&gt; <span class="cstat-no" title="statement not covered" >isText(node),</span>
-      split: true,
-    });
-<span class="cstat-no" title="statement not covered" >    if (editor.selection &amp;&amp; Range.isCollapsed(editor.selection)) <span class="cstat-no" title="statement not covered" >Editor.removeMark(editor, 'a');</span></span>
-<span class="cstat-no" title="statement not covered" >    return true;</span>
+export const isRangeInEditor = <span class="fstat-no" title="function not covered" >(e</span>ditor: Editor, range: Range): boolean =&gt; {
+<span class="cstat-no" title="statement not covered" >  for (const point of [Range.start(range), Range.end(range)]) {</span>
+    const {path, offset} = <span class="cstat-no" title="statement not covered" >point;</span>
+<span class="cstat-no" title="statement not covered" >    if (!Node.has(editor, path)) <span class="cstat-no" title="statement not covered" >return false;</span></span>
+    const node = <span class="cstat-no" title="statement not covered" >Node.get(editor, path);</span>
+<span class="cstat-no" title="statement not covered" >    if (!Text.isText(node) || offset &gt; node.text.length) <span class="cstat-no" title="statement not covered" >return false;</span></span>
   }
+<span class="cstat-no" title="statement not covered" >  return true;</span>
+};
+&nbsp;
+export const removeLink = <span class="fstat-no" title="function not covered" >(e</span>ditor: Editor): boolean =&gt; {
   const activeLink = <span class="cstat-no" title="statement not covered" >getActiveLink(editor);</span>
 <span class="cstat-no" title="statement not covered" >  if (activeLink) {</span>
 <span class="cstat-no" title="statement not covered" >    Transforms.unsetNodes(editor, 'a', {</span>
@@ -523,7 +526,7 @@ export const removeLink = <span class="fstat-no" title="function not covered" >(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-15T11:14:25.164Z
+                at 2026-05-27T12:34:19.586Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
