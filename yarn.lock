@@ -2898,7 +2898,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-prosemirror@workspace:packages/collaborative-prosemirror":
+"@jsonjoy.com/collaborative-prosemirror@workspace:*, @jsonjoy.com/collaborative-prosemirror@workspace:packages/collaborative-prosemirror":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-prosemirror@workspace:packages/collaborative-prosemirror"
   dependencies:
@@ -3749,19 +3749,49 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/site@workspace:packages/site"
   dependencies:
+    "@jsonjoy.com/collaborative-ace-react": "workspace:*"
+    "@jsonjoy.com/collaborative-codemirror": "workspace:*"
+    "@jsonjoy.com/collaborative-input-react": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco-react": "workspace:*"
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
+    "@jsonjoy.com/collaborative-prosemirror": "workspace:*"
+    "@jsonjoy.com/collaborative-quill-react": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
     "@types/node": "npm:^22.14.1"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    ace-builds: "npm:^1.44.0"
+    codemirror: "npm:^6.0.2"
+    copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.3"
+    json-joy: "workspace:*"
     mini-css-extract-plugin: "npm:^2.9.2"
+    monaco-editor: "npm:^0.55.1"
     nano-theme: "workspace:*"
+    prosemirror-example-setup: "npm:^1.2.3"
+    prosemirror-menu: "npm:^1.2.5"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-schema-basic: "npm:^1.2.4"
+    prosemirror-schema-list: "npm:^1.5.1"
+    prosemirror-state: "npm:^1.4.4"
+    prosemirror-view: "npm:^1.41.5"
+    quill: "npm:^2.0.3"
+    quill-cursors: "npm:^4.0.4"
+    raw-loader: "npm:^4.0.2"
     react: "npm:^19.2.3"
+    react-ace: "npm:^14.0.1"
     react-dom: "npm:^19.2.3"
     react-router-lite: "npm:^1.6.0"
     rx-use: "npm:^1.9.0"
     rxjs: "npm:7"
+    slate: "npm:^0.123.0"
+    slate-history: "npm:^0.113.1"
+    slate-react: "npm:^0.123.0"
     style-loader: "npm:^4.0.0"
     ts-loader: "npm:^9.5.2"
     ts-node: "npm:*"
@@ -5087,6 +5117,13 @@ __metadata:
   version: 7.2.0
   resolution: "@sindresorhus/is@npm:7.2.0"
   checksum: 10c0/0040c17d7826414363f99f5d56077c200789d51e6dfe5542920bfb29ab3828ec0ebf2845e8bae796bee461debb646b5e4c0a623140131cf3143471e915b50b54
+  languageName: node
+  linkType: hard
+
+"@sindresorhus/merge-streams@npm:^2.1.0":
+  version: 2.3.0
+  resolution: "@sindresorhus/merge-streams@npm:2.3.0"
+  checksum: 10c0/69ee906f3125fb2c6bb6ec5cdd84e8827d93b49b3892bce8b62267116cc7e197b5cccf20c160a1d32c26014ecd14470a72a5e3ee37a58f1d6dadc0db1ccf3894
   languageName: node
   linkType: hard
 
@@ -6802,6 +6839,13 @@ __metadata:
   version: 1.43.6
   resolution: "ace-builds@npm:1.43.6"
   checksum: 10c0/33d0159a99650602de83b95766643b8f4f6029fc1ab582e47f7678288cae8e1c89b91747d23be42ec153a88d784fb9488935973f7a100b9093f837ac988f5c96
+  languageName: node
+  linkType: hard
+
+"ace-builds@npm:^1.44.0":
+  version: 1.44.0
+  resolution: "ace-builds@npm:1.44.0"
+  checksum: 10c0/c5a614b082daef1621e5392024daaa0c472275cff2ac79e85422027a9f12442fcee8ad8362eab7223d0c90feeaa84280d83991f75a64372ade4854fb4ea60291
   languageName: node
   linkType: hard
 
@@ -8564,6 +8608,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"copy-webpack-plugin@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "copy-webpack-plugin@npm:12.0.2"
+  dependencies:
+    fast-glob: "npm:^3.3.2"
+    glob-parent: "npm:^6.0.1"
+    globby: "npm:^14.0.0"
+    normalize-path: "npm:^3.0.0"
+    schema-utils: "npm:^4.2.0"
+    serialize-javascript: "npm:^6.0.2"
+  peerDependencies:
+    webpack: ^5.1.0
+  checksum: 10c0/1a2715a1280a37b81b7040b89ed962db4aa75475b164f84f266fa4e81f209269b13f8bff10b104dff7558854bafedcdd4f30c40fd23ecd8fa28af45516b459cd
+  languageName: node
+  linkType: hard
+
 "core-js@npm:^1.0.0":
   version: 1.2.7
   resolution: "core-js@npm:1.2.7"
@@ -10012,7 +10072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.7":
+"fast-glob@npm:^3.2.7, fast-glob@npm:^3.3.2, fast-glob@npm:^3.3.3":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
@@ -10678,6 +10738,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob-parent@npm:^6.0.1":
+  version: 6.0.2
+  resolution: "glob-parent@npm:6.0.2"
+  dependencies:
+    is-glob: "npm:^4.0.3"
+  checksum: 10c0/317034d88654730230b3f43bb7ad4f7c90257a426e872ea0bf157473ac61c99bf5d205fad8f0185f989be8d2fa6d3c7dce1645d99d545b6ea9089c39f838e7f8
+  languageName: node
+  linkType: hard
+
 "glob-to-regex.js@npm:^1.0.0, glob-to-regex.js@npm:^1.0.1":
   version: 1.2.0
   resolution: "glob-to-regex.js@npm:1.2.0"
@@ -10778,6 +10847,20 @@ __metadata:
     define-properties: "npm:^1.2.1"
     gopd: "npm:^1.0.1"
   checksum: 10c0/9d156f313af79d80b1566b93e19285f481c591ad6d0d319b4be5e03750d004dde40a39a0f26f7e635f9007a3600802f53ecd85a759b86f109e80a5f705e01846
+  languageName: node
+  linkType: hard
+
+"globby@npm:^14.0.0":
+  version: 14.1.0
+  resolution: "globby@npm:14.1.0"
+  dependencies:
+    "@sindresorhus/merge-streams": "npm:^2.1.0"
+    fast-glob: "npm:^3.3.3"
+    ignore: "npm:^7.0.3"
+    path-type: "npm:^6.0.0"
+    slash: "npm:^5.1.0"
+    unicorn-magic: "npm:^0.3.0"
+  checksum: 10c0/527a1063c5958255969620c6fa4444a2b2e9278caddd571d46dfbfa307cb15977afb746e84d682ba5b6c94fc081e8997f80ff05dd235441ba1cb16f86153e58e
   languageName: node
   linkType: hard
 
@@ -11203,6 +11286,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ignore@npm:^7.0.3":
+  version: 7.0.5
+  resolution: "ignore@npm:7.0.5"
+  checksum: 10c0/ae00db89fe873064a093b8999fe4cc284b13ef2a178636211842cceb650b9c3e390d3339191acb145d81ed5379d2074840cf0c33a20bdbd6f32821f79eb4ad5d
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^3.3.0":
   version: 3.3.1
   resolution: "import-fresh@npm:3.3.1"
@@ -11409,7 +11499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-glob@npm:^4.0.1, is-glob@npm:~4.0.1":
+"is-glob@npm:^4.0.1, is-glob@npm:^4.0.3, is-glob@npm:~4.0.1":
   version: 4.0.3
   resolution: "is-glob@npm:4.0.3"
   dependencies:
@@ -15131,6 +15221,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-type@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "path-type@npm:6.0.0"
+  checksum: 10c0/55baa8b1187d6dc683d5a9cfcc866168d6adff58e5db91126795376d818eee46391e00b2a4d53e44d844c7524a7d96aa68cc68f4f3e500d3d069a39e6535481c
+  languageName: node
+  linkType: hard
+
 "pathe@npm:^2.0.3":
   version: 2.0.3
   resolution: "pathe@npm:2.0.3"
@@ -15584,6 +15681,18 @@ __metadata:
     prosemirror-history: "npm:^1.0.0"
     prosemirror-state: "npm:^1.0.0"
   checksum: 10c0/a4da649aa3c7bfb74128da203984009b44fd48638ff76ec7b209635fafd23b05d7d5bed9520282cdcf886f73eafcfbda4e77f55d81a92db333f8807d84ded2f9
+  languageName: node
+  linkType: hard
+
+"prosemirror-menu@npm:^1.2.5":
+  version: 1.3.2
+  resolution: "prosemirror-menu@npm:1.3.2"
+  dependencies:
+    crelt: "npm:^1.0.0"
+    prosemirror-commands: "npm:^1.0.0"
+    prosemirror-history: "npm:^1.0.0"
+    prosemirror-state: "npm:^1.0.0"
+  checksum: 10c0/b634ce8c6e82bc6027ccbc3654722c4054132076a9d49e16a7df3b0e412bbf0dd5c93cb13e6f6ac5e5d7306ccb665792eb07eef7e652a46d8b920746237f4762
   languageName: node
   linkType: hard
 
@@ -17225,6 +17334,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"slash@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "slash@npm:5.1.0"
+  checksum: 10c0/eb48b815caf0bdc390d0519d41b9e0556a14380f6799c72ba35caf03544d501d18befdeeef074bc9c052acf69654bc9e0d79d7f1de0866284137a40805299eb3
+  languageName: node
+  linkType: hard
+
 "slate-dom@npm:^0.123.0":
   version: 0.123.0
   resolution: "slate-dom@npm:0.123.0"
@@ -18516,6 +18632,13 @@ __metadata:
   dependencies:
     pathe: "npm:^2.0.3"
   checksum: 10c0/e8556b4287fcf647f23db790eea2782cc79f182370718680e3aba4753d5fb7177abf5d6df489c8f74f7e3ad6cd554b8623cc01caf3e6f2d5548e69178adb1691
+  languageName: node
+  linkType: hard
+
+"unicorn-magic@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "unicorn-magic@npm:0.3.0"
+  checksum: 10c0/0a32a997d6c15f1c2a077a15b1c4ca6f268d574cf5b8975e778bb98e6f8db4ef4e86dfcae4e158cd4c7e38fb4dd383b93b13eefddc7f178dea13d3ac8a603271
   languageName: node
   linkType: hard
 
