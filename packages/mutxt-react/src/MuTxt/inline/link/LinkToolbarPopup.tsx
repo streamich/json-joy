@@ -75,7 +75,7 @@ export const LinkToolbarPopup: React.FC = () => {
             height={32}
             rounder
             onMouseDown={preventMouseDown}
-            onConfirm={state.remove}
+            onClick={state.remove}
           />
         </BasicTooltip>
       </div>

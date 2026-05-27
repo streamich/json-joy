@@ -1,16 +1,66 @@
 import {md} from '../../markdown/parser';
 import {concurrency} from 'thingies/lib/concurrency';
 import type {ContentPage} from './types';
+import type {LibPage} from '../../types/libs';
 
 export interface MarkdownDownloadResult {
   text: string;
 }
 
+const SITE_ORIGIN = 'https://jsonjoy.com';
+
+const absolutize = (markdown: string): string => markdown.replace(/\]\(\/(?!\/)/g, `](${SITE_ORIGIN}/`);
+
+/** Preamble for a documentation download: title, what the file is, and resource links. */
+const buildHeader = (page: ContentPage, words: number): string => {
+  const {pkg} = page as LibPage;
+  const title = page.title || page.name || page.slug || 'Documentation';
+  const docsUrl = page.to ? `${SITE_ORIGIN}${page.to}` : SITE_ORIGIN;
+  const repoUrl = page.repo ? `https://github.com/${page.repo}${page.repoPath ? `/${page.repoPath}` : ''}` : undefined;
+
+  let header = `# ${title}\n\n`;
+  if (page.subtitle) header += `> ${page.subtitle}\n\n`;
+  header +=
+    `This file is the complete documentation for **${title}**, part of [json-joy](${SITE_ORIGIN}), a suite ` +
+    `of high-performance TypeScript libraries for JSON, JSON CRDT, and real-time collaborative editing. It ` +
+    `is bundled as a single Markdown document for use as LLM context or offline reading; the live version ` +
+    `is at ${docsUrl}.\n\n`;
+  if (page.about) header += `${page.about}\n\n`;
+
+  const rows: [string, string][] = [['Documentation', docsUrl]];
+  if (pkg) rows.push(['NPM', `https://www.npmjs.com/package/${pkg}`]);
+  if (repoUrl) rows.push(['GitHub', repoUrl]);
+  if (pkg) rows.push(['Install', `\`npm install ${pkg}\``]);
+  header += '| Resource | Link |\n| --- | --- |\n';
+  for (const [name, link] of rows) header += `| ${name} | ${link} |\n`;
+  header += '\n';
+
+  const date = new Date().toISOString().slice(0, 10);
+  header += `_Generated ${date} from ${docsUrl} (~${words.toLocaleString('en-US')} words)._\n\n`;
+  return header;
+};
+
+/** Nested list of all sub-pages, so the reader sees the full scope up front. */
+const buildToc = (page: ContentPage): string => {
+  if (!page.children || !page.children.length) return '';
+  let toc = '## Contents\n\n';
+  const walk = (pages: ContentPage[], depth: number): void => {
+    for (const p of pages) {
+      const title = p.title || p.name || p.slug || '';
+      const url = p.to ? `${SITE_ORIGIN}${p.to}` : undefined;
+      toc += `${'  '.repeat(depth)}- ${url ? `[${title}](${url})` : title}\n`;
+      if (p.children && p.children.length) walk(p.children, depth + 1);
+    }
+  };
+  walk(page.children, 0);
+  return toc + '\n';
+};
+
 const appendPage = async (page: ContentPage, result: MarkdownDownloadResult, parents: string[]): Promise<void> => {
   if (!page.src) return;
   result.text += '---\n\n';
   result.text += `# ${parents.length ? parents.join(' > ') + ' > ' : ''}${page.name}\n\n`;
-  result.text += await page.src();
+  result.text += absolutize(await page.src());
   result.text += '\n\n';
   if (page.children && page.children.length) {
     for (const child of page.children) {
@@ -20,11 +70,22 @@ const appendPage = async (page: ContentPage, result: MarkdownDownloadResult, par
 };
 
 export const downloadPageAsMarkdown = async (page: ContentPage): Promise<MarkdownDownloadResult> => {
-  const result: MarkdownDownloadResult = {
-    text: '',
-  };
-  await appendPage(page, result, []);
-  return result;
+  // Build the body first so the header can report its size. The header supplies
+  // the document's H1, so the root page's body follows it directly; child pages
+  // keep their `parent > name` section headings.
+  const body: MarkdownDownloadResult = {text: ''};
+  if (page.src) {
+    body.text += '---\n\n';
+    body.text += absolutize(await page.src());
+    body.text += '\n\n';
+  }
+  if (page.children && page.children.length) {
+    for (const child of page.children) {
+      await appendPage(child, body, [page.name]);
+    }
+  }
+  const words = body.text.trim() ? body.text.trim().split(/\s+/).length : 0;
+  return {text: buildHeader(page, words) + buildToc(page) + body.text};
 };
 
 export const downloadFile = (filename: string, text: string, mime = 'text/plain'): void => {

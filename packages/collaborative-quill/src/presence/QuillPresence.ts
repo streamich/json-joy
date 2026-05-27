@@ -1,6 +1,5 @@
 import {str as strPresence} from '@jsonjoy.com/collaborative-presence';
-import {UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
+import {UserPresenceIdx, NodeType} from '@jsonjoy.com/collaborative-presence';
 import type {PresenceManager, PresenceEvent, PeerEntry} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
 import type {UserPresence, RgaSelection} from '@jsonjoy.com/collaborative-presence/lib/types';
 import type {StrSelectionStrict} from '@jsonjoy.com/collaborative-presence/lib/str';
@@ -204,5 +203,5 @@ const clamp = (v: number, min: number, max: number): number => (v < min ? min : 
 const isRgaSelection = (sel: unknown): sel is RgaSelection => {
   if (!Array.isArray(sel) || sel.length < 8) return false;
   const type = sel[5];
-  return type === JsonCrdtDataType.str || type === JsonCrdtDataType.bin || type === JsonCrdtDataType.arr;
+  return type === NodeType.str || type === NodeType.bin || type === NodeType.arr;
 };

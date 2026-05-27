@@ -5,7 +5,6 @@ import MarkdownFullWidthBlock from '../util/MarkdownFullWidthBlock';
 import {rule} from 'nano-theme';
 import MarkdownBlock from '../util/MarkdownBlock';
 import {MyTable} from '../block/Csv/MyTable';
-import {Paper} from '../../4-card/Paper';
 
 const {createElement: h} = React;
 
@@ -57,12 +56,12 @@ const renderTable: RenderNode = (renderers, ast, idx, props, state) => {
 
   const element = (
     <MarkdownBlock idx={idx}>
-      <Paper style={{overflowX: 'scroll'}}>
+      <div style={{overflowX: 'auto'}}>
         <MyTable className={tableClassName}>
           <thead>{renderers.tableRow(renderers, ast, head, props, state)}</thead>
           {h('tbody', {}, ...bodyRows)}
         </MyTable>
-      </Paper>
+      </div>
     </MarkdownBlock>
   );
 

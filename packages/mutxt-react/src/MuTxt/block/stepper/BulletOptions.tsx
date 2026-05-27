@@ -13,8 +13,8 @@ import {
   DEF_HALO,
   DEF_HALO_WIDTH,
   DEF_INDICATOR,
-  DEF_LINE,
   DEF_LINE_WIDTH,
+  DEF_RADIUS,
   DEF_RING,
   DEF_RING_WIDTH,
   DEF_STATE,
@@ -24,8 +24,10 @@ import {
   STEP_INDICATOR_LABEL,
   STEP_STATES,
   STEP_STATE_LABEL,
+  clampRadius,
   clampWidth,
   getLineStyle,
+  getStateLineDefault,
   getStepIndicator,
   getStepState,
 } from './settings';
@@ -100,6 +102,13 @@ const BgRowIcon: React.FC = () => (
   </svg>
 );
 
+const RadiusRowIcon: React.FC = () => (
+  <svg width={16} height={16} viewBox="0 0 16 16" aria-hidden="true" style={{display: 'block'}}>
+    <path d="M3 8.5V6a3 3 0 0 1 3-3h2.5" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
+    <rect x={7} y={7} width={6} height={6} rx={1.5} fill="currentColor" opacity={0.35} />
+  </svg>
+);
+
 const ColorRowIcon: React.FC = () => (
   <svg width={16} height={16} viewBox="0 0 16 16" aria-hidden="true" style={{display: 'block'}}>
     <text x="8" y="12" textAnchor="middle" fontSize="12" fontWeight="700" fill="currentColor">
@@ -112,6 +121,7 @@ const renderRingRowIcon = () => <RingRowIcon />;
 const renderHaloRowIcon = () => <HaloRowIcon />;
 const renderConnectorRowIcon = () => <ConnectorRowIcon />;
 const renderBgRowIcon = () => <BgRowIcon />;
+const renderRadiusRowIcon = () => <RadiusRowIcon />;
 const renderColorRowIcon = () => <ColorRowIcon />;
 const renderCharsRowIcon = () => <CharsIcon />;
 const renderEraserIcon = () => <EraserIcon />;
@@ -137,6 +147,7 @@ const enumOpts = <V extends string>(
 const hasStyleOverrides = (e: ListItemElement): boolean =>
   e.stepCol !== undefined ||
   e.stepBg !== undefined ||
+  e.stepRadius !== undefined ||
   e.ring !== undefined ||
   e.ringCol !== undefined ||
   e.ringWidth !== undefined ||
@@ -179,6 +190,7 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
         [
           'stepCol',
           'stepBg',
+          'stepRadius',
           'ring',
           'ringCol',
           'ringWidth',
@@ -215,12 +227,14 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
     const state = getStepState(e.stepState);
     const colors = getStepStateColors(styles, state);
     const lineHex = toHex(colors.line);
+    const ringHex = toHex(colors.ring);
     const bgHex = toHex(colors.bg);
     const resolvedBg = e.stepBg ?? colors.bg;
     const autoGlyph = e.stepBg ? pickGlyphColor(styles, resolvedBg, colors.glyph) : colors.glyph;
     const colHex = toHex(autoGlyph);
     const indicator = getStepIndicator(e.stepIndicator);
     const indicatorIsChars = indicator === 'chars';
+    const stateLineDefault = getStateLineDefault(state);
 
     const ringHasSubControls = e.ring !== undefined && e.ring !== 'none';
     const haloHasSubControls = e.halo !== undefined && e.halo !== 'none';
@@ -281,6 +295,21 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
       initialDef: e.stepBg === undefined,
       initialValue: e.stepBg ? toHex(e.stepBg) : bgHex,
     });
+    list.push({
+      kind: 'num',
+      id: 'stepRadius',
+      name: 'Corner radius',
+      icon: renderRadiusRowIcon,
+      defaultable: true,
+      default: DEF_RADIUS,
+      min: 0,
+      max: 100,
+      step: 1,
+      decimals: 0,
+      dragSensitivity: 0.3,
+      initialDef: e.stepRadius === undefined,
+      initialValue: e.stepRadius ?? DEF_RADIUS,
+    });
 
     list.push({name: 'sep-bg', innerSep: true});
     list.push({
@@ -299,10 +328,10 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
       id: 'ringCol',
       name: 'Ring color',
       defaultable: true,
-      default: lineHex,
+      default: ringHex,
       alpha: true,
       initialDef: e.ringCol === undefined,
-      initialValue: e.ringCol ? toHex(e.ringCol) : lineHex,
+      initialValue: e.ringCol ? toHex(e.ringCol) : ringHex,
       visible: syncStore(ringHasSubControls),
     });
     list.push({
@@ -367,9 +396,9 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
       name: 'Connector',
       icon: renderConnectorRowIcon,
       defaultable: true,
-      default: DEF_LINE,
+      default: stateLineDefault,
       initialDef: e.line === undefined,
-      initialValue: e.line ?? DEF_LINE,
+      initialValue: e.line ?? stateLineDefault,
       options: enumOpts(LINE_STYLES, LINE_STYLE_LABEL, verticalBorderIcon),
     });
     list.push({
@@ -455,6 +484,7 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
 
       setField('stepCol', readDefaultableColor(map.stepCol));
       setField('stepBg', readDefaultableColor(map.stepBg));
+      setField('stepRadius', readDefaultableRadius(map.stepRadius));
 
       // Style group: when style is in default mode, only clear the style
       // itself. Keep the previously-stored color/width so the values come
@@ -484,6 +514,12 @@ const readDefaultableColor = (raw: unknown): string | undefined => {
     return v ? toHex(v) : undefined;
   }
   if (typeof raw === 'string' && raw.trim()) return toHex(raw.trim());
+  return undefined;
+};
+
+const readDefaultableRadius = (raw: unknown): number | undefined => {
+  if (isDefaultable<number>(raw)) return raw.def ? undefined : clampRadius(raw.value);
+  if (typeof raw === 'number') return clampRadius(raw);
   return undefined;
 };
 

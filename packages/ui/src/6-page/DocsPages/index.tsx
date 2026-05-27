@@ -33,7 +33,10 @@ export const DocsPages: React.FC<Props> = (props) => {
   }, [page.to, page]);
 
   let right = null;
-  if (!steps.length) right = <DocsRightIndex page={page} />;
+
+  const doShowIndex = !otherSteps.length && (page.type === 'spec' || page.type === 'spec-note' || page.type === 'lib');
+
+  if (doShowIndex) right = <DocsRightIndex page={page} />;
   else {
     const innerPage = findPage(page, otherSteps);
     if (innerPage) right = <DocsRight top={page} page={innerPage} />;

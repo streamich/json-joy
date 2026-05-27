@@ -56,6 +56,14 @@ export class MuTxtApi {
   }
 
   public focusRect(): DOMRect | undefined {
+    try {
+      const editor = this.editor as ReactEditor;
+      const sel = editor.selection;
+      if (sel) {
+        const focusRange = {anchor: sel.focus, focus: sel.focus};
+        return ReactEditor.toDOMRange(editor, focusRange).getBoundingClientRect();
+      }
+    } catch {}
     if (!this.state.cursor.value) return;
     const selection = window.getSelection();
     if (!selection?.focusNode) return;

@@ -7,6 +7,7 @@ import {SYMBOL} from 'nano-theme';
 import {BasicButtonClose} from '../../../../2-inline-block/BasicButton/BasicButtonClose';
 import {EmptyState} from '../../../EmptyState';
 import {ContextItemNested} from '../../ContextItemNested';
+import {Highlight} from '../../../../1-inline/Highlight';
 import {GroupTitle} from './GroupTitle';
 import {ContextSep} from '../../ContextSep';
 import {OpenPanelState} from '../OpenPanelState';
@@ -17,16 +18,23 @@ import type {ContextMenuPaneProps} from '../ContextMenuPane';
 
 enum HEIGHT {
   SEARCH = 45,
+  SEARCH_LABEL = 28,
   SEPARATOR = 7,
 }
 
 export interface ContextMenuSearchProps {
   inset?: boolean;
   searchPlaceholder?: string;
+  searchLabel?: boolean | string;
   ContextMenuPane: React.FC<ContextMenuPaneProps>;
 }
 
-export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, searchPlaceholder, ContextMenuPane}) => {
+export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({
+  inset,
+  searchPlaceholder,
+  searchLabel,
+  ContextMenuPane,
+}) => {
   const [t] = useT();
   const state = useContextMenu();
   const search = useBehaviorSubject(state.search$);
@@ -41,6 +49,10 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, sear
     if (!matches || !matches.length) {
       results = <EmptyState emoji={' '} />;
     } else {
+      const queryTokens = search
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((s) => s.length > 0);
       let lastPathStr: string = '';
       const list = matches.map(({item, path}, index) => {
         const pathStr = path.map((item) => item.id ?? item.name).join('/');
@@ -114,7 +126,13 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, sear
                 aria-haspopup={navigable ? 'menu' : undefined}
                 aria-expanded={navigable ? isOpen : undefined}
               >
-                {item.display?.() ?? t(item.name)}
+                {item.display ? (
+                  item.display()
+                ) : (
+                  <span>
+                    <Highlight text={t(item.name)} query={queryTokens} />
+                  </span>
+                )}
               </ContextItemNested>
             </div>
           </React.Fragment>
@@ -142,7 +160,11 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, sear
           <Scrollbox
             style={{
               maxHeight:
-                (anchor?.maxHeight() ?? window.innerHeight) - HEIGHT.SEARCH - HEIGHT.SEPARATOR - HEIGHT.SEPARATOR,
+                (anchor?.maxHeight() ?? window.innerHeight) -
+                HEIGHT.SEARCH -
+                (searchLabel ? HEIGHT.SEARCH_LABEL : 0) -
+                HEIGHT.SEPARATOR -
+                HEIGHT.SEPARATOR,
             }}
           >
             {list}
@@ -158,6 +180,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, sear
       <div data-menu-row style={{padding: '0 8px 8px'}}>
         <Input
           focus
+          label={searchLabel ? (typeof searchLabel === 'string' ? searchLabel : t('Search')) : void 0}
           size={-2}
           placeholder={searchPlaceholder ?? t('Find') + SYMBOL.ELLIPSIS}
           right={search ? <BasicButtonClose onClick={() => state.search$.next('')} /> : void 0}

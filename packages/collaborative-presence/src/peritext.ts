@@ -1,4 +1,4 @@
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
+import {NodeType} from './constants';
 import {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
@@ -45,7 +45,7 @@ export const toDto = (txt: Peritext, selections: StablePeritextSelection[]): Rga
       cursors.push([anchorPoint, focusPoint]);
     }
   }
-  const selection: RgaSelection = ['', '', sid, clock.time, {}, JsonCrdtDataType.str, nodeId, cursors];
+  const selection: RgaSelection = ['', '', sid, clock.time, {}, NodeType.str, nodeId, cursors];
   return selection;
 };
 
@@ -61,7 +61,7 @@ export const toDto = (txt: Peritext, selections: StablePeritextSelection[]): Rga
 export const fromDto = (txt: Peritext<string>, selection: RgaSelection): StablePeritextSelection[] => {
   const [_documentId, _uiLocationId, sid, _time, _meta, type, _nodeIdDto, cursors] = selection;
   const result: StablePeritextSelection[] = [];
-  if (type !== JsonCrdtDataType.str) return result;
+  if (type !== NodeType.str) return result;
   const str = txt.str;
   for (const cursor of cursors) {
     const [anchorPointDto, focusPointDto] = cursor;

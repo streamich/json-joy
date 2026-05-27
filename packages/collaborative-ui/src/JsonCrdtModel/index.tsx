@@ -52,6 +52,8 @@ export interface JsonCrdtModelProps {
   filename?: string;
   order?: ('model' | 'view' | 'display')[];
   noDisplayHdr?: boolean;
+  /** Whether the interactive model view displays the root node wrapper. Default: true. */
+  showRoot?: boolean;
   renderLeftToolbar?: () => React.ReactNode;
   renderDisplay?: DisplayProps['renderDisplay'];
   renderContext?: () => React.ReactNode;
@@ -65,6 +67,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
   filename,
   order = ['model', 'view', 'display'],
   noDisplayHdr,
+  showRoot,
   renderLeftToolbar,
   renderDisplay,
   renderContext,
@@ -180,7 +183,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
 
   switch (modelView) {
     case 'interactive':
-      content = <JsonCrdtModelClickable model={model} readonly={readonly} />;
+      content = <JsonCrdtModelClickable model={model} readonly={readonly} showRoot={showRoot} />;
       break;
     case 'index':
       content = <JsonCrdtModelIndex model={model} readonly={readonly} />;

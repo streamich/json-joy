@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {distinctUntilChanged, fromEvent, map} from 'rxjs';
+import {distinctUntilChanged, EMPTY, fromEvent, map} from 'rxjs';
 import {drule, ZINDEX} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 import useWindowSize from 'react-use/lib/useWindowSize';
@@ -17,6 +17,8 @@ const blockClass = drule({
   z: ZINDEX.TOP_NAV,
   bdfl: 'saturate(170%) blur(14px)',
   bdb: '1px solid transparent',
+  transform: 'translateZ(0)',
+  backfaceVisibility: 'hidden',
   '-webkit-app-region': 'drag', // Drag for Electron app.
   '@media only screen and (max-width: 600px)': {
     pad: '0px 16px',
@@ -33,10 +35,16 @@ const sizerClass = drule({
   jc: 'space-between',
 });
 
-const showBorder$ = fromEvent(window, 'scroll').pipe(
-  map(() => window.scrollY > 10),
-  distinctUntilChanged(),
-);
+const showBorder$ =
+  typeof window === 'undefined'
+    ? (EMPTY as unknown as ReturnType<typeof fromEvent>).pipe(
+        map(() => false),
+        distinctUntilChanged(),
+      )
+    : fromEvent(window, 'scroll').pipe(
+        map(() => window.scrollY > 10),
+        distinctUntilChanged(),
+      );
 
 export interface TopNavProps extends React.HTMLAttributes<any> {}
 
@@ -53,13 +61,17 @@ export const TopNav: React.FC<TopNavProps> = (props) => {
     showBorder2
       ? {
           bdb: `1px solid ${styles.g(0, 0.08)}`,
-          '&:hover': {bdb: `1px solid ${styles.g(0, 0.12)}`},
+          // '&:hover': {bdb: `1px solid ${styles.g(0, 0.12)}`},
         }
-      : {},
+      : {
+          '&:hover': {
+            bdb: `1px solid ${styles.g(0, 0.08)}`,
+            '& > div': {borderBottomColor: 'transparent'},
+          },
+        },
   );
   const sizerCls = sizerClass({
-    bdb: `1px solid ${styles.g(0, 0.04)}`,
-    '&:hover': {bdb: `1px solid ${styles.g(0, 0.08)}`},
+    bdb: `1px solid ${styles.g(0, 0.06)}`,
   });
 
   return (
@@ -68,7 +80,11 @@ export const TopNav: React.FC<TopNavProps> = (props) => {
         data-testid="TopNav"
         {...rest}
         className={(rest.className || '') + blockCls}
-        style={{marginLeft: paddingLeft, width: `calc(100% - ${paddingLeft}px)`}}
+        style={{
+          marginLeft: paddingLeft,
+          width: `calc(100% - ${paddingLeft}px)`,
+          backgroundColor: styles.light ? 'rgba(255,255,255,.88)' : 'rgba(18,18,18,.9)',
+        }}
       >
         <div className={sizerCls} style={{borderBottomColor: showBorder2 ? 'transparent' : undefined}}>
           {children}

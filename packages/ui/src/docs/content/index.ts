@@ -1,4 +1,4 @@
-import type {ContentPage} from './types';
+import type {ContentPage} from '../../types/libs';
 import {augmentContentPages} from '../../6-page/DocsPages/util';
 import {componentsPage} from './components';
 import {guidelinesPage} from './guidelines';

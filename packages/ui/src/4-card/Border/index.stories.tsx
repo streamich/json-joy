@@ -60,3 +60,29 @@ export const Reach: StoryObj<typeof Border> = {
   ),
   args: {borderRadius: 16, thickness: 1, radius: 200, reach: 120},
 };
+
+export const Trailing: StoryObj<typeof Border> = {
+  render: (args) => (
+    <div style={{padding: 80}}>
+      <Demo {...args} />
+    </div>
+  ),
+  args: {borderRadius: 16, thickness: 2, radius: 200, reach: 120, delay: 220},
+};
+
+export const Colorful: StoryObj<typeof Border> = {
+  render: (args) => (
+    <div style={{padding: 80}}>
+      <Demo {...args} />
+    </div>
+  ),
+  args: {
+    borderRadius: 16,
+    thickness: 2,
+    radius: 220,
+    reach: 120,
+    delay: 180,
+    colors: ['#07f', '#0ff 35%', '#f0f 70%'],
+    falloff: 0.85,
+  },
+};

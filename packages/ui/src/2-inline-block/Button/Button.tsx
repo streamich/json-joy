@@ -31,16 +31,19 @@ const buttonClass = drule({
   minWidth: '50px',
   whiteSpace: 'nowrap',
   us: 'none',
+  svg: {col: 'inherit!important', trs: 'color .2s'},
 });
 
 const iconClass = rule({
   alignItems: 'center',
   d: 'flex',
+  col: 'inherit',
 });
 
 export interface ButtonProps {
   block?: boolean;
   color?: string | ColorSpecifier[0];
+  invert?: boolean;
   colorStep?: ColorScaleStep | ColorScaleStepMnemonic;
   disabled?: boolean;
   ghost?: boolean;
@@ -50,6 +53,7 @@ export interface ButtonProps {
   lite?: boolean;
   loading?: boolean;
   size?: Scale;
+  spacious?: boolean;
   small?: boolean;
   outline?: boolean;
   primary?: boolean;
@@ -61,6 +65,12 @@ export interface ButtonProps {
   compact?: boolean;
   children?: React.ReactNode;
   dashed?: boolean;
+  /**
+   * On hover, draw a 1px ring in this color just inside the border, so the
+   * border reads 1px wider without shifting layout. Implemented as an inset
+   * box-shadow.
+   */
+  hoverOutline?: string;
   onClick?: React.MouseEventHandler<any>;
 }
 
@@ -70,6 +80,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     block,
     children,
     color = 'neutral',
+    invert,
     primary,
     colorStep = primary ? 6 : 2,
     disabled,
@@ -82,7 +93,9 @@ export const Button: React.FC<ButtonProps> = (props) => {
     outline,
     size = 0,
     radius = 0,
+    spacious,
     compact: _compact,
+    hoverOutline,
     onClick,
     submit,
   } = props;
@@ -118,22 +131,41 @@ export const Button: React.FC<ButtonProps> = (props) => {
   const col: string = colorStepNum > 3 ? theme.g(0.98, 0.96) : theme.col.get('neutral', 'txt-1') + '';
 
   const buttonStyle: React.CSSProperties = {
-    height: `${size * 4 + defaultHeight}px`,
-    fontSize: defaultFontSize + size * (size < 0 ? 0.5 : 2) + 'px',
+    height: `${size * 2 + defaultHeight + (spacious ? 12 : 0)}px`,
+    fontSize: defaultFontSize + size * (size < 0 ? 0.5 : 1.1) + 'px',
     border: `1px solid ${lite || outline ? bg : 'transparent'}`,
     borderRadius: radius < 0 ? 0 : !radius ? 4 : 8,
   };
+
+  if (ghost) {
+    buttonStyle.boxShadow = `0 -2px 0 ${theme.g(0, 0.04)} inset`;
+  }
 
   const buttonProps: any = {
     className:
       (props.className || '') +
       buttonClass({
-        bg: lite || outline ? 'transparent' : bg,
-        col: outline ? (colorStepNum > 4 ? bg : theme.col.get('neutral', 'txt-1')) : !lite ? col : theme.g(0.08),
+        bg: invert ? theme.g(0, 0.9) : lite || outline ? 'transparent' : bg,
+        col: invert
+          ? theme.g(0.98, 0.96)
+          : outline
+            ? colorStepNum > 4
+              ? bg
+              : theme.col.get('neutral', 'txt-1')
+            : !lite
+              ? col
+              : theme.g(0.08),
         '&:hover': {
-          col: outline || lite ? (outline && colorStepNum > 4 ? theme.g(0.98, 0.96) : theme.g(0.08)) : col,
+          col: invert
+            ? theme.g(0.08)
+            : outline || lite
+              ? outline && colorStepNum > 4
+                ? theme.g(0.98, 0.96)
+                : theme.g(0.08)
+              : col,
           bg: bgHover,
-          // boxShadow: disabled ? '0' : `0 0 0 3px ${theme.g(0, .1)}`,
+          td: 'none',
+          ...(hoverOutline ? {boxShadow: `inset 0 0 0 1px ${hoverOutline}`} : {}),
         },
       }),
     onClick,
@@ -186,7 +218,17 @@ export const Button: React.FC<ButtonProps> = (props) => {
   Object.assign(buttonStyle, props.style);
 
   if (typeof tag !== 'string') {
-    buttonElement = h('div', {}, buttonElement);
+    buttonElement = h(
+      'div',
+      {
+        style: {
+          display: 'inline-block',
+          borderRadius: buttonStyle.borderRadius,
+          boxShadow: ghost ? `1px 1px 2px ${theme.g(0, 0.04)}` : void 0,
+        },
+      },
+      buttonElement,
+    );
   }
 
   return h(Ripple, {

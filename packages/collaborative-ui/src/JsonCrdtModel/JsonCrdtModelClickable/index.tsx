@@ -16,9 +16,11 @@ const css = {
 export interface JsonCrdtModelClickableProps {
   model: Model<any>;
   readonly?: boolean;
+  /** Whether to display the root node wrapper. Default: true. */
+  showRoot?: boolean;
 }
 
-export const JsonCrdtModelClickable: React.FC<JsonCrdtModelClickableProps> = ({model, readonly}) => {
+export const JsonCrdtModelClickable: React.FC<JsonCrdtModelClickableProps> = ({model, readonly, showRoot = true}) => {
   const {width} = useWindowSize();
   const [focused, setFocused] = React.useState<null | string>(null);
   useModelTick(model);
@@ -37,7 +39,7 @@ export const JsonCrdtModelClickable: React.FC<JsonCrdtModelClickableProps> = ({m
         <ClickableJsonCrdt
           key={width < 700 ? '10px' : '12px'}
           model={model as any}
-          showRoot
+          showRoot={showRoot}
           readonly={readonly}
           fontSize={width < 700 ? '10px' : '12px'}
           onFocus={(id) => {

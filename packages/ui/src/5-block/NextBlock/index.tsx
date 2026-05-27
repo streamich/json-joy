@@ -13,10 +13,24 @@ const blockClass = rule({
   d: 'flex',
 });
 
+const linkClass = rule({
+  flex: '1 1 100%',
+  td: 'none',
+  bd: '1px solid transparent',
+  bdrad: '16px',
+  '&:hover': {
+    td: 'none',
+    bd: '1px solid rgba(127,127,127,.04)',
+  },
+  '&:active': {
+    tr: 'scale(.99)',
+  },
+});
+
 const getNoteClass = drule({
   ...theme.font.ui3,
   d: 'block',
-  fz: '14px',
+  fz: '13px',
   '@media only screen and (max-width: 500px)': {
     fz: '11px',
   },
@@ -37,6 +51,7 @@ const getCardClass = drule({
   justifyContent: 'space-between',
   alignItems: 'center',
   bxz: 'border-box',
+  bdrad: '16px',
   pad: '16px',
   '@media only screen and (max-width: 500px)': {
     padl: '12px',
@@ -80,9 +95,9 @@ export const NextBlock: React.FC<Props> = ({left, right}) => {
   const styles = useStyles();
 
   const noteClass = getNoteClass({
-    col: styles.g(0.6),
+    col: styles.g(0.5),
     [`.${String(getCardClass).trim()}:hover &`]: {
-      col: styles.g(0.4),
+      col: styles.g(0.3),
     },
   });
 
@@ -106,8 +121,8 @@ export const NextBlock: React.FC<Props> = ({left, right}) => {
 
   const leftElement = !left ? null : (
     // <Link key={left.to} a to={left.to} style={{flex: '1 1 100%'}} preload>
-    <Link key={left.to} a to={left.to} style={{flex: '1 1 100%'}}>
-      <Paper as={'span'} hoverElevate>
+    <Link key={left.to} a to={left.to} className={linkClass}>
+      <Paper as={'span'} round hover hoverElevate>
         <Ripple ms={700}>
           <span className={cardClass}>
             {width < 400 ? (
@@ -132,9 +147,9 @@ export const NextBlock: React.FC<Props> = ({left, right}) => {
   );
 
   const rightElement = !right ? null : (
-    <Link key={right.to} a to={right.to} style={{flex: '1 1 100%'}}>
+    <Link key={right.to} a to={right.to} className={linkClass}>
       {/* <Link key={right.to} a to={right.to} style={{flex: '1 1 100%'}} preload> */}
-      <Paper as={'span'} hoverElevate>
+      <Paper as={'span'} round hover hoverElevate>
         <Ripple ms={700}>
           <span className={cardClass}>
             <span>

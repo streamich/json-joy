@@ -1,6 +1,6 @@
 import type {LineStyle, StepIndicator, StepState} from './types';
 
-export const DEF_STATE: StepState = 'active';
+export const DEF_STATE: StepState = 'pending';
 export const DEF_INDICATOR: StepIndicator = 'number';
 
 export const DEF_RING: LineStyle = 'solid';
@@ -10,6 +10,8 @@ export const DEF_LINE: LineStyle = 'solid';
 export const DEF_RING_WIDTH = 1;
 export const DEF_HALO_WIDTH = 1;
 export const DEF_LINE_WIDTH = 1;
+
+export const DEF_RADIUS = 50;
 
 export const INDICATOR_SIZE = 28;
 export const ITEM_GAP = 14;
@@ -55,6 +57,19 @@ export const getStepState = (v?: string): StepState => (isStepState(v) ? v : DEF
 export const getStepIndicator = (v?: string): StepIndicator => (isStepIndicator(v) ? v : DEF_INDICATOR);
 
 export const getLineStyle = (v: string | undefined, fallback: LineStyle): LineStyle => (isLineStyle(v) ? v : fallback);
+
+// Pending steps default to a dotted connector; everything else stays solid.
+export const getStateLineDefault = (state: StepState): LineStyle => (state === 'pending' ? 'dotted' : DEF_LINE);
+
+export const clampRadius = (v: unknown): number => {
+  const n = Math.round(Number(v) || 0);
+  if (n <= 0) return 0;
+  if (n >= 100) return 100;
+  return n;
+};
+
+// Map the 0-100 roundness scale to a CSS border-radius (0% square to 50% circle).
+export const radiusToCss = (radius: number): string => `${clampRadius(radius) / 2}%`;
 
 export const clampWidth = (v: unknown): 0 | 1 | 2 | 3 | 4 | 5 | 6 => {
   const n = Math.round(Number(v) || 0);

@@ -58,11 +58,11 @@ const Demo: React.FC = () => {
   const model = React.useMemo(() => {
     return Model.create(
       s.str(
-        'Integration of json-joy JSON CRDT with Monaco Editor.\n' +
+        'Integration of json-joy JSON CRDT\nwith Monaco Editor.\n' +
           '\n' +
-          'Enabling real-time collaborative plain-text editing.\n' +
+          'Enabling real-time collaborative\nplain-text editing.\n' +
           '\n' +
-          'Type in either editor to see changes synchronized in real-time!\n',
+          'Type in either editor to see changes\nsynchronized in real-time!\n',
       ),
     );
   }, []);

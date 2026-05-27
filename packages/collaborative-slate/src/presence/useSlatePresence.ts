@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
-import {peritext as peritextPresence, UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
+import {peritext as peritextPresence, UserPresenceIdx, NodeType} from '@jsonjoy.com/collaborative-presence';
 import {generateColor} from './styles';
 import {pointToSlatePoint, slatePointToPoint} from '../positions';
 import {deepEqual} from '@jsonjoy.com/json-equal';
@@ -16,7 +15,7 @@ import type {SlatePath, SlatePoint} from '../types';
 const isRgaSelection = (sel: unknown): sel is RgaSelection => {
   if (!Array.isArray(sel) || sel.length < 8) return false;
   const type = sel[5];
-  return type === JsonCrdtDataType.str || type === JsonCrdtDataType.bin || type === JsonCrdtDataType.arr;
+  return type === NodeType.str || type === NodeType.bin || type === NodeType.arr;
 };
 
 const pathsEqual = (a: SlatePath, b: SlatePath): boolean => deepEqual(a, b);

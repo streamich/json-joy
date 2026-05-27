@@ -48,8 +48,19 @@ interface SharedFromUrl {
   message: string;
 }
 
+/** Plain text passed via `#t=...` to seed the first paragraph of a new document. */
+interface SeedTextFromUrl {
+  text: string;
+}
+
+type ConsumedFromUrl = SharedFromUrl | SeedTextFromUrl;
+
+const isSeedText = (consumed: ConsumedFromUrl): consumed is SeedTextFromUrl =>
+  (consumed as SeedTextFromUrl).text !== undefined;
+
 const PLAIN_KEYS: readonly string[] = ['n', 'new'];
 const ENCRYPTED_KEYS: readonly string[] = ['e', 'enc'];
+const PLAINTEXT_KEYS: readonly string[] = ['t', 'text'];
 const METADATA_KEYS: readonly string[] = ['t', 'm'];
 
 const takeFirst = (params: URLSearchParams, keys: readonly string[]): string | null => {
@@ -60,18 +71,26 @@ const takeFirst = (params: URLSearchParams, keys: readonly string[]): string | n
   return null;
 };
 
-const consumeSharedParams = (params: URLSearchParams): SharedFromUrl | null => {
+const consumeSharedParams = (params: URLSearchParams): ConsumedFromUrl | null => {
   const plain = takeFirst(params, PLAIN_KEYS);
   const encrypted = plain ? null : takeFirst(params, ENCRYPTED_KEYS);
   const encoded = plain ?? encrypted;
-  if (!encoded) return null;
-  const title = params.get('t') ?? '';
-  const message = params.get('m') ?? '';
-  for (const key of [...PLAIN_KEYS, ...ENCRYPTED_KEYS, ...METADATA_KEYS]) params.delete(key);
-  return {encoded, encrypted: !plain, title, message};
+  if (encoded) {
+    const title = params.get('t') ?? '';
+    const message = params.get('m') ?? '';
+    for (const key of [...PLAIN_KEYS, ...ENCRYPTED_KEYS, ...METADATA_KEYS]) params.delete(key);
+    return {encoded, encrypted: !plain, title, message};
+  }
+  // No encoded document: use `#t=...` as seed text for a new document.
+  const text = takeFirst(params, PLAINTEXT_KEYS);
+  if (text !== null) {
+    for (const key of PLAINTEXT_KEYS) params.delete(key);
+    return {text};
+  }
+  return null;
 };
 
-const consumeFromHash = (url: URL): SharedFromUrl | null => {
+const consumeFromHash = (url: URL): ConsumedFromUrl | null => {
   if (!url.hash) return null;
   const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
   const result = consumeSharedParams(hashParams);
@@ -236,11 +255,16 @@ export class MuTxtAppState {
     this.detachDragDrop?.();
     this.detachDragDrop = this.attachDragDrop();
 
-    // If the page was opened with a shared document encoded in the URL,
-    // consume it (stripping the params) and import as a new document.
-    const shared = this.consumeSharedFromUrl();
+    const consumed = this.consumeSharedFromUrl();
     let opened = false;
-    if (shared) opened = await this.importSharedDocument(shared);
+    if (consumed) {
+      if (isSeedText(consumed)) {
+        this.createNewMuTxtFromText(consumed.text);
+        opened = true;
+      } else {
+        opened = await this.importSharedDocument(consumed);
+      }
+    }
     if (this.stopped) return;
 
     if (!opened) {
@@ -254,7 +278,7 @@ export class MuTxtAppState {
     this.started.set(true);
   }
 
-  private readonly consumeSharedFromUrl = (): SharedFromUrl | null => {
+  private readonly consumeSharedFromUrl = (): ConsumedFromUrl | null => {
     if (typeof window === 'undefined' || !window.location) return null;
     try {
       const url = new URL(window.location.href);
@@ -536,6 +560,10 @@ export class MuTxtAppState {
 
   public readonly createNewMuTxt = (name?: string, link?: FileLink) => {
     this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}), name, link);
+  };
+
+  public readonly createNewMuTxtFromText = (text: string, name?: string, link?: FileLink) => {
+    this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new(text)}), name, link);
   };
 
   public readonly createNewMuTxtFromSlate = (slate: SlateDocument, name?: string) => {

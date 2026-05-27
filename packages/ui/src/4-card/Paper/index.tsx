@@ -23,6 +23,7 @@ export interface PaperProps extends React.AllHTMLAttributes<any> {
   hoverElevate?: boolean;
   contrast?: boolean;
   noOutline?: boolean;
+  tint?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 }
 
@@ -37,11 +38,12 @@ export const Paper: React.FC<PaperProps> = (props) => {
     hoverElevate,
     contrast,
     noOutline,
+    tint,
     ref,
     ...rest
   } = props;
   const styles = useStyles();
-  const bg = styles.bg + '';
+  const bg = styles.bg.fg.pct(0, 0, 0.75) + '';
   const light = styles.light;
 
   const style: React.CSSProperties = {};
@@ -56,6 +58,10 @@ export const Paper: React.FC<PaperProps> = (props) => {
 
   if (noOutline) {
     style.border = 'none';
+  }
+
+  if (tint) {
+    style.backgroundColor = 'var(--colBgTint)';
   }
 
   if (round) {

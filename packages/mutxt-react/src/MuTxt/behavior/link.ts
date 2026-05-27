@@ -1,4 +1,4 @@
-import {Editor, Path, Range, Text, Transforms} from 'slate';
+import {Editor, Node, Path, Range, Text, Transforms} from 'slate';
 import type {CustomText, LinkAttributes} from '../types';
 
 const isText = (node: unknown): node is CustomText => Text.isText(node);
@@ -125,16 +125,17 @@ export const upsertLink = (editor: Editor, href: string): ActiveLink | null => {
   return getActiveLink(editor);
 };
 
-export const removeLink = (editor: Editor, at?: Range): boolean => {
-  if (at) {
-    Transforms.unsetNodes(editor, 'a', {
-      at,
-      match: (node) => isText(node),
-      split: true,
-    });
-    if (editor.selection && Range.isCollapsed(editor.selection)) Editor.removeMark(editor, 'a');
-    return true;
+export const isRangeInEditor = (editor: Editor, range: Range): boolean => {
+  for (const point of [Range.start(range), Range.end(range)]) {
+    const {path, offset} = point;
+    if (!Node.has(editor, path)) return false;
+    const node = Node.get(editor, path);
+    if (!Text.isText(node) || offset > node.text.length) return false;
   }
+  return true;
+};
+
+export const removeLink = (editor: Editor): boolean => {
   const activeLink = getActiveLink(editor);
   if (activeLink) {
     Transforms.unsetNodes(editor, 'a', {

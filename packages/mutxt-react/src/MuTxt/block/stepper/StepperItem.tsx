@@ -18,13 +18,14 @@ import {getStepStateColors, pickGlyphColor} from './colors';
 import {
   DEF_HALO,
   DEF_HALO_WIDTH,
-  DEF_LINE,
   DEF_LINE_WIDTH,
+  DEF_RADIUS,
   DEF_RING,
   DEF_RING_WIDTH,
   INDICATOR_SIZE,
   ITEM_GAP,
   getLineStyle,
+  getStateLineDefault,
   getStepIndicator,
   getStepState,
 } from './settings';
@@ -104,17 +105,18 @@ export const StepperItem: React.FC<StepperItemProps> = ({attributes, children, e
   // already reads as a ring, so a solid outline would visually compete.
   const stateRingDefault = state === 'optional' ? 'none' : DEF_RING;
   const ring = getLineStyle(element.ring, stateRingDefault);
-  const ringColor = element.ringCol ?? stateColors.line;
+  const ringColor = element.ringCol ?? stateColors.ring;
   const ringWidth = element.ringWidth ?? DEF_RING_WIDTH;
 
   const halo = getLineStyle(element.halo, DEF_HALO);
   const haloColor = element.haloCol ?? stateColors.line;
   const haloWidth = element.haloWidth ?? DEF_HALO_WIDTH;
 
-  const line = getLineStyle(element.line, DEF_LINE);
+  const line = getLineStyle(element.line, getStateLineDefault(state));
   const lineColor = element.lineCol ?? stateColors.line;
   const lineWidth = element.lineWidth ?? DEF_LINE_WIDTH;
 
+  const radius = element.stepRadius ?? DEF_RADIUS;
   const bg = element.stepBg ?? stateColors.bg;
   const autoGlyph = element.stepBg ? pickGlyphColor(styles, bg, stateColors.glyph) : stateColors.glyph;
   const glyphColor = element.stepCol ?? autoGlyph;
@@ -132,6 +134,7 @@ export const StepperItem: React.FC<StepperItemProps> = ({attributes, children, e
       indicator={indicator}
       chars={element.stepChar ?? ''}
       index={index}
+      radius={radius}
       bg={bg}
       glyphColor={glyphColor}
       ring={ring}

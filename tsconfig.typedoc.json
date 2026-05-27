@@ -8,6 +8,7 @@
   "exclude": [
     "node_modules",
     "lib",
+    "packages/site/**",
     "**/*.stories.ts",
     "**/*.stories.tsx",
     "**/__demos__/**",

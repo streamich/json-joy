@@ -32,3 +32,11 @@ export const Gray: StoryObj<typeof meta> = {
     gray: true,
   },
 };
+
+export const Outline: StoryObj<typeof meta> = {
+  args: {
+    children: 'console.log(123)',
+    outline: true,
+    noBg: true,
+  },
+};

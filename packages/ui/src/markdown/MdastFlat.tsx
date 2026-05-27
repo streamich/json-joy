@@ -33,10 +33,12 @@ const markdownClass = drule({
     mar: '0 -.125em',
   },
   a: {
-    bdb: '1px solid rgba(0,137,255,.3)',
-    td: 'none',
+    td: 'underline',
+    textDecorationColor: 'color-mix(in srgb, currentColor 25%, transparent)',
+    textUnderlineOffset: '5px',
+    textDecorationThickness: '1px',
     '&:has(img)': {
-      bdb: 0,
+      td: 'none',
     },
   },
   ul: {
@@ -60,7 +62,6 @@ export const MdastFlat: React.FC<MdastProps> = ({...props}) => {
       col: styles.col.get('link', 'solid-1'),
       '&:hover': {
         color: styles.light ? '#ec1020' : '#ff8a8a',
-        bdb: styles.light ? '1px solid rgba(244,18,36,.3)' : '1px solid rgba(255,138,138,.3)',
       },
     },
   });

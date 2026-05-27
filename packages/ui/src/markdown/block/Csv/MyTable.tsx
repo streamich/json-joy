@@ -12,14 +12,21 @@ export interface MyTableProps {
 export const MyTable: React.FC<MyTableProps> = ({className, children}) => {
   const styles = useStyles();
   const cls = tableClass({
-    '& tr th': {
-      bdb: `1px solid ${styles.g(0.1, 0.08)}`,
+    borderCollapse: 'collapse',
+    w: '100%',
+    '& thead td, & thead th': {
+      fontWeight: 600,
+      textAlign: 'left',
+      pad: '10px 10px',
+      bdb: `1px solid ${styles.g(0, 0.18)}`,
+      col: styles.g(0.05),
     },
-    '& tr td': {
-      bdb: `1px solid ${styles.g(0.1, 0.08)}`,
+    '& tbody td': {
+      pad: '10px 10px',
+      bd: 'none',
     },
-    '& tr:last-child td': {
-      bdb: '0',
+    '& tbody tr:nth-child(even) td': {
+      bg: styles.g(0, 0.02),
     },
   });
 

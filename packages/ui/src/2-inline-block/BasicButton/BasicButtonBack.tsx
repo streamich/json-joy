@@ -22,7 +22,9 @@ const animationActive = keyframes({
 });
 
 const animationClass = rule({
-  d: 'inline-block',
+  d: 'inline-flex',
+  ai: 'center',
+  jc: 'center',
   w: '100%',
   h: '100%',
   trs: 'all .12s ease-in 0s',

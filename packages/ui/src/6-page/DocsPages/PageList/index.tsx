@@ -4,6 +4,7 @@ import {Link} from 'react-router-lite';
 import type {ContentPage} from '../types';
 import {Markdown} from '../../../markdown/Markdown';
 import {pageutils} from '../util';
+import {fonts} from '../../../styles';
 
 const listClass = rule({
   pad: 0,
@@ -19,9 +20,20 @@ const listItemClass = rule({
     pad: '0.38em 0',
     mar: 0,
   },
+  a: {
+    td: 'none',
+    '&:hover': {
+      td: 'underline',
+      textUnderlineOffset: '5px',
+    },
+  },
 });
 
 const itemBulletClass = rule({
+  ...fonts.get('mono', 'bold', 0),
+  fz: '0.95em',
+  // lh: 1,
+  letterSpacing: '.04em',
   op: 0.5,
 });
 

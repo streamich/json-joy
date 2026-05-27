@@ -1,31 +1,48 @@
 import * as React from 'react';
-import {lightTheme, drule} from 'nano-theme';
+import {lightTheme, rule} from 'nano-theme';
 import {Link} from 'react-router-lite';
 import {useStyles} from '../../styles/context';
 
-const baseClass = drule({
-  ...lightTheme.font.ui1.mid,
-  fz: '15px',
+const baseCls = rule({
+  ...lightTheme.font.display.mid,
+  fz: '14px',
+  // ...lightTheme.font.ui1.mid,
+  // fz: '15px',
+  col: 'var(--colTxt)',
   d: 'flex',
   w: '100%',
   bxz: 'border-box',
   alignItems: 'center',
-  bdrad: '6px',
+  bdrad: '8px',
   bd: 0,
-  pad: '10px 8px',
+  pd: '10px 10px',
   bg: 'none',
   cur: 'pointer',
-  mar: 0,
+  mr: 0,
   out: 0,
+  td: 'none',
+  '&:hover': {
+    td: 'none',
+    col: 'var(--colTxtSharp)',
+    bg: 'var(--colBgHover)',
+  },
   '&+&': {
-    mart: '2px',
+    mrt: '2px',
   },
 });
 
-const activeChildClass = drule({});
-const activeBlockClass = drule({
+const activeChildClass = rule({
+  bg: 'var(--colBgActiveDim)',
+});
+
+const activeBlockClass = rule({
   cur: 'default',
-  bg: 'rgba(0,128,255,.04)',
+  col: 'var(--colTxtActiveSharp)',
+  bg: 'var(--colBgActive)',
+  '&:hover': {
+    col: 'var(--colTxtActiveHover)',
+    bg: 'var(--colBgActive)',
+  },
 });
 
 export interface Props {
@@ -40,16 +57,16 @@ export interface Props {
 
 export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onMouseDown, children, hasMore}) => {
   const styles = useStyles();
-  const link = styles.col.get('link', 'solid-1');
-  const baseCls = baseClass({
-    col: styles.g(0, 0.9),
-    '&:hover': {
-      bg: styles.g(0.96),
-      col: styles.light ? '#000' : '#fff',
-    },
-  });
-  const activeChildCls = activeChild ? ' ' + activeChildClass({bg: styles.g(0, 0.01)}) : '';
-  const activeBlockCls = active ? ' ' + activeBlockClass({col: link}) : '';
+  // const link = styles.col.get('link', 'solid-1');
+  // const link = styles.accent.fg.pct(0, .2, -.2, -.06) + '';
+  // const link = styles.link.fg.pct(0, 0, 0) + '';
+  // const baseCls = baseClass({
+  //   '&:hover': {
+  //     col: styles.light ? '#000' : '#fff',
+  //   },
+  // });
+  const activeParentCls = activeChild ? ' ' + activeChildClass : '';
+  const activeBlockCls = active ? ' ' + activeBlockClass : '';
 
   let element = children;
 
@@ -68,7 +85,7 @@ export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onM
       to={to}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className={baseCls + activeChildCls + activeBlockCls}
+      className={baseCls + activeParentCls + activeBlockCls}
     >
       {element}
     </Link>

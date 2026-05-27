@@ -58,6 +58,7 @@ export const CollaborativeQuill: React.FC<CollaborativeQuillProps> = ({
     if (!div) return;
     if (!themeCss) themeCss = `https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.${options.theme || 'snow'}.css`;
     loadCss(themeCss, themeCss);
+    const originalClassName = div.className;
     const editor = new Quill(div, options);
     const unbind = bind(api, editor);
     onEditor?.(editor);
@@ -89,6 +90,13 @@ export const CollaborativeQuill: React.FC<CollaborativeQuillProps> = ({
       presence?.destroy();
       unbind();
       editor.off('editor-change', handleChange);
+      // Quill mutates the container and inserts its toolbar as a sibling before
+      // it. Tear that generated DOM down so a remount (React StrictMode in dev)
+      // does not stack a second toolbar.
+      const toolbar = (editor.getModule('toolbar') as {container?: HTMLElement} | undefined)?.container;
+      toolbar?.remove();
+      div.innerHTML = '';
+      div.className = originalClassName;
     };
   }, [options.theme, options.readOnly, options.debug, options.placeholder, presenceManager]);
 

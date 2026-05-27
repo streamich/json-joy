@@ -5,10 +5,11 @@ import {Space} from '../../3-list-item/Space';
 import LinkBack from '../../2-inline-block/LinkBack';
 
 const blockClass = drule({
-  pad: '0 0 16px',
-  mar: '0 0 16px',
+  pd: '0 0 12px',
+  mr: '0 0 16px',
   d: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'center',
 });
 
 const blockClass3 = rule({
@@ -27,7 +28,7 @@ const blockClass6 = rule({
 });
 
 const headerClass = rule({
-  ...lightTheme.font.ui2.bold,
+  ...lightTheme.font.display.bold,
   fz: '28px',
   mar: 0,
   pad: 0,

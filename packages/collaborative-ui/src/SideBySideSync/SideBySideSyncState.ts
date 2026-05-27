@@ -12,8 +12,8 @@ export class SideBySideSyncState {
   public readonly right: Log;
   public readonly rightState: JsonCrdtModelState;
   public readonly rightPresence: PresenceManager;
-  public readonly autoSync$ = new BehaviorSubject<boolean>(false);
-  public readonly autoSyncInterval$ = new BehaviorSubject<number>(5000);
+  public readonly autoSync$ = new BehaviorSubject<boolean>(true);
+  public readonly autoSyncInterval$ = new BehaviorSubject<number>(1000);
   private autoSyncTimer: any = null;
 
   constructor(model: Model<any>) {
@@ -40,8 +40,16 @@ export class SideBySideSyncState {
     this.rightPresence.setMeta({name: 'Right User'});
   }
 
+  /** Idempotent: starts the auto-sync loop if enabled and not already running.
+   * Call from a React effect so StrictMode's cleanup -> re-setup pair restarts
+   * the loop correctly. */
+  public readonly start = () => {
+    if (this.autoSync$.getValue() && this.autoSyncTimer === null) this.loopSync();
+  };
+
   public dispose() {
     clearTimeout(this.autoSyncTimer);
+    this.autoSyncTimer = null;
   }
 
   private loopSync() {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {SetNamedTrace} from '../../context/traces';
 
 export const hidePreviewAt = 900;
 
@@ -21,29 +22,37 @@ const separatorClass = rule({
 export interface BreadcrumbsProps {
   crumbs: React.ReactNode[];
   compact?: boolean;
+  /** Render in greyscale, darken on hover instead of using the brand link color. */
+  dim?: boolean;
   style?: React.CSSProperties;
 }
 
-export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({crumbs, compact, style}) => {
+const Body: React.FC<BreadcrumbsProps> = ({crumbs, compact, style}) => (
+  <nav className={blockClass} style={{...style, fontSize: compact ? '12px' : void 0}} aria-label="Breadcrumb">
+    {crumbs.map((item, index) => {
+      const isLast = index === crumbs.length - 1;
+      return (
+        <React.Fragment key={index}>
+          {item}
+          {!isLast && (
+            <span
+              className={separatorClass}
+              style={{padding: compact ? '0 2px' : void 0, fontSize: compact ? '11px' : void 0}}
+            >
+              /
+            </span>
+          )}
+        </React.Fragment>
+      );
+    })}
+  </nav>
+);
+
+export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({dim, ...rest}) => {
+  if (!dim) return <Body {...rest} />;
   return (
-    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: breadcrumb landmark pattern
-    <div className={blockClass} style={{...style, fontSize: compact ? '12px' : void 0}} aria-label="breadcrumb">
-      {crumbs.map((item, index) => {
-        const isLast = index === crumbs.length - 1;
-        return (
-          <React.Fragment key={index}>
-            {item}
-            {!isLast && (
-              <span
-                className={separatorClass}
-                style={{padding: compact ? '0 2px' : void 0, fontSize: compact ? '11px' : void 0}}
-              >
-                /
-              </span>
-            )}
-          </React.Fragment>
-        );
-      })}
-    </div>
+    <SetNamedTrace name="subtle" value={true}>
+      <Body {...rest} />
+    </SetNamedTrace>
   );
 };

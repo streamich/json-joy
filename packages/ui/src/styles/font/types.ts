@@ -13,6 +13,8 @@ export interface FontPalette {
   mono?: FontScale[];
   /** Fonts to be used in UI elements. */
   ui?: FontScale[];
+  /** Fonts to be used for display purposes. */
+  display?: FontScale[];
 }
 
 export interface FontScale {

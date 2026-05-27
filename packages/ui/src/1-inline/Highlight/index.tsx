@@ -4,7 +4,6 @@ import {useStyles} from '../../styles/context';
 import {highlight, highlightFuzzy, normalize} from './util';
 
 const highlightClass = drule({
-  fw: 'bold',
   bdrad: '3px',
   pad: '1px 3px',
   mar: '-1px -3px',
@@ -25,13 +24,20 @@ const preserveSpaces = (text: string): React.ReactNode => {
 
 export interface Props {
   text: string;
+  bold?: boolean;
   query?: string[];
 }
 
-export const Highlight: React.FC<Props> = ({text, query}) => {
+export const Highlight: React.FC<Props> = ({text, bold, query}) => {
   const styles = useStyles();
   const cls = highlightClass({
-    bg: styles.light ? 'rgba(235, 213, 52,.5)' : 'rgba(255, 230, 80,.4)',
+    fw: bold ? 'bold' : undefined,
+    // bg: styles.light ? 'rgba(235, 213, 52,.5)' : 'rgba(255, 230, 80,.4)',
+    // bg: styles.positive.fg.pct(0, .2, .1, -.7) + '',
+    // bg: styles.warning.fg.pct(0, .2, .1, -.7) + '',
+    bg: styles.brand2.fg.pct(0, 0.2, 0.1, -0.7) + '',
+    // bg: styles.ai.fg.pct(0, .2, .1, -.7) + '',
+    // bg: styles.positive.fg.pct(0, .3, 0, -.7) + '',
   });
   const parts = React.useMemo(() => {
     if (!query) return [text];

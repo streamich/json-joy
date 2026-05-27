@@ -6,7 +6,9 @@ import PrevNext from './PrevNext';
 import {downloadFile, downloadPageAsMarkdown} from './util';
 import type {ContentPage} from './types';
 import {Space} from '../../3-list-item/Space';
-import {Button} from '../../2-inline-block/Button';
+import DownloadIcon__svg from 'iconista/lib/react/auth0/download';
+import BasicButton from '../../2-inline-block/BasicButton';
+import {BasicButtonCopy} from '../../2-inline-block/BasicButton/BasicButtonCopy';
 
 export interface Props {
   page: ContentPage;
@@ -23,15 +25,26 @@ const DocsRightIndex: React.FC<Props> = (props) => {
     downloadFile(`${page.slug}.md`, md.text, 'text/markdown');
   };
 
+  const onCopyClick = async () => {
+    const md = await downloadPageAsMarkdown(page);
+    return md.text;
+  };
+
   return (
     <>
       <ContentPageMarkdown page={page} />
       {!!showSpecDownloadButton && (
         <>
           <Space size={3} />
-          <Button ghost={true} size={-1} onClick={onSpecDownloadClick}>
-            {t('Download as Markdown')}
-          </Button>
+          <div style={{display: 'flex', alignItems: 'center', gap: 2}}>
+            <BasicButton bdradR={3} rounder border height={32} width={'auto'} onClick={onSpecDownloadClick}>
+              <span style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                <DownloadIcon__svg width={16} height={16} />
+                {t('Download as Markdown')}
+              </span>
+            </BasicButton>
+            <BasicButtonCopy bdradL={3} rounder border size={32} onCopy={onCopyClick} />
+          </div>
         </>
       )}
       {page.children && page.children.length ? <ContentsList page={page} /> : null}

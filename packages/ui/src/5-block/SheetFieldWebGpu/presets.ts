@@ -1,0 +1,363 @@
+import {defaultSheet} from './presets/default';
+import type {SheetFieldOptions} from './types';
+
+export const DEFAULT_CONFIG: SheetFieldOptions = {...defaultSheet};
+
+export interface SheetFieldPreset {
+  name: string;
+  /** One-line note on the intended use case. */
+  hint: string;
+  /** Overrides applied on top of {@link DEFAULT_CONFIG}. */
+  config: SheetFieldOptions;
+}
+
+/** The Stripe hero, made interactive: tilts toward the pointer, sheen tracks it. */
+export const heroSheet: SheetFieldOptions = {
+  twistTurns: 0.7,
+  reactToMouse: true,
+  tiltMax: 0.25,
+  lightFollowsMouse: true,
+};
+
+/** One huge slow sheet, broad sheen, soft folds: a calm backdrop. */
+export const silk: SheetFieldOptions = {
+  length: 3.6,
+  width: 2.2,
+  twistTurns: 0.6,
+  twistWave: 0.08,
+  foldAmp: 0.45,
+  foldSpeed: 0.18,
+  fiberCount: 160,
+  fiberContrast: 0.08,
+  specular: 1,
+  shininess: 12,
+  rim: 0.3,
+  yawSpeed: 0.03,
+  pitchAmp: 0.04,
+  pitchSpeed: 0.12,
+};
+
+/** Additive glow on a dark surface: the sheet as a sweep of light. */
+export const nebula: SheetFieldOptions = {
+  additive: true,
+  glow: 0.8,
+  light: false,
+  fibers: false,
+  colorMode: 'palette',
+  colorActive: 4,
+  colorChangeSpeed: 1.8,
+  opacity: 0.85,
+  vignette: 0.4,
+  foldAmp: 0.5,
+  twistTurns: 1.4,
+};
+
+/** A livelier, shifting gradient: rotating active colors instead of a static ramp. */
+export const palette: SheetFieldOptions = {
+  colorMode: 'palette',
+  colorActive: 4,
+  colorChangeSpeed: 1.6,
+};
+
+/** Everything slowed down: gentle idle drift of folds and color. */
+export const ambient: SheetFieldOptions = {
+  yawSpeed: 0.02,
+  pitchAmp: 0.03,
+  pitchSpeed: 0.1,
+  foldSpeed: 0.15,
+  twistSpeed: 0.1,
+  colorChangeSpeed: 0.6,
+  centerDrift: 0.1,
+  centerDriftSpeed: 0.2,
+  fiberDrift: 0.015,
+};
+
+/** Static, calm band that sits quietly at the edge of a card (more edge-on). */
+export const cardFooter: SheetFieldOptions = {
+  tilt: 0.3,
+  twistTurns: 1.2,
+  foldAmp: 0.25,
+  yawSpeed: 0.03,
+  pitchAmp: 0.03,
+  pitchSpeed: 0.12,
+  vignette: 0.4,
+};
+
+/** Subtle sheet that drifts and tilts toward the cursor behind page content. */
+export const behindCard: SheetFieldOptions = {
+  followMouse: true,
+  followStrength: 0.4,
+  followReach: 0.8,
+  reactToMouse: true,
+  tiltMax: 0.2,
+  specular: 0.55,
+  vignette: 0.35,
+};
+
+/**
+ * Page scroll drives the twist and tilt. Not in the dropdown: it only does
+ * something on a scrollable page, so it has a dedicated story.
+ */
+export const scrollReactive: SheetFieldOptions = {
+  yawSpeed: 0.02,
+  twistTurns: 0.6,
+  reactToMouse: false,
+  followMouse: false,
+  scrollBindings: [
+    {source: 'window', axis: 'y', target: 'twist', scale: 1.4},
+    {source: 'window', axis: 'y', target: 'tilt', scale: 0.4},
+  ],
+};
+
+export const pulsatingBranch: SheetFieldOptions = {
+  segments: 800,
+  columns: 300,
+  length: 8,
+  width: 1.5,
+  forward: [1.2, 0.45, -0.3],
+  tilt: 1.5,
+  taper: 0.08,
+  twistBase: 0.25,
+  twistTurns: -0.2,
+  twistWave: 0.06,
+  twistFreq: 0.4,
+  twistSpeed: 0.1,
+  foldAmp: 0.5,
+  foldLateral: 0.22,
+  foldFreq: 1.7,
+  foldSpeed: 0.1,
+  shapeOctaves: 6,
+  shapeRoughness: 0.6,
+  flowScale: 1,
+  pulse: 0.1,
+  pulseSpeed: 4,
+  colorMode: 'gradient',
+  color: {wave: 0.05, waveFreq: 0.8, waveSpeed: 0.2},
+  colorAlong: 0.9,
+  colorAcross: 0.12,
+  colorActive: 4,
+  colorChangeSpeed: 1,
+  fibers: true,
+  fiberCount: 4,
+  fiberContrast: 0.74,
+  fiberShear: 0.3,
+  fiberDrift: 0.03,
+  fiberSharpness: 4,
+  fiberJitter: 0.45,
+  fiberVariation: 0.55,
+  fiberGaps: 0.3,
+  fiberGlint: 0.5,
+  light: true,
+  ambient: 0.58,
+  diffuse: 0.6,
+  specular: 0.15,
+  shininess: 11,
+  rim: 0.98,
+  rimPower: 3,
+  lightDir: [0.2, 0.6, 0.7],
+  lightFollowsMouse: true,
+  fog: 0,
+  glow: 0,
+  vignette: 0.1,
+  opacity: 1,
+  additive: false,
+  yawSpeed: 0,
+  pitchAmp: 0,
+  pitchSpeed: 0,
+  perspective: 8,
+  radius: 0.45,
+  centerDrift: 0,
+  centerDriftSpeed: 0,
+  reactToMouse: true,
+  tiltMax: 0.2,
+  followMouse: true,
+  followStrength: 0.05,
+  followReach: 0.4,
+  bendMouse: false,
+  bendRadius: 160,
+  bendStrength: 50,
+};
+
+export const landscape: SheetFieldOptions = {
+  segments: 800,
+  columns: 300,
+  length: 8.3,
+  width: 3.6,
+  forward: [1.2, 0.45, -0.3],
+  tilt: 0,
+  taper: 0.08,
+  twistBase: 0.05,
+  twistTurns: -0.2,
+  twistWave: 0.06,
+  twistFreq: 0.4,
+  twistSpeed: 0.1,
+  foldAmp: 0.58,
+  foldLateral: 0.33,
+  foldFreq: 1.7,
+  foldSpeed: 0.1,
+  shapeOctaves: 6,
+  shapeRoughness: 0.6,
+  flowScale: 1,
+  pulse: 0.1,
+  pulseSpeed: 4,
+  colorMode: 'gradient',
+  color: {wave: 0.05, waveFreq: 0.8, waveSpeed: 0.2},
+  colorAlong: 0.9,
+  colorAcross: 0.12,
+  colorActive: 4,
+  colorChangeSpeed: 1,
+  fibers: true,
+  fiberCount: 400,
+  fiberContrast: 0.74,
+  fiberShear: 2,
+  fiberDrift: 0.52,
+  fiberSharpness: 16,
+  fiberJitter: 1.5,
+  fiberVariation: 0.55,
+  fiberGaps: 0,
+  fiberGlint: 0,
+  light: true,
+  ambient: 0.58,
+  diffuse: 0.6,
+  specular: 0.15,
+  shininess: 11,
+  rim: 0.98,
+  rimPower: 3,
+  lightDir: [0.2, 0.6, 0.7],
+  lightFollowsMouse: true,
+  fog: 0,
+  glow: 0,
+  vignette: 0.1,
+  opacity: 1,
+  additive: false,
+  yawSpeed: 0,
+  pitchAmp: 0,
+  pitchSpeed: 0,
+  perspective: 24,
+  radius: 0.45,
+  centerDrift: 0,
+  centerDriftSpeed: 0,
+  reactToMouse: true,
+  tiltMax: 0.2,
+  followMouse: true,
+  followStrength: 0.05,
+  followReach: 0.4,
+  bendMouse: false,
+  bendRadius: 160,
+  bendStrength: 50,
+};
+
+export const oceanWaves: SheetFieldOptions = {
+  segments: 800,
+  columns: 300,
+  length: 8,
+  width: 1.5,
+  forward: [1.5, 0, 0.5],
+  tilt: 0.45,
+  taper: 0.12,
+  twistBase: 0.45,
+  twistTurns: 0.7,
+  twistWave: 0.48,
+  twistFreq: 1.6,
+  twistSpeed: 0.35,
+  foldAmp: 0.3,
+  foldLateral: 0.08,
+  foldFreq: 1.3,
+  foldSpeed: 0.3,
+  shapeOctaves: 3,
+  shapeRoughness: 0.6,
+  flowScale: 1,
+  pulse: 0,
+  pulseSpeed: 0.5,
+  colorMode: 'gradient',
+  color: {wave: 0.05, waveFreq: 0.8, waveSpeed: 0.2},
+  colorAlong: 0.9,
+  colorAcross: 0.12,
+  colorActive: 4,
+  colorChangeSpeed: 1,
+  fibers: true,
+  fiberCount: 220,
+  fiberContrast: 0.35,
+  fiberShear: 0.3,
+  fiberDrift: 0.03,
+  fiberSharpness: 4,
+  fiberJitter: 0.45,
+  fiberVariation: 0.55,
+  fiberGaps: 0.3,
+  fiberGlint: 0.5,
+  light: true,
+  ambient: 0.58,
+  diffuse: 0.6,
+  specular: 0.15,
+  shininess: 11,
+  rim: 0.98,
+  rimPower: 3,
+  lightDir: [0.2, 0.6, 0.7],
+  lightFollowsMouse: true,
+  fog: 0,
+  glow: 0,
+  vignette: 0.1,
+  opacity: 1,
+  additive: false,
+  yawSpeed: 0,
+  pitchAmp: 0,
+  pitchSpeed: 0.2,
+  perspective: 7,
+  radius: 1,
+  centerDrift: 0,
+  centerDriftSpeed: 0.4,
+  reactToMouse: true,
+  tiltMax: 0.2,
+  followMouse: true,
+  followStrength: 0.05,
+  followReach: 0.4,
+  bendMouse: false,
+  bendRadius: 160,
+  bendStrength: 50,
+};
+
+/** Drawn as parallel lines (transparent gaps) instead of a filled sheet. */
+export const lines: SheetFieldOptions = {
+  style: 'lines',
+  lineCount: 36,
+  lineWidth: 0.45,
+  fibers: false,
+  twistTurns: 0.7,
+  specular: 0.3,
+  rim: 0.4,
+};
+
+/** Dotted/stitched lines: parallel lines dashed along the length. */
+export const dotted: SheetFieldOptions = {
+  style: 'dots',
+  lineCount: 28,
+  lineWidth: 0.5,
+  dotCount: 90,
+  dotWidth: 0.45,
+  fibers: false,
+  twistTurns: 0.6,
+  specular: 0.25,
+  rim: 0.4,
+};
+
+export const PRESETS: SheetFieldPreset[] = [
+  {name: 'Default (Playground)', hint: 'The Stripe hero blanket', config: {}},
+  {name: 'Lines', hint: 'Parallel lines, not filled', config: lines},
+  {name: 'Dotted', hint: 'Dashed/stitched lines', config: dotted},
+  {name: 'Hero sheet', hint: 'Hero + mouse tilt/sheen', config: heroSheet},
+  {name: 'Silk', hint: 'Huge slow calm sheet', config: silk},
+  {name: 'Nebula', hint: 'Additive light sweep (dark)', config: nebula},
+  {name: 'Palette', hint: 'Rotating shifting colors', config: palette},
+  {name: 'Ambient', hint: 'Slow idle drift', config: ambient},
+  {name: 'Card footer', hint: 'Calm, edge-on, no mouse', config: cardFooter},
+  {name: 'Behind card', hint: 'Subtle, follows the cursor', config: behindCard},
+  {name: 'Pulsating branch', hint: 'Stationary, pulsating branch', config: pulsatingBranch},
+  {name: 'Landscape', hint: 'Wide sheet with sharper waves', config: landscape},
+  {name: 'Ocean waves', hint: 'Dynamic, flowing waves', config: oceanWaves},
+];
+
+export const resolvePreset = (p: SheetFieldOptions): SheetFieldOptions => ({
+  ...DEFAULT_CONFIG,
+  ...p,
+  color: {...DEFAULT_CONFIG.color, ...p.color},
+});

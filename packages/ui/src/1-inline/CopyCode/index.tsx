@@ -35,6 +35,7 @@ export const CopyCode: React.FC<CopyCodeProps> = ({value, truncate, onMouseDown,
       <span
         style={{
           display: 'inline-flex',
+          gap: 2,
           alignItems: 'center',
           maxWidth: '100%',
           minWidth: 0,
@@ -56,7 +57,7 @@ export const CopyCode: React.FC<CopyCodeProps> = ({value, truncate, onMouseDown,
         >
           {value}
         </span>
-        <CopyButton onCopy={() => value} />
+        <CopyButton rounder={rest.roundest} onCopy={() => value} />
       </span>
     </Code>
   );
