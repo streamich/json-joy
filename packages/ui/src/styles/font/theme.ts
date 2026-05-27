@@ -12,6 +12,7 @@ const ui3 = 'Roboto,sans-serif,' + ui2;
 const mono1 =
   '"Menlo","DejaVu Sans Mono","Roboto Mono","Fira Mono","Cousine",Consolas,"Liberation Mono",Courier,monospace';
 const mono2 = '"Fira Mono","Cousine",Consolas,"Liberation Mono",Courier,monospace';
+const display = '"Inter",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,sans-serif';
 
 export const theme: FontTheme = {
   palette: {
@@ -33,6 +34,14 @@ export const theme: FontTheme = {
         mid: {fw: 400, ff: ui3},
         bold: {fw: 700, ff: ui3},
         black: {fw: 800, ff: ui3},
+      },
+    ],
+    display: [
+      {
+        lite: {fw: 400, ff: display},
+        mid: {fw: 500, ff: display},
+        bold: {fw: 700, ff: display},
+        black: {fw: 800, ff: display},
       },
     ],
     sans: [

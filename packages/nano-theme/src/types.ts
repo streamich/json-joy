@@ -82,6 +82,14 @@ export interface ThemeFontPalette {
     black: ThemeFontStyle;
   };
 
+  /** Display / heading font (Inter). */
+  display: {
+    lite: ThemeFontStyle;
+    mid: ThemeFontStyle;
+    bold: ThemeFontStyle;
+    black: ThemeFontStyle;
+  };
+
   /** A palette of serif fonts. */
   serif: {
     lite: ThemeFontStyle;

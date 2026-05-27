@@ -1,0 +1,461 @@
+import {defaultConfig} from './presets/default';
+import type {StickFieldOptions} from './types';
+
+/**
+ * The Playground's baseline: short, fat, blobby sticks that read as an organic
+ * cloud (not long technical lines). Preset below are mostly overrides.
+ */
+export const DEFAULT_CONFIG: StickFieldOptions = {
+  ...defaultConfig,
+};
+
+export interface StickFieldPreset {
+  name: string;
+  /** One-line note on the intended use case. */
+  hint: string;
+  /** Overrides applied on top of {@link DEFAULT_CONFIG}. */
+  config: StickFieldOptions;
+}
+
+/** Static, calm band that sits quietly at the bottom/edge of a card. */
+export const cardFooter: StickFieldOptions = {
+  reactToMouse: false,
+  followMouse: false,
+  yawSpeed: 0.1,
+  pitchAmp: 0.06,
+  pitchSpeed: 0.2,
+  pulseSpeed: 0.4,
+  colorActive: 2,
+  colorChangeSpeed: 1.1,
+  vignette: 0.35,
+  count: 1400,
+};
+
+/** Subtle cloud that drifts toward the cursor behind page content. */
+export const behindCard: StickFieldOptions = {
+  followStrength: 0.4,
+  followReach: 1,
+  tiltMax: 0.35,
+  colorActive: 2,
+  colorChangeSpeed: 1.4,
+  vignette: 0.3,
+  count: 1600,
+};
+
+/** Big, vivid, glowy, strongly mouse-reactive centerpiece for a landing hero. */
+export const landingHero: StickFieldOptions = {
+  count: 2600,
+  radius: 0.95,
+  lineWidth: 4.4,
+  thickness: {base: 3.2, random: 0, wave: 1.4, waveFreq: 1.8, waveSpeed: 2.8, min: 4, max: 9},
+  colorActive: 4,
+  colorChangeSpeed: 2.8,
+  glow: 0.35,
+  tiltMax: 0.7,
+  followStrength: 0.7,
+  followReach: 1.2,
+  magnetism: {base: 0.6, random: 0.1},
+};
+
+/** Everything slowed down: gentle idle float and a soft, lazy mouse reaction. */
+export const ambient: StickFieldOptions = {
+  yawSpeed: 0.06,
+  pitchAmp: 0.12,
+  pitchSpeed: 0.12,
+  pulseSpeed: 0.4,
+  size: {base: 0.9, random: 0.35, wave: 1.4, waveFreq: 0.8, waveSpeed: 0.6, min: 0.15, max: 0.25},
+  thickness: {base: 2.85, random: 0, wave: 1.3, waveFreq: 1.8, waveSpeed: 0.9, min: 3.55, max: 8},
+  distance: {wave: 0.1, waveSpeed: 1.2},
+  colorActive: 3,
+  colorChangeSpeed: 0.7,
+  centerDrift: 0.18,
+  centerDriftSpeed: 0.25,
+  tiltMax: 0.25,
+  followStrength: 0.3,
+  followReach: 0.8,
+};
+
+/** Sharp-cornered sticks (sharp rectangles) held in a tight magnetic field. */
+export const squares: StickFieldOptions = {
+  rounding: 0,
+  magnetism: {base: 0.9, random: 0.08},
+  thickness: {base: 3, random: 0, wave: 1, waveFreq: 1.6, waveSpeed: 2, min: 4, max: 7},
+  colorActive: 3,
+  count: 1100,
+};
+
+/** Softened squares: rounded-rectangle sticks. */
+export const roundedSquares: StickFieldOptions = {
+  rounding: 0.35,
+  magnetism: {base: 0.85, random: 0.1},
+  count: 1200,
+};
+
+/** Radial sticks with thin rays fanning toward the center (a starburst). */
+export const raysStarburst: StickFieldOptions = {
+  rays: true,
+  rayWidth: 1.2,
+  rayFrom: 0.12,
+  rayAlphaNear: 0.35,
+  rayAlphaFar: 0.04,
+  magnetism: {base: 0.9, random: 0.05},
+  colorActive: 4,
+  centerDrift: 0.15,
+  centerDriftSpeed: 0.4,
+  count: 900,
+};
+
+/** Additive glow + twinkle on a dark surface for a nebula/bloom look. */
+export const nebula: StickFieldOptions = {
+  additive: true,
+  glow: 0.85,
+  twinkle: 0.5,
+  twinkleSpeed: 5,
+  radius: 1,
+  thickness: {base: 2, random: 0.3, wave: 1, waveFreq: 1.6, waveSpeed: 2, min: 2.5, max: 6},
+  magnetism: {base: 0.4, random: 0.3},
+  colorActive: 4,
+  colorChangeSpeed: 1.8,
+  count: 1800,
+};
+
+/** Flattened, front-only, undulating sheet rather than a ball. */
+export const sheet: StickFieldOptions = {
+  flatten: 0.7,
+  hideBack: true,
+  cullDepth: 0.2,
+  distance: {wave: 0.35, waveSpeed: 1.2},
+  shapeOctaves: 4,
+  shapeSharpness: 1.4,
+  magnetism: {base: 0.6, random: 0.2},
+  count: 1600,
+};
+
+/** Sticks aligned tangentially around a slowly wandering axis (a swirl). */
+export const swirl: StickFieldOptions = {
+  fieldMode: 'ring',
+  fieldDrift: 0.3,
+  magnetism: {base: 0.95, random: 0.05},
+  colorActive: 4,
+  count: 1400,
+};
+
+/** Sticks all combed parallel to a fixed axis (a flow field). */
+export const magneticLines: StickFieldOptions = {
+  fieldMode: 'line',
+  fieldAxis: [0.3, 1, 0.2],
+  magnetism: {base: 0.92, random: 0.06},
+  thickness: {base: 2.4, random: 0, wave: 1.2, waveFreq: 1.8, waveSpeed: 2.4, min: 3, max: 7},
+  count: 1300,
+};
+
+/**
+ * Page scroll drives rotation + breathing. Not in the dropdown: it only does
+ * something on a scrollable page, so it has a dedicated story (ScrollReactive)
+ * rather than the fixed-height Playground.
+ */
+export const scrollReactive: StickFieldOptions = {
+  yawSpeed: 0.05,
+  scrollYaw: 4,
+  scrollPulse: 0.4,
+  reactToMouse: false,
+  followMouse: false,
+};
+
+export const staticFlower: StickFieldOptions = {
+  count: 888,
+  radius: 0.78,
+  stickLength: 0.07,
+  lineWidth: 3.8,
+  rounding: 1,
+  size: {base: 0.9, random: 0.35, wave: 1.4, waveFreq: 0.8, waveSpeed: 1.8, min: 0.15, max: 0.25},
+  thickness: {base: 2.85, random: 0, wave: 1.3, waveFreq: 1.8, waveSpeed: 2.8, min: 3.55, max: 8},
+  distance: {wave: 0.1, waveSpeed: 4.2},
+  shapeOctaves: 3,
+  shapeRoughness: 0.75,
+  shapeSharpness: 1,
+  pulse: 0.04,
+  pulseSpeed: 0.75,
+  flatten: 0,
+  color: {wave: 1.45, random: 0, waveSpeed: 0.75},
+  colorActive: 3,
+  colorChangeSpeed: 2.45,
+  magnetism: {base: 0.8, random: 0.05},
+  fieldMode: 'radial',
+  fieldDrift: 0,
+  yawSpeed: 0.38,
+  pitchAmp: 0.18,
+  pitchSpeed: 0.35,
+  perspective: 4.2,
+  hideBack: true,
+  cullDepth: -0.85,
+  centerDrift: 0,
+  centerDriftSpeed: 0.6,
+  rays: true,
+  rayWidth: 0.3,
+  rayFrom: -0.04,
+  rayTo: 1,
+  rayAlphaNear: 0.4,
+  rayAlphaFar: 0,
+  fog: 0,
+  twinkle: 0,
+  twinkleSpeed: 4,
+  vignette: 0,
+  spin: 0,
+  glow: 0,
+  parallax: 0,
+  additive: false,
+  tiltMax: 0.65,
+  reactToMouse: true,
+  followMouse: true,
+  followStrength: 0,
+  followReach: 1.2,
+  repelMouse: true,
+  repelRadius: 888,
+  repelStrength: 111,
+};
+
+export const organicBlob: StickFieldOptions = {
+  count: 9000,
+  radius: 0.78,
+  origin: [0.5, 0.5],
+  stickLength: 0.07,
+  lineWidth: 3.8,
+  rounding: 1,
+  size: {base: 0.9, random: 0.35, wave: 1.4, waveFreq: 0.8, waveSpeed: 1.8, min: 0.15, max: 0.25},
+  thickness: {base: 2.85, random: 0, wave: 1.3, waveFreq: 1.8, waveSpeed: 2.8, min: 3.55, max: 8},
+  distance: {wave: 0.18, waveSpeed: 4},
+  shapeOctaves: 3,
+  shapeRoughness: 0.75,
+  shapeSharpness: 1,
+  pulse: 0.06,
+  pulseSpeed: 0.8,
+  flatten: 0.75,
+  color: {wave: 2.55, random: 0.85, waveSpeed: 0.75},
+  colorActive: 3,
+  colorChangeSpeed: 2.45,
+  magnetism: {base: 1, random: 0.05},
+  fieldMode: 'radial',
+  fieldDrift: 0,
+  yawSpeed: 0,
+  pitchAmp: 0.18,
+  pitchSpeed: 0.35,
+  perspective: 4.2,
+  hideBack: false,
+  cullDepth: 0.35,
+  centerDrift: 0,
+  centerDriftSpeed: 0.6,
+  rays: false,
+  rayWidth: 1,
+  rayFrom: 0,
+  rayTo: 1,
+  rayAlphaNear: 0.4,
+  rayAlphaFar: 0,
+  fog: 0,
+  twinkle: 0,
+  twinkleSpeed: 4,
+  vignette: 0,
+  spin: 0,
+  glow: 0,
+  parallax: 0,
+  additive: false,
+  tiltMax: 0.65,
+  reactToMouse: true,
+  followMouse: true,
+  followStrength: 0.6,
+  followReach: 1.2,
+  repelMouse: true,
+  repelRadius: 1000,
+  repelStrength: 40,
+};
+
+export const organicBlob2: StickFieldOptions = {
+  count: 9000,
+  radius: 0.5,
+  origin: [0.5, 0.5],
+  stickLength: 0.035,
+  lineWidth: 4.6,
+  rounding: 1,
+  size: {base: 0.5, random: 0.35, wave: 1.4, waveFreq: 0.8, waveSpeed: 1.8, min: 0.15, max: 0.25},
+  thickness: {base: 3.2, random: 0.15, wave: 1.3, waveFreq: 1.8, waveSpeed: 2.8, min: 3.55, max: 8},
+  distance: {wave: 0.18, waveSpeed: 4},
+  shapeOctaves: 3,
+  shapeRoughness: 0.75,
+  shapeSharpness: 1,
+  pulse: 0.06,
+  pulseSpeed: 0.8,
+  flatten: 0.75,
+  color: {wave: 2.55, random: 0.85, waveSpeed: 0.75},
+  colorActive: 4,
+  colorChangeSpeed: 2.45,
+  magnetism: {base: 0.9, random: 0.2},
+  fieldMode: 'radial',
+  fieldDrift: 0.8,
+  yawSpeed: 0,
+  pitchAmp: 0,
+  pitchSpeed: 0,
+  perspective: 4.2,
+  hideBack: true,
+  cullDepth: -0.3,
+  centerDrift: 0,
+  centerDriftSpeed: 0.7,
+  rays: false,
+  rayWidth: 1,
+  rayFrom: 0,
+  rayTo: 1,
+  rayAlphaNear: 0.4,
+  rayAlphaFar: 0,
+  fog: 0,
+  twinkle: 0.26,
+  twinkleSpeed: 4,
+  vignette: 0,
+  spin: 0,
+  glow: 0,
+  parallax: 0,
+  additive: false,
+  tiltMax: 0.65,
+  reactToMouse: true,
+  followMouse: true,
+  followStrength: 0.6,
+  followReach: 1.2,
+  repelMouse: true,
+  repelRadius: 1000,
+  repelStrength: 80,
+};
+
+export const hedgehog: StickFieldOptions = {
+  count: 444,
+  radius: 0.78,
+  origin: [0.78, 0.6],
+  stickLength: 0.02,
+  lineWidth: 4.8,
+  rounding: 1,
+  size: {base: 0.4, random: 0.35, wave: 1.4, waveFreq: 0.8, waveSpeed: 1.8, min: 0.15, max: 0.25},
+  thickness: {base: 3.35, random: 0, wave: 1.3, waveFreq: 1.8, waveSpeed: 2.8, min: 3.55, max: 8},
+  distance: {wave: 0, waveSpeed: 4.2},
+  shapeOctaves: 1,
+  shapeRoughness: 0,
+  shapeSharpness: 1,
+  pulse: 0,
+  pulseSpeed: 0,
+  flatten: 0,
+  color: {wave: 1.45, random: 0, waveSpeed: 0.75},
+  colorActive: 1,
+  colorChangeSpeed: 2.45,
+  magnetism: {base: 0.8, random: 0.05},
+  fieldMode: 'radial',
+  fieldDrift: 0,
+  yawSpeed: 0.38,
+  pitchAmp: 0.18,
+  pitchSpeed: 0.35,
+  perspective: 4.2,
+  hideBack: true,
+  cullDepth: 1,
+  centerDrift: 0.08,
+  centerDriftSpeed: 3,
+  rays: true,
+  rayWidth: 2.4,
+  rayFrom: 0,
+  rayTo: 0.5,
+  rayAlphaNear: 1,
+  rayAlphaFar: 0.14,
+  fog: 0,
+  twinkle: 1,
+  twinkleSpeed: 4,
+  vignette: 0,
+  spin: 0,
+  glow: 0,
+  parallax: 0,
+  additive: false,
+  tiltMax: 0.65,
+  reactToMouse: true,
+  followMouse: false,
+  followStrength: 0.6,
+  followReach: 1.2,
+  repelMouse: true,
+  repelRadius: 265,
+  repelStrength: 105,
+};
+
+export const rotatingRaysOfDots: StickFieldOptions = {
+  count: 333,
+  radius: 0.7,
+  stickLength: 0.07,
+  lineWidth: 3.8,
+  rounding: 1,
+  size: {base: 0.9, random: 0.35, wave: 12, waveFreq: 9.5, waveSpeed: 1.8, min: 0.15, max: 0.25},
+  thickness: {base: 2.85, random: 0, wave: 1.3, waveFreq: 1.8, waveSpeed: 2.8, min: 3.55, max: 8},
+  distance: {wave: 0.1, waveSpeed: 4.2},
+  shapeOctaves: 3,
+  shapeRoughness: 0.75,
+  shapeSharpness: 1,
+  pulse: 0.04,
+  pulseSpeed: 0.75,
+  flatten: 0,
+  color: {wave: 2.2, random: 2.05, waveSpeed: 0.75},
+  colorActive: 3,
+  colorChangeSpeed: 2.45,
+  magnetism: {base: 0.9, random: 0},
+  fieldMode: 'radial',
+  fieldDrift: 1,
+  yawSpeed: 0.38,
+  pitchAmp: 1.5,
+  pitchSpeed: 0.7,
+  perspective: 7.1,
+  hideBack: true,
+  cullDepth: -0.5,
+  centerDrift: 0,
+  centerDriftSpeed: 0.6,
+  rays: true,
+  rayWidth: 0.5,
+  rayFrom: 0.12,
+  rayTo: 0.82,
+  rayAlphaNear: 0.4,
+  rayAlphaFar: 0,
+  fog: 0,
+  twinkle: 0,
+  twinkleSpeed: 12,
+  vignette: 0,
+  spin: 4,
+  glow: 0.05,
+  parallax: 0.24,
+  additive: false,
+  tiltMax: 0.65,
+  reactToMouse: true,
+  followMouse: true,
+  followStrength: 0.6,
+  followReach: 1.2,
+  repelMouse: false,
+  repelRadius: 140,
+  repelStrength: 60,
+};
+
+export const PRESETS: StickFieldPreset[] = [
+  {name: 'Default (Playground)', hint: 'The baseline blobby cloud', config: {}},
+  {name: 'Card footer', hint: 'Static, calm, no mouse', config: cardFooter},
+  {name: 'Behind card', hint: 'Subtle, follows the cursor', config: behindCard},
+  {name: 'Landing hero', hint: 'Big, vivid, reactive', config: landingHero},
+  {name: 'Ambient', hint: 'Slow drift, lazy mouse', config: ambient},
+  {name: 'Squares', hint: 'Sharp rectangles, magnetic', config: squares},
+  {name: 'Rounded squares', hint: 'Rounded-rectangle sticks', config: roundedSquares},
+  {name: 'Rays starburst', hint: 'Rays fanning to the center', config: raysStarburst},
+  {name: 'Nebula', hint: 'Additive glow + twinkle (dark)', config: nebula},
+  {name: 'Sheet', hint: 'Flat undulating sheet', config: sheet},
+  {name: 'Swirl', hint: 'Tangential ring field', config: swirl},
+  {name: 'Magnetic lines', hint: 'Combed flow field', config: magneticLines},
+  {name: 'Organic blob', hint: 'Soft, flowing shapes', config: organicBlob},
+  {name: 'Organic blob 2', hint: 'Soft, flowing shapes', config: organicBlob2},
+  {name: 'Hedgehog', hint: 'Sharp, futuristic spikes', config: hedgehog},
+  {name: 'Rotating rays of dots', hint: 'Rays fanning to the center', config: rotatingRaysOfDots},
+];
+
+/** Merge a preset's overrides onto the default, deep-merging the modulators. */
+export const resolvePreset = (p: StickFieldOptions): StickFieldOptions => ({
+  ...DEFAULT_CONFIG,
+  ...p,
+  size: {...DEFAULT_CONFIG.size, ...p.size},
+  thickness: {...DEFAULT_CONFIG.thickness, ...p.thickness},
+  distance: {...DEFAULT_CONFIG.distance, ...p.distance},
+  color: {...DEFAULT_CONFIG.color, ...p.color},
+  magnetism: {...DEFAULT_CONFIG.magnetism, ...p.magnetism},
+});

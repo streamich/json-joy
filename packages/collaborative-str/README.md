@@ -1,47 +1,37 @@
 # Collaborative plain text editor binding
 
-This package provides binding for a generic text editor to a [JSON CRDT `str` node](https://jsonjoy.com/specs/json-crdt/model-document/node-types#The-str-RGA-String-Node-Type).
+Binds a generic plain text editor to a [JSON CRDT `str` node](https://jsonjoy.com/specs/json-crdt/model-document/node-types#The-str-RGA-String-Node-Type),
+enabling real-time collaborative editing of `<input>`, `<textarea>`, and code
+editors like CodeMirror, Monaco, and Ace.
+
+📖 **[Full documentation →](https://jsonjoy.com/libs/collaborative-str)**
 
 ![collaborative-str](https://github.com/user-attachments/assets/7d1c2158-5890-4e73-8aa8-bc929e9135f8)
 
 
-## Usage
-
-Installation:
+## Installation
 
 ```
 npm install json-joy @jsonjoy.com/collaborative-str
 ```
 
-Simple integration for any plain text editor, for the most basic integration
-you only need to implement the `.get()` and `.set()` methods:
+
+## Usage
+
+The minimal integration implements only `get()` and `set()`:
 
 ```ts
-import {StrBinding, EditorFacade} from '@jsonjoy.com/collaborative-str';
-import {Model} from 'json-joy/lib/json-crdt';
+import {StrBinding} from '@jsonjoy.com/collaborative-str';
 
-const str = model.api.str(['path', 'to', 'string']);
-const unbind = StrBinding.bind(str, {
-  get: () => input.value,
-  set: (value: string) => input.value = value,
-}, true);
+const unbind = StrBinding.bind(
+  () => model.api.str(['path', 'to', 'string']),
+  {
+    get: () => input.value,
+    set: (text) => { input.value = text; },
+  },
+  true,
+);
 ```
 
-For a better integration, implement as many `EditorFacade` methods as possible:
-
-```ts
-import {StrBinding, EditorFacade} from '@jsonjoy.com/collaborative-str';
-
-const editor: EditorFacade = {
-  // ...
-};
-
-const str = model.api.str(['path', 'to', 'string']);
-const binding = new StrBinding(str, editor);
-
-binding.syncFromModel();
-binding.bind(polling);
-
-// When done, unbind the binding.
-binding.unbind();
-```
+For granular sync, implement more of the `EditorFacade` interface — see the
+[full documentation](https://jsonjoy.com/libs/collaborative-str).

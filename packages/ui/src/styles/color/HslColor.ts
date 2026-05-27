@@ -39,7 +39,7 @@ export class HslColor {
     if (typeof source !== 'string') return;
     if (source[0] === 'h') return HslColor.fromString(source);
     const rgb = RgbColor.fromString(source);
-    return rgb ? HslColor.fromRgb(rgb) : rgb;
+    return rgb ? HslColor.fromRgb(rgb) : undefined;
   }
 
   public static fromString(hsl: string): HslColor | undefined {

@@ -35,9 +35,9 @@ export const GlobalCss = () => {
   const theme = useTheme();
 
   useIsomorphicLayoutEffect(() => {
-    console.log(theme.bg);
     document.body.style.background = theme.bg;
     document.body.style.color = theme.g(0.05, 0.85);
+    document.body.style.setProperty('--jj-heading', theme.g(0.03, 0.97));
   }, [theme]);
 
   return null;

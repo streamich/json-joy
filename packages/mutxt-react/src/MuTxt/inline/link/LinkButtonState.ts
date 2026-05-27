@@ -2,7 +2,14 @@ import {rsync} from '@jsonjoy.com/ui';
 import {flushSync} from 'react-dom';
 import {ReactEditor} from 'slate-react';
 import {Transforms, type Editor, type Range} from 'slate';
-import {getActiveLink, normalizeLinkHref, removeLink, type ActiveLink, upsertLink} from '../../behavior/link';
+import {
+  getActiveLink,
+  isRangeInEditor,
+  normalizeLinkHref,
+  removeLink,
+  type ActiveLink,
+  upsertLink,
+} from '../../behavior/link';
 import type {MuTxtState} from '../../state/MuTxtState';
 
 export class LinkButtonState {
@@ -104,13 +111,26 @@ export class LinkButtonState {
 
   public readonly remove = (): void => {
     const editor = this.editor;
-    const range = this.rangeSnapshot.value;
-    if (range) {
+    const snapshot = this.rangeSnapshot.value;
+    if (snapshot && isRangeInEditor(editor, snapshot)) {
       try {
-        Transforms.select(editor, range);
+        Transforms.select(editor, snapshot);
       } catch {}
     }
-    if (!removeLink(editor, range ?? undefined)) return;
-    this.close();
+    if (!removeLink(editor)) return;
+    const restored = editor.selection && isRangeInEditor(editor, editor.selection) ? {...editor.selection} : null;
+    this.open.set(false);
+    this.anchorRect.set(null);
+    this.rangeSnapshot.set(null);
+    if (restored && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(() => {
+        try {
+          window.getSelection()?.removeAllRanges();
+        } catch {}
+        try {
+          Transforms.select(editor, restored);
+        } catch {}
+      });
+    }
   };
 }

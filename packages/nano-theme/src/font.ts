@@ -1,6 +1,7 @@
 import type {ThemeFontPalette} from './types';
 
 const sans = '"Open Sans",sans-serif';
+const display = '"Inter",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,sans-serif';
 const serif = '"Merriweather","Linux Libertine"';
 const slab = '"Roboto Slab"';
 const ui1 =
@@ -16,6 +17,12 @@ export const font: ThemeFontPalette = {
     mid: {fw: 400, ff: sans},
     bold: {fw: 700, ff: sans},
     black: {fw: 800, ff: sans},
+  },
+  display: {
+    lite: {fw: 400, ff: display},
+    mid: {fw: 500, ff: display},
+    bold: {fw: 700, ff: display},
+    black: {fw: 800, ff: display},
   },
   serif: {
     lite: {fw: 300, ff: serif},

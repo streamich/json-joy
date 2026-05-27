@@ -113,7 +113,8 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
     });
 
     const blockStyle: React.CSSProperties = {
-      background: transparent ? 'transparent' : light ? styles.bg + '' : styles.g(0.94),
+      // background: transparent ? 'transparent' : light ? styles.bg + '' : styles.g(0.94),
+      background: transparent ? 'transparent' : light ? '#fff' + '' : styles.g(0.94),
       color: styles.g(0.2),
       boxShadow:
         transparent || borderless

@@ -65,10 +65,20 @@ const scoreText = (query: string, text: string): number => {
   return 0;
 };
 
-export const findMenuItems = (root: MenuItem, query: string): SearchMatch[] => {
+export interface FindMenuItemsOpts {
+  /**
+   * When `true`, include intermediate container nodes (items with `children`)
+   * that have their own `onSelect` handler in the search results, even when
+   * one of their descendants also matched.
+   */
+  includeContainers?: boolean;
+}
+
+export const findMenuItems = (root: MenuItem, query: string, opts: FindMenuItemsOpts = {}): SearchMatch[] => {
   const result: SearchMatch[] = [];
   query = query.trim();
   if (!query) return result;
+  const includeContainers = !!opts.includeContainers;
   const find = (path: MenuItem[], curr: MenuItem) => {
     if (curr.sep || curr.heading) return;
     // Skip inline-only raw items
@@ -87,7 +97,11 @@ export const findMenuItems = (root: MenuItem, query: string): SearchMatch[] => {
       const before = result.length;
       const newPath = [...path, curr];
       for (let i = 0; i < children.length; i++) find(newPath, children[i]);
-      if (score > 0 && result.length === before) result.push({path, item: curr, score});
+      const noneMatched = result.length === before;
+      const containerSelectable = includeContainers && !!curr.onSelect;
+      if (score > 0 && (noneMatched || containerSelectable)) {
+        result.push({path, item: curr, score});
+      }
     } else if (score > 0) {
       result.push({path, item: curr, score});
     }

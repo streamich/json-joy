@@ -9,6 +9,7 @@ import Note from '../components/Note';
 import Screenshot from '../components/Screenshot';
 import Wide from '../components/Wide';
 import Aside from '../components/Aside';
+import Iframe from '../components/Iframe';
 
 export const introClass = rule({
   fz: '0.9em',
@@ -53,6 +54,15 @@ const renderCode: RenderNode = (renderers, flat, idx, props, state) => {
     }
     case 'jj.aside': {
       return <Aside node={node} />;
+    }
+    case 'jj.iframe': {
+      try {
+        const json = JSON.parse(node.value);
+        return <Iframe {...json} />;
+      } catch (e) {
+        console.error('Failed to parse jj.iframe JSON:', e);
+        return null;
+      }
     }
     default: {
       return renderCodeDefault(renderers, flat, idx, props, state);

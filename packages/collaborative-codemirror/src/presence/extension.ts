@@ -1,8 +1,7 @@
 import {ViewPlugin, Decoration, type DecorationSet} from '@codemirror/view';
 import {Annotation, RangeSetBuilder} from '@codemirror/state';
 import {str as strPresence} from '@jsonjoy.com/collaborative-presence';
-import {UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
+import {UserPresenceIdx, NodeType} from '@jsonjoy.com/collaborative-presence';
 import * as view from './view';
 import {CursorManager, CursorWidget} from './view';
 import type {CursorRenderOpts} from './view';
@@ -248,5 +247,5 @@ const clamp = (v: number, min: number, max: number): number => (v < min ? min : 
 
 const isRgaSelection = (sel: unknown): sel is RgaSelection => {
   if (!Array.isArray(sel) || sel.length < 8) return false;
-  return sel[5] === JsonCrdtDataType.str || sel[5] === JsonCrdtDataType.bin || sel[5] === JsonCrdtDataType.arr;
+  return sel[5] === NodeType.str || sel[5] === NodeType.bin || sel[5] === NodeType.arr;
 };

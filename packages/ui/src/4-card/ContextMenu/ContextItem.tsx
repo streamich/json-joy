@@ -58,6 +58,8 @@ const smallTextClass = drule({
 
 const nestedClass = rule({
   d: 'flex',
+  ai: 'center',
+  jc: 'center',
   w: '20px',
   h: '20px',
   mar: '-2px',
@@ -210,7 +212,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
 
   if (nested) {
     element = (
-      <Split as="span">
+      <Split as="span" align="center">
         {element}
         <span className={nestedClass} style={{paddingInlineStart: 12, opacity: open ? 1 : 0.7}}>
           <Arrow direction={open ? 'r' : 'd'} />

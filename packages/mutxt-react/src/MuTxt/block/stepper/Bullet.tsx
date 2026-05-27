@@ -3,7 +3,7 @@ import {rule} from 'nano-theme';
 import {BulletGlyph} from './BulletGlyph';
 import {BulletHalo} from './BulletHalo';
 import {BulletSquigglyRing} from './BulletSquigglyRing';
-import {INDICATOR_SIZE} from './settings';
+import {INDICATOR_SIZE, radiusToCss} from './settings';
 import type {LineStyle, StepIndicator, StepState} from './types';
 
 export const bulletClassName = 'mutxt-step-bullet';
@@ -12,7 +12,6 @@ const bulletClass = rule({
   pos: 'relative',
   w: `${INDICATOR_SIZE}px`,
   h: `${INDICATOR_SIZE}px`,
-  bdrad: '50%',
   d: 'flex',
   ai: 'center',
   jc: 'center',
@@ -22,16 +21,10 @@ const bulletClass = rule({
   lh: '1',
   us: 'none',
   flexShrink: 0,
-  trs: 'background-color .08s ease, border-color .08s ease, color .08s ease, box-shadow .08s ease, transform .08s ease',
+  trs: 'background-color .08s ease, border-color .08s ease, color .08s ease, box-shadow .08s ease',
   overflow: 'hidden',
-  willChange: 'transform',
-  backfaceVisibility: 'hidden',
   '&:hover': {
-    bxsh: '0 0 0 4px rgba(127,127,127,0.14)',
-    transform: 'scale(1.04)',
-  },
-  '&:active': {
-    transform: 'scale(0.97)',
+    bxsh: '0 0 0 4px rgba(127,127,127,0.06)',
   },
 });
 
@@ -51,6 +44,7 @@ export interface BulletProps {
   indicator: StepIndicator;
   chars: string;
   index: number;
+  radius: number;
   bg: string;
   glyphColor: string;
   ring: LineStyle;
@@ -84,6 +78,7 @@ export const Bullet: React.FC<BulletProps> = ({
   indicator,
   chars,
   index,
+  radius,
   bg,
   glyphColor,
   ring,
@@ -104,6 +99,7 @@ export const Bullet: React.FC<BulletProps> = ({
         style={{
           background: isSquigglyRing ? 'transparent' : bg,
           color: glyphColor,
+          borderRadius: radiusToCss(radius),
           ...borderStyles,
           ...(showCssBorder ? {borderWidth: ringWidth, borderColor: ringColor} : null),
           ...(isSquigglyRing ? {overflow: 'visible'} : null),

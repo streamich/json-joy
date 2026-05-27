@@ -37,24 +37,28 @@ export const TopBar: React.FC = () => {
     <Paper contrast style={{margin: '-1px -1px 2px', padding: 16}}>
       <Split>
         <Flex style={{alignItems: 'center'}}>
-          <BasicTooltip renderTooltip={() => 'Synchronize models both ways'} nowrap>
-            <Button size={-2} compact onClick={state.synchronize}>
-              Synchronize
-            </Button>
-          </BasicTooltip>
-          <Space horizontal />
-          <BasicButtonGroup>
-            <BasicTooltip renderTooltip={() => 'Sync right-to-left'} nowrap>
-              <BasicButton fill width="auto" compact onClick={state.syncRightToLeft}>
-                ←
-              </BasicButton>
-            </BasicTooltip>
-            <BasicTooltip renderTooltip={() => 'Sync left-to-right'} nowrap>
-              <BasicButton fill width="auto" compact onClick={state.syncLeftToRight}>
-                →
-              </BasicButton>
-            </BasicTooltip>
-          </BasicButtonGroup>
+          {!autoSync && (
+            <>
+              <BasicTooltip renderTooltip={() => 'Synchronize models both ways'} nowrap>
+                <Button size={-4} compact onClick={state.synchronize}>
+                  Synchronize
+                </Button>
+              </BasicTooltip>
+              <Space horizontal />
+              <BasicButtonGroup>
+                <BasicTooltip renderTooltip={() => 'Sync right-to-left'} nowrap>
+                  <BasicButton fill width="auto" compact onClick={state.syncRightToLeft}>
+                    ←
+                  </BasicButton>
+                </BasicTooltip>
+                <BasicTooltip renderTooltip={() => 'Sync left-to-right'} nowrap>
+                  <BasicButton fill width="auto" compact onClick={state.syncLeftToRight}>
+                    →
+                  </BasicButton>
+                </BasicTooltip>
+              </BasicButtonGroup>
+            </>
+          )}
         </Flex>
         <Flex style={{alignItems: 'center', justifyContent: 'flex-end'}}>
           <Text size={-2} font="ui3" noselect>

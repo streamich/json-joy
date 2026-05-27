@@ -1,15 +1,35 @@
 # Collaborative rich-text editor binding
 
-This package provides binding for a generic rich-text editor to a JSON CRDT `peritext` node.
+Binds a generic rich-text editor to a JSON CRDT `peritext` node, enabling
+real-time collaborative rich-text editing.
+
+📖 **[Full documentation →](https://jsonjoy.com/libs/collaborative-peritext)**
 
 
-## Usage
-
-Installation:
+## Installation
 
 ```
 npm install json-joy @jsonjoy.com/collaborative-peritext
 ```
+
+
+## Usage
+
+```ts
+import {PeritextBinding, type RichtextEditorFacade} from '@jsonjoy.com/collaborative-peritext';
+
+const editor: RichtextEditorFacade = {
+  get: () => toViewRange(myEditor),
+  set: (fragment) => renderFragment(myEditor, fragment),
+  // optional: onchange, getSelection, setSelection, dispose
+};
+
+const unbind = PeritextBinding.bind(() => peritextApi, editor);
+```
+
+See the [full documentation](https://jsonjoy.com/libs/collaborative-peritext)
+for the complete `RichtextEditorFacade` interface.
+
 
 ## Funding
 

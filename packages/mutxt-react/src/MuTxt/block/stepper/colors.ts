@@ -4,8 +4,10 @@ import type {Styles} from '@jsonjoy.com/ui/lib/styles/Styles';
 import type {StepState} from './types';
 
 export interface StepStateColors {
-  /** Color used for ring stroke, connector line, halo. */
+  /** Color used for the connector line and halo. */
   line: string;
+  /** Color used for the bullet ring (outline). */
+  ring: string;
   /** Default background fill behind the bullet disc. */
   bg: string;
   /** Color of the glyph rendered inside the bullet (for the state default bg). */
@@ -16,28 +18,32 @@ export interface StepStateColors {
 export const getStepStateColors = (styles: Styles, state: StepState): StepStateColors => {
   switch (state) {
     case 'pending': {
-      const line = styles.grey.toString();
-      return {line, bg: styles.grey.g(0.04), glyph: line};
+      return {
+        ring: styles.grey.g(0.22),
+        line: styles.grey.g(0.62),
+        bg: styles.bg.toString(),
+        glyph: styles.grey.g(1),
+      };
     }
     case 'active': {
       const line = styles.g(0.05);
-      return {line, bg: styles.grey.g(0.04), glyph: line};
+      return {line, ring: line, bg: styles.grey.g(0.04), glyph: line};
     }
     case 'done': {
       const line = styles.positive.toString();
-      return {line, bg: line, glyph: '#ffffff'};
+      return {line, ring: line, bg: line, glyph: '#ffffff'};
     }
     case 'warning': {
       const line = styles.warning.toString();
-      return {line, bg: styles.warning.g(0.04), glyph: line};
+      return {line, ring: line, bg: styles.warning.g(0.04), glyph: line};
     }
     case 'error': {
       const line = styles.negative.toString();
-      return {line, bg: styles.negative.g(0.04), glyph: line};
+      return {line, ring: line, bg: styles.negative.g(0.04), glyph: line};
     }
     case 'optional': {
       const line = styles.grey.g(0.35);
-      return {line, bg: styles.grey.g(0.02), glyph: line};
+      return {line, ring: line, bg: styles.grey.g(0.02), glyph: line};
     }
   }
 };

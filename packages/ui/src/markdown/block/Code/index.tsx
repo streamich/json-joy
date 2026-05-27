@@ -7,6 +7,7 @@ import MarkdownBlock from '../../util/MarkdownBlock';
 import MarkdownFullWidthBlock from '../../util/MarkdownFullWidthBlock';
 import isFirstLevelBlockElement from '../../util/isFirstLevelBlockElement';
 import HighlightCode from '../../../1-inline/HighlightCode';
+import {CopyButton} from '../../../2-inline-block/CopyButton';
 import {lightTheme, rule, drule} from 'nano-theme';
 import {useStyles} from '../../../styles/context';
 
@@ -27,6 +28,28 @@ const blockClass = drule({
 
 const blockCompactClass = rule({
   pad: `${lightTheme.g(0.2)}px ${lightTheme.g(0.3)}px !important`,
+});
+
+const copyClass = rule({
+  pos: 'absolute',
+  top: '8px',
+  right: '8px',
+  d: 'block',
+  trs: 'opacity 0.12s ease-in-out',
+  op: 0,
+  '@media (hover: none)': {
+    op: 1,
+  },
+});
+
+const wrapClass = rule({
+  pos: 'relative',
+  [`&:hover .${copyClass.trim()}`]: {
+    op: 1,
+  },
+  [`&:focus-within .${copyClass.trim()}`]: {
+    op: 1,
+  },
 });
 
 const {useContext} = React;
@@ -52,13 +75,15 @@ const Code: React.FC<IMarkdownBlockCodeProps> = ({idx}) => {
   const blockStyle: React.CSSProperties = {};
 
   const element = (
-    <MarkdownBlock
-      idx={idx}
-      as="pre"
-      className={cls + (props.isCompact ? ' ' + blockCompactClass : '')}
-      style={blockStyle}
-    >
-      {lang ? <HighlightCode code={value} lang={lang || undefined} /> : <code>{value}</code>}
+    <MarkdownBlock idx={idx} as="div" className={wrapClass} style={blockStyle}>
+      <pre className={cls + (props.isCompact ? ' ' + blockCompactClass : '')} style={{margin: 0}}>
+        {lang ? <HighlightCode code={value} lang={lang || undefined} /> : <code>{value}</code>}
+      </pre>
+      <span className={copyClass} style={{background: styles.bg + ''}}>
+        {/* <span style={{display: 'block', position: 'relative'}}> */}
+        <CopyButton onCopy={() => value} width={28} height={28} rounder />
+        {/* </span> */}
+      </span>
     </MarkdownBlock>
   );
 

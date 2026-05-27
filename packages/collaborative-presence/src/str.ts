@@ -1,4 +1,4 @@
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
+import {NodeType} from './constants';
 import * as id from './id';
 import type {ITimestampStruct, StrApi, StrNode, Model} from 'json-joy/lib/json-crdt';
 import type {PresenceIdShorthand, PresencePoint, RgaSelection, PresenceCursor} from './types';
@@ -49,7 +49,7 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
     }
     cursors.push(cursor);
   }
-  const selection: RgaSelection = ['', '', sid, clock.time, {}, JsonCrdtDataType.str, nodeId, cursors];
+  const selection: RgaSelection = ['', '', sid, clock.time, {}, NodeType.str, nodeId, cursors];
   return selection;
 };
 
@@ -80,7 +80,7 @@ const findOffset = (str: StrNode, tsId: ITimestampStruct): number => {
 export const fromDto = (model: Model<any>, selection: RgaSelection): StrSelectionStrict[] => {
   const [_documentId, _uiLocationId, sid, _time, _meta, type, nodeIdDto, cursors] = selection;
   const result: StrSelectionStrict[] = [];
-  if (type !== JsonCrdtDataType.str) return result;
+  if (type !== NodeType.str) return result;
   const nodeId = id.fromDto(sid, nodeIdDto);
   const str = model.index.get(nodeId) as StrNode | undefined;
   if (!str || str.name() !== 'str') return result;

@@ -66,7 +66,8 @@ export class ContextMenuState {
     this.search$.subscribe((query) => {
       if (!query) this.matches$.next([]);
       else {
-        const matches = findMenuItems(this.root, query);
+        const includeContainers = !!this.props?.searchIncludeContainers;
+        const matches = findMenuItems(this.root, query, {includeContainers});
         this.matches$.next(matches);
       }
     });

@@ -4,7 +4,7 @@ import {ContextSep} from '../ContextSep';
 import {ContextPane, type ContextPaneProps} from '../ContextPane';
 import {useContextMenu} from './context';
 import {ContextMenuHeader} from './ContextMenuHeader';
-import {ContextMenuSearch} from './ContextMenuSearch';
+import {ContextMenuSearch, type ContextMenuSearchProps} from './ContextMenuSearch';
 import {useBehaviorSubject} from '../../../hooks/useBehaviorSubject';
 import {OpenPanelState} from './OpenPanelState';
 import {ExpandSection} from './ExpandSection';
@@ -39,8 +39,14 @@ export interface ContextMenuPaneProps {
   inset?: boolean;
   pane?: ContextPaneProps;
   showSearch?: boolean;
+  searchLabel?: ContextMenuSearchProps['searchLabel'];
   /** Placeholder text for the search input. Defaults to "Find…". */
   searchPlaceholder?: string;
+  /**
+   * When `true`, the search results also include intermediate container
+   * items (those with `children`) that have their own `onSelect` handler.
+   */
+  searchIncludeContainers?: boolean;
   header?: React.ReactNode;
 
   onEsc?: () => void;
@@ -254,6 +260,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
       {doShowSearch && (
         <ContextMenuSearch
           inset={inset}
+          searchLabel={props.searchLabel}
           searchPlaceholder={props.searchPlaceholder}
           ContextMenuPane={ContextMenuPane}
         />

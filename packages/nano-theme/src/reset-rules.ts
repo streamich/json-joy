@@ -17,6 +17,7 @@ export const ROOT_DECLS: Rules = {
 export const DESCENDANT_RULES: Rules = {
   ':where(h1,h2,h3,h4,h5,h6,p,ul,ol,figure,blockquote,dl,dd)': {mr: 0},
   ':where(p,h1,h2,h3,h4,h5,h6)': {overflowWrap: 'break-word'},
+  ':where(h1,h2,h3,h4,h5,h6)': {color: 'var(--colTxtSharp,inherit)'},
   ':where(img,picture,video,canvas)': {d: 'block', maxW: '100%'},
   'button,input,optgroup,select,textarea': {
     ff: 'inherit',

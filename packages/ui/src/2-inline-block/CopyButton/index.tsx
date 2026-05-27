@@ -40,30 +40,46 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip, ...rest}
       {...tooltip}
     >
       <BasicButton {...rest} onClick={handleClick}>
-        <div style={{position: 'relative', width: 16, height: 16, overflow: 'hidden'}}>
-          <div
+        {/* Spans (not divs) and explicit margins so ambient markdown rules
+            like `div+div { margin-top: 2em }` cannot shift the icon stack. */}
+        <span
+          style={{
+            display: 'block',
+            position: 'relative',
+            width: 16,
+            height: 16,
+            margin: 0,
+            lineHeight: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <span
             style={{
+              display: 'block',
               position: 'absolute',
               top: 0,
               left: 0,
+              margin: 0,
               transform: copied ? 'translateY(100%)' : 'translateY(0%)',
               transition: 'transform 150ms ease-in-out',
             }}
           >
-            <CopyIcon width={16} height={16} />
-          </div>
-          <div
+            <CopyIcon width={16} height={16} style={{display: 'block'}} />
+          </span>
+          <span
             style={{
+              display: 'block',
               position: 'absolute',
               top: 0,
               left: 0,
+              margin: 0,
               transform: copied ? 'translateY(0%)' : 'translateY(-100%)',
               transition: 'transform 150ms ease-in-out',
             }}
           >
-            <CheckIcon width={16} height={16} />
-          </div>
-        </div>
+            <CheckIcon width={16} height={16} style={{display: 'block'}} />
+          </span>
+        </span>
       </BasicButton>
     </BasicTooltip>
   );

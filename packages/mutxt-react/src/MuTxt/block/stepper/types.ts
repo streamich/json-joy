@@ -34,6 +34,9 @@ export interface StepperItem {
    * semi-transparent grey is used or semantic (based on `stepState`) solid fill. */
   stepBg?: string;
 
+  /** Bullet corner roundness, 0 (square) to 100 (fully round). Defaults to 50. */
+  stepRadius?: number;
+
   /** Inner ring line style override. */
   ring?: LineStyle;
   /** Inner ring color override. */

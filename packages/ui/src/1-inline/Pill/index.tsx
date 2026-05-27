@@ -32,6 +32,10 @@ export interface PillProps {
   solid?: boolean;
   /** Smaller size variant. */
   small?: boolean;
+  /** Dimmed appearance variant. */
+  dim?: boolean;
+  /** Outline appearance variant. */
+  outline?: boolean;
   className?: string;
   style?: React.CSSProperties;
   onClick?: React.MouseEventHandler<HTMLSpanElement>;
@@ -54,7 +58,17 @@ const resolveBase = (styles: Styles, color: PillColor): string => {
   return color;
 };
 
-export const Pill: React.FC<PillProps> = ({color = 'neutral', solid, small, className, style, onClick, children}) => {
+export const Pill: React.FC<PillProps> = ({
+  color = 'neutral',
+  solid,
+  small,
+  dim,
+  outline,
+  className,
+  style,
+  onClick,
+  children,
+}) => {
   const styles = useStyles();
   const base = resolveBase(styles, color);
 
@@ -64,8 +78,10 @@ export const Pill: React.FC<PillProps> = ({color = 'neutral', solid, small, clas
         col: styles.light ? '#fff' : styles.g(0.04),
       }
     : {
-        bg: color === 'neutral' ? styles.g(0, 0.06) : `${base}1f`,
-        col: color === 'neutral' ? styles.g(0.25) : base,
+        bg: outline ? 'transparent' : dim ? styles.g(0, 0.035) : color === 'neutral' ? styles.g(0, 0.06) : `${base}1f`,
+        // bg: dim ? 'transparent' : color === 'neutral' ? styles.g(0, 0.06) : `${base}1f`,
+        col: dim ? styles.g(0.2, 0.8) : color === 'neutral' ? styles.g(0.25) : base,
+        bd: outline ? `1px solid ${styles.g(0.08, 0.08)}` : 'none',
       };
 
   return (

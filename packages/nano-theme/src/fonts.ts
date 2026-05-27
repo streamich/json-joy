@@ -1,5 +1,5 @@
 export const googleFonts =
-  'https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800|Roboto+Mono|Merriweather:300,400,700|Roboto+Slab:300,400,700|Roboto:300,500|Ubuntu:400&subset=cyrillic';
+  'https://fonts.googleapis.com/css?family=Inter:400,500,600,700,800|Open+Sans:300,400,700,800|Roboto+Mono|Merriweather:300,400,700|Roboto+Slab:300,400,700|Roboto:300,500|Ubuntu:400&subset=cyrillic';
 
 const isClient = typeof window === 'object';
 let loaded = false;

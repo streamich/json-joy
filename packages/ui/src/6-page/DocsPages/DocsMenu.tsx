@@ -9,14 +9,20 @@ export interface Props {
   page: ContentPage;
 }
 
-const pageToItem = (page: ContentPage, path: string): MenuItemDef => {
+const pageToItem = (page: ContentPage, path: string, index: number): MenuItemDef => {
+  if (page.sep) {
+    return {
+      key: 'sep-' + (page.id ?? page.name ?? index),
+      sep: true,
+    };
+  }
   return {
-    key: page.to || page.id || page.title || '',
-    menuItem: page.name,
+    key: page.to || page.id || page.title || page.name || String(index),
+    menuItem: page.display ? page.display() : page.name,
     to: page.to,
     active: path === page.to,
-    activeChild: path === page.to || path.startsWith(page.to + '/'),
-    children: page.children ? page.children.map((item) => pageToItem(item, path)) : undefined,
+    activeChild: path === page.to || (!!page.to && path.startsWith(page.to + '/')),
+    children: page.children ? page.children.map((item, i) => pageToItem(item, path, i)) : undefined,
     onMouseDown: page.md ? () => page.md!().catch(() => {}) : undefined,
   };
 };
@@ -27,7 +33,7 @@ const DocsMenu: React.FC<Props> = ({steps, page}) => {
   return (
     <div style={{width: NiceUiSizes.SidebarWidth}}>
       <Space />
-      <Menu items={[pageToItem(page, path)]} />
+      <Menu items={[pageToItem(page, path, 0)]} />
     </div>
   );
 };

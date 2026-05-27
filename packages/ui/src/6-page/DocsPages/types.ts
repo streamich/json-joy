@@ -1,19 +1,24 @@
 import type {Flat} from 'mdast-flat/lib/types';
+import type {MenuItem} from '../../4-card/StructuralMenu/types';
+import React from 'react';
 
-export type PageTypes = 'blog' | 'resource' | 'spec' | 'spec-note';
+export type PageTypes = 'blog' | 'resource' | 'spec' | 'spec-note' | 'lib';
 
-export interface ContentPage {
+/**
+ * Tree of site content pages.
+ *
+ * Extends {@link MenuItem}, so any `ContentPage` is also a valid menu item
+ * and can be rendered directly by `<ContextMenu>`, `<ToolbarMenu>`, etc.
+ */
+export interface ContentPage extends MenuItem {
   /** Type of the page, whether it is blog post, resource, etc.. */
   type?: PageTypes;
-  /** Unique identifier of the page. */
-  id?: string;
 
-  /** As displayed in navigation menu. */
-  name: string;
   /** As displayed in main page title. */
   title?: string;
   /** As subtitle to the main page title. */
-  subtitle?: string;
+  subtitle?: React.ReactNode;
+  smallSubtitle?: string;
   /** Up to a paragraph short description. */
   about?: string;
   /** Pointer to the parent page. */
@@ -45,8 +50,12 @@ export interface ContentPage {
   /** Sorted list of children. */
   children?: ContentPage[];
 
+  /** NPM package name. */
+  pkg?: string;
   /**  GitHub repo name, if the page is a code library. */
   repo?: string;
+  /** Path within the repo. */
+  repoPath?: string;
 }
 
 /** @todo Is this needed? */
