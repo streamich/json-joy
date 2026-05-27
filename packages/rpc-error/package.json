@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.24.0",
+  "version": "18.25.0",
   "description": "RPC error class and error codes for JSON RPC APIs",
   "author": {
     "name": "streamich",

@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.24.0",
+  "version": "18.25.0",
   "description": "HTTP and WebSocket server implementations for Reactive JSON RPC.",
   "author": {
     "name": "streamich",

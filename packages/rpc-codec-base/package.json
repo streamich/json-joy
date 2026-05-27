@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.24.0",
+  "version": "18.25.0",
   "description": "Base types and utilities for RPC message codecs",
   "author": {
     "name": "streamich",
