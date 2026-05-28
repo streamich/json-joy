@@ -3070,6 +3070,7 @@ __metadata:
     react-use: "npm:^17.6.0"
     rxjs: "npm:^7.8.2"
     slate: "npm:>=0.100.0"
+    slate-history: "npm:>=0.100.0"
     slate-react: "npm:>=0.100.0"
     sonic-forest: "npm:^1.2.1"
     thingies: "npm:^2.6.0"
@@ -17243,6 +17244,15 @@ __metadata:
   peerDependencies:
     slate: ">=0.121.0"
   checksum: 10c0/ca1fc5d1f8c2f51466267d4e71007bcf4427263fc641118be6057f5353b6ff6a75ebeb45c5fd4c914c1a3ae1370c58d88c81f675e5c2e0eb32a73e821e91ffd7
+  languageName: node
+  linkType: hard
+
+"slate-history@npm:>=0.100.0":
+  version: 0.115.0
+  resolution: "slate-history@npm:0.115.0"
+  peerDependencies:
+    slate: ">=0.114.3"
+  checksum: 10c0/a33119e944bbc8f5193b509d749214d4ed8db40c7a690cae81359ea27ffe491c9aa15c65891c69710d99ca4e288a627a06c0193c1edb4dcf471e62a745a348e6
   languageName: node
   linkType: hard
 

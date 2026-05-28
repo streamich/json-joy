@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {createEditor, type Descendant, Editor} from 'slate';
 import {Slate, Editable, withReact, type RenderLeafProps, type RenderElementProps} from 'slate-react';
+import {withHistory} from 'slate-history';
 import {bind, useSlatePresence, withPresenceLeaf} from '@jsonjoy.com/collaborative-slate';
 import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
@@ -63,13 +64,13 @@ interface LiveSlateDemoInnerProps {
 const initialValue: Descendant[] = [{type: 'paragraph', children: [{text: ''}]} as any];
 
 const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id, manager}) => {
-  const editor = React.useMemo(() => withReact(createEditor()), []);
+  const editor = React.useMemo(() => withHistory(withReact(createEditor())), []);
 
   // Bind Slate ↔ CRDT.
   React.useEffect(() => {
     model.ext.register(ext.peritext);
     const peritextRef = () => (model as any).s.toExt();
-    const unbind = bind(peritextRef, editor);
+    const unbind = bind(peritextRef, editor as any);
     return () => {
       unbind();
     };
@@ -106,7 +107,7 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
   const {decorate, sendLocalPresence} = useSlatePresence({
     manager,
     peritext: () => (model as any).s.toExt(),
-    editor,
+    editor: editor as any,
   });
 
   const renderLeaf = React.useMemo(
@@ -176,7 +177,7 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
             style={{padding: '16px 20px', minHeight: '280px', fontSize: '16px', lineHeight: 1.6, outline: 'none'}}
             renderLeaf={renderLeaf}
             renderElement={renderElement}
-            decorate={decorate}
+            decorate={decorate as any}
             onKeyDown={handleKeyDown}
             placeholder="Start typing..."
             spellCheck

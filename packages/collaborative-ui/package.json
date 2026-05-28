@@ -61,6 +61,7 @@
     "quill-delta": "^5.1.0",
     "react-use": "^17.6.0",
     "slate": ">=0.100.0",
+    "slate-history": ">=0.100.0",
     "slate-react": ">=0.100.0",
     "sonic-forest": "^1.2.1",
     "thingies": "^2.6.0",
