@@ -3090,11 +3090,11 @@ __metadata:
     codemirror:
       optional: true
     slate:
-      optional: false
+      optional: true
     slate-history:
-      optional: false
+      optional: true
     slate-react:
-      optional: false
+      optional: true
   languageName: unknown
   linkType: soft
 
