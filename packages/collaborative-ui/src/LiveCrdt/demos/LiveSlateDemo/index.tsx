@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {createEditor, type Descendant, Editor, Transforms, Element as SlateElement, type BaseEditor} from 'slate';
-import {Slate, Editable, withReact, type RenderLeafProps, type RenderElementProps, type ReactEditor} from 'slate-react';
+import {createEditor, type Descendant, Editor} from 'slate';
+import {Slate, Editable, withReact, type RenderLeafProps, type RenderElementProps} from 'slate-react';
 import {bind, useSlatePresence, withPresenceLeaf} from '@jsonjoy.com/collaborative-slate';
 import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
@@ -123,9 +123,10 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
 
   const renderElement = React.useCallback(({attributes, children, element}: RenderElementProps) => {
     switch ((element as any).type) {
-      case 'heading':
+      case 'heading': {
         const Tag = `h${(element as any).level || 1}` as 'h1' | 'h2' | 'h3';
         return <Tag {...attributes}>{children}</Tag>;
+      }
       case 'blockquote':
         return (
           <blockquote {...attributes} style={{borderLeft: '4px solid #ccc', paddingLeft: '1rem', color: '#555'}}>

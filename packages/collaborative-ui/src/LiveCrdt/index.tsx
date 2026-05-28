@@ -95,7 +95,7 @@ export const LiveCrdt: React.FC<LiveCrdtProps> = ({
       created?.dispose();
       setSession(null);
     };
-  }, [repo, id, remoteTimeout]);
+  }, [repo, id, remoteTimeout, schema, setup]);
 
   if (!session) return <>{loading}</>;
   return (
@@ -112,7 +112,7 @@ const LiveCrdtInner: React.FC<{
 }> = ({session, repo, children}) => {
   const model = session.model;
   const getSnapshot = React.useCallback(() => model.tick, [model]);
-  const tick = React.useSyncExternalStore(model.api.subscribe, getSnapshot);
+  React.useSyncExternalStore(model.api.subscribe, getSnapshot);
 
   return <>{children(model, session, repo)}</>;
 };
