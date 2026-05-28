@@ -46,7 +46,9 @@
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-quill": "workspace:*",
     "@jsonjoy.com/collaborative-quill-react": "workspace:*",
+    "@jsonjoy.com/collaborative-slate": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",
+    "@jsonjoy.com/json-crdt-repo": "workspace:*",
     "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
@@ -58,6 +60,8 @@
     "quill": "^2.0.3",
     "quill-delta": "^5.1.0",
     "react-use": "^17.6.0",
+    "slate": ">=0.100.0",
+    "slate-react": ">=0.100.0",
     "sonic-forest": "^1.2.1",
     "thingies": "^2.6.0",
     "use-t": "^1.6.4"

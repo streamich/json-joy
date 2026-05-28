@@ -94,7 +94,8 @@ const LiveQuillDemoInner: React.FC<LiveQuillDemoInnerProps> = ({model, repo, id,
           presence={manager}
           api={() => {
             model.ext.register(ext.quill);
-            return (model as any).s.toExt();
+            const s = (model as any).s;
+            return typeof s?.toExt === 'function' ? s.toExt() : undefined;
           }}
         />
       </div>

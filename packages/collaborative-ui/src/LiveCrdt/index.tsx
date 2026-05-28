@@ -23,10 +23,20 @@ export interface LiveCrdtProps {
   name?: string;
 
   /**
+   * Time in ms to wait for the server when neither the local repo nor the
+   * remote has the block yet, before falling back to creating a fresh local
+   * block via `make`. Default `3000`.
+   */
+  remoteTimeout?: number;
+
+  /**
    * Called once after the session is created. Use to register extensions
    * or perform other one-time model setup.
    */
   setup?: (model: Model<any>, session: EditSession) => void;
+
+  /** Rendered while the session is being loaded. */
+  loading?: React.ReactNode;
 
   /** Render the document model. Called on every model tick. */
   children: (model: Model<any>, session: EditSession, repo: JsonCrdtRepo) => React.ReactNode;
@@ -50,29 +60,44 @@ export const LiveCrdt: React.FC<LiveCrdtProps> = ({
   setup,
   wsUrl = 'wss://pub-1-api.jsonjoy.org/rx',
   name = 'json-crdt-repo',
+  remoteTimeout = 3000,
+  loading = null,
   children,
 }) => {
   const repo = React.useMemo(() => getRepo(name, wsUrl), [name, wsUrl]);
-
-  const sessionRef = React.useRef<EditSession | null>(null);
-
-  if (!sessionRef.current || (sessionRef.current as any)._stopped) {
-    const {session} = repo.sessions.make({
-      id: ['default', id],
-      schema,
-    });
-    setup?.(session.model, session);
-    sessionRef.current = session;
-  }
-
-  const session = sessionRef.current;
+  const [session, setSession] = React.useState<EditSession | null>(null);
 
   React.useEffect(() => {
+    let disposed = false;
+    let created: EditSession | null = null;
+    (async () => {
+      try {
+        const s = await repo.sessions.load({
+          id: ['default', id],
+          remote: {timeout: remoteTimeout},
+          make: schema ? {schema} : {},
+        });
+        if (disposed) {
+          s.dispose();
+          return;
+        }
+        setup?.(s.model, s);
+        created = s;
+        setSession(s);
+      } catch (err) {
+        // Surfacing the error here would only be useful if `loading` was
+        // replaced with an error UI — left to the integration if needed.
+        console.error('LiveCrdt: failed to load session', err);
+      }
+    })();
     return () => {
-      session.dispose();
+      disposed = true;
+      created?.dispose();
+      setSession(null);
     };
-  }, [session]);
+  }, [repo, id, remoteTimeout]);
 
+  if (!session) return <>{loading}</>;
   return <LiveCrdtInner session={session} repo={repo}>{children}</LiveCrdtInner>;
 };
 
