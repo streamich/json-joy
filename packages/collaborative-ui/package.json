@@ -60,9 +60,6 @@
     "quill": "^2.0.3",
     "quill-delta": "^5.1.0",
     "react-use": "^17.6.0",
-    "slate": ">=0.100.0",
-    "slate-history": ">=0.100.0",
-    "slate-react": ">=0.100.0",
     "sonic-forest": "^1.2.1",
     "thingies": "^2.6.0",
     "use-t": "^1.6.4"
@@ -74,10 +71,22 @@
     "react": "*",
     "react-dom": "*",
     "rxjs": "*",
+    "slate": ">=0.100.0",
+    "slate-history": ">=0.100.0",
+    "slate-react": ">=0.100.0",
     "tslib": "2"
   },
   "peerDependenciesMeta": {
     "codemirror": {
+      "optional": true
+    },
+    "slate": {
+      "optional": true
+    },
+    "slate-history": {
+      "optional": true
+    },
+    "slate-react": {
       "optional": true
     }
   },
@@ -85,7 +94,10 @@
     "@monaco-editor/react": "^4.7.0",
     "codemirror": "^6.0.2",
     "monaco-editor": "^0.55.1",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "slate": "^0.124.1",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.124.2"
   },
   "engines": {
     "node": ">=10.0"

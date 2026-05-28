@@ -70,7 +70,7 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
   React.useEffect(() => {
     model.ext.register(ext.peritext);
     const peritextRef = () => (model as any).s.toExt();
-    const unbind = bind(peritextRef, editor as any);
+    const unbind = bind(peritextRef, editor);
     return () => {
       unbind();
     };
@@ -107,7 +107,7 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
   const {decorate, sendLocalPresence} = useSlatePresence({
     manager,
     peritext: () => (model as any).s.toExt(),
-    editor: editor as any,
+    editor,
   });
 
   const renderLeaf = React.useMemo(
@@ -177,7 +177,7 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
             style={{padding: '16px 20px', minHeight: '280px', fontSize: '16px', lineHeight: 1.6, outline: 'none'}}
             renderLeaf={renderLeaf}
             renderElement={renderElement}
-            decorate={decorate as any}
+            decorate={decorate}
             onKeyDown={handleKeyDown}
             placeholder="Start typing..."
             spellCheck
