@@ -70,7 +70,9 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
     model.ext.register(ext.peritext);
     const peritextRef = () => (model as any).s.toExt();
     const unbind = bind(peritextRef, editor);
-    return () => { unbind(); };
+    return () => {
+      unbind();
+    };
   }, [model, editor]);
 
   // Presence networking: dumb pipe.
@@ -131,7 +133,11 @@ const LiveSlateDemoInner: React.FC<LiveSlateDemoInnerProps> = ({model, repo, id,
           </blockquote>
         );
       default:
-        return <p {...attributes} style={{margin: '0 0 0.5rem 0', lineHeight: 1.6}}>{children}</p>;
+        return (
+          <p {...attributes} style={{margin: '0 0 0.5rem 0', lineHeight: 1.6}}>
+            {children}
+          </p>
+        );
     }
   }, []);
 

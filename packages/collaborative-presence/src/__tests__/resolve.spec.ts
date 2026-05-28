@@ -10,11 +10,14 @@ import type {UserPresence, JsonCrdtSelection} from '../types';
  * selection is generated from a *sender-side* model — its anchor IDs come
  * from whatever characters the sender currently sees.
  */
-const mkPresence = (
-  processId: string,
-  seq: number,
-  selections: JsonCrdtSelection[],
-): UserPresence => ['user-' + processId, processId, seq, Date.now() / 1000, selections, {}];
+const mkPresence = (processId: string, seq: number, selections: JsonCrdtSelection[]): UserPresence => [
+  'user-' + processId,
+  processId,
+  seq,
+  Date.now() / 1000,
+  selections,
+  {},
+];
 
 const setupSenderAndReceiver = (initial: string) => {
   const sender = Model.create().setSchema(s.obj({str: s.str(initial)}));

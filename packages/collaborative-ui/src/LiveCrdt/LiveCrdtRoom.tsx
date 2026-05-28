@@ -109,12 +109,7 @@ const RoomEntry: React.FC<RoomEntryProps> = ({onJoin, generateId, title}) => {
       </Text>
       <div className={entryRowClass}>
         <div className={entryInputClass}>
-          <InputLine
-            value={value}
-            label="Document ID"
-            focus
-            onChange={setValue}
-          />
+          <InputLine value={value} label="Document ID" focus onChange={setValue} />
         </div>
         <Button primary disabled={!trimmed} onClick={join}>
           Join

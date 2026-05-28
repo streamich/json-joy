@@ -81,7 +81,10 @@ const findOffset = (str: StrNode, tsId: ITimestampStruct, senderSid?: number, pr
     if (atEndOfChunk) {
       let c = str.next(chunk);
       while (c) {
-        if (c.del) { c = str.next(c); continue; }
+        if (c.del) {
+          c = str.next(c);
+          continue;
+        }
         if (c.id.sid === senderSid && c.id.time > presenceTime) {
           offset += c.span;
           c = str.next(c);

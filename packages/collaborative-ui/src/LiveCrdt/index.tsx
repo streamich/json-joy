@@ -98,7 +98,11 @@ export const LiveCrdt: React.FC<LiveCrdtProps> = ({
   }, [repo, id, remoteTimeout]);
 
   if (!session) return <>{loading}</>;
-  return <LiveCrdtInner session={session} repo={repo}>{children}</LiveCrdtInner>;
+  return (
+    <LiveCrdtInner session={session} repo={repo}>
+      {children}
+    </LiveCrdtInner>
+  );
 };
 
 const LiveCrdtInner: React.FC<{
