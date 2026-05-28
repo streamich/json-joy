@@ -54,7 +54,13 @@
       "path": "../collaborative-quill-react/tsconfig.build.json"
     },
     {
+      "path": "../collaborative-slate/tsconfig.build.json"
+    },
+    {
       "path": "../collaborative-str/tsconfig.build.json"
+    },
+    {
+      "path": "../json-crdt-repo/tsconfig.build.json"
     },
     {
       "path": "../json-pack/tsconfig.build.json"

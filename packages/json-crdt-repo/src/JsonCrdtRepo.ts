@@ -28,6 +28,7 @@ export class JsonCrdtRepo {
   public readonly sessions: EditSessionFactory;
   public readonly opts: JsonCrdtRepoOpts;
   public readonly remote: DemoServerRemoteHistory;
+  public readonly client: DemoServerClient;
 
   constructor(opts?: Partial<JsonCrdtRepoOpts>) {
     this.opts = {
@@ -35,7 +36,7 @@ export class JsonCrdtRepo {
       wsUrl: opts?.wsUrl ?? 'wss://pub-1-api.jsonjoy.org/rx',
       ...opts,
     };
-    const client = createBinaryClient(this.opts.wsUrl) as DemoServerClient;
+    const client = (this.client = createBinaryClient(this.opts.wsUrl) as DemoServerClient);
     const sid: number = this.readSid();
     const clientId = (sid % 0xfffffffe) + 1;
     this.remote = new DemoServerRemoteHistory(client, clientId);

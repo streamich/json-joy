@@ -58,6 +58,9 @@
       "path": "../collaborative-str"
     },
     {
+      "path": "../json-crdt-repo"
+    },
+    {
       "path": "../json-pack"
     },
     {

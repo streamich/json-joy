@@ -1,7 +1,6 @@
-import {str as strPresence} from '@jsonjoy.com/collaborative-presence';
-import {UserPresenceIdx, NodeType} from '@jsonjoy.com/collaborative-presence';
-import type {PresenceManager, PresenceEvent, PeerEntry} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
-import type {UserPresence, RgaSelection} from '@jsonjoy.com/collaborative-presence/lib/types';
+import {NodeType, str as strPresence} from '@jsonjoy.com/collaborative-presence';
+import type {PresenceManager, PresenceEvent} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
+import type {RgaSelection} from '@jsonjoy.com/collaborative-presence/lib/types';
 import type {StrSelectionStrict} from '@jsonjoy.com/collaborative-presence/lib/str';
 import type {QuillDeltaApi} from 'json-joy/lib/json-crdt-extensions/quill-delta';
 import type {Model} from 'json-joy/lib/json-crdt';
@@ -33,6 +32,9 @@ export interface QuillPresenceOpts<Meta extends object = object> {
   /** Interval in milliseconds for running {@link PresenceManager.removeOutdated}.
    * Pass `0` to disable internal GC. Default: 5000. */
   gcIntervalMs?: number;
+  /** Document ID used to scope presence resolution. Selections in the peer's
+   * presence whose `documentId` does not match are ignored. */
+  documentId?: string;
 }
 
 /**
@@ -62,6 +64,7 @@ export class QuillPresence<Meta extends object = object> {
   private readonly cursorsModule: QuillCursorsModule;
   private readonly opts: QuillPresenceOpts<Meta>;
   private destroyed = false;
+  private modelUnsub: (() => void) | null = null;
 
   constructor(opts: QuillPresenceOpts<Meta>) {
     this.opts = opts;
@@ -85,10 +88,6 @@ export class QuillPresence<Meta extends object = object> {
     // Subscribe to local selection changes to broadcast presence.
     quill.on('selection-change', this.onSelectionChange);
 
-    // Re-map remote cursors after every local edit so that CRDT character IDs
-    // are re-resolved to up-to-date flat offsets (Option B: stable CRDT IDs).
-    quill.on('text-change', this.onTextChange);
-
     // Periodically GC outdated peers.
     if (gcIntervalMs > 0) this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
 
@@ -96,10 +95,12 @@ export class QuillPresence<Meta extends object = object> {
     this.updateRemoteCursors();
   }
 
-  /** Remap remote cursors after every local edit. */
-  private readonly onTextChange = () => {
-    if (!this.destroyed) this.updateRemoteCursors();
-  };
+  private ensureModelSubscription(api: QuillDeltaApi): void {
+    if (this.modelUnsub) return;
+    this.modelUnsub = api.api.onChange.listen(() => {
+      if (!this.destroyed) this.updateRemoteCursors();
+    });
+  }
 
   /** Broadcast the local selection to the presence manager. */
   private readonly onSelectionChange = (range: Range | null) => {
@@ -130,37 +131,33 @@ export class QuillPresence<Meta extends object = object> {
 
   /** Render / update / remove remote peer cursors and selections. */
   private updateRemoteCursors(): void {
-    const {manager, api: apiRef, userFromMeta, hideAfterMs = 60_000} = this.opts;
+    const {manager, api: apiRef, userFromMeta, hideAfterMs = 60_000, documentId = ''} = this.opts;
     const ext = apiRef();
     if (!ext) return;
+    this.ensureModelSubscription(ext);
     const strApi = ext.text();
     const model = strApi.api.model as Model<any>;
-    const localProcessId = manager.getProcessId();
     const docLength = strApi.length();
     const now = Date.now();
-    const peers = manager.peers;
     const cursorsModule = this.cursorsModule;
     const activePeerIds = new Set<string>();
-
-    for (const processId in peers) {
-      if (processId === localProcessId) continue;
-      const entry: PeerEntry<Meta> = peers[processId];
-      const presence: UserPresence<Meta> = entry[0];
-      const receivedAt: number = entry[1];
-      const age = now - receivedAt;
-      if (age >= hideAfterMs) {
+    const resolved = manager.resolve(documentId, model);
+    for (const [processId, slots] of resolved) {
+      const entry = manager.peers[processId];
+      if (!entry) continue;
+      const receivedAt = entry[1];
+      if (now - receivedAt >= hideAfterMs) {
         cursorsModule.removeCursor(processId);
         continue;
       }
-      const selections: unknown[] = presence[UserPresenceIdx.Selections] as unknown[];
-      if (!selections) continue;
-      const meta = presence[UserPresenceIdx.Meta];
-      const user: PresenceUser | undefined = userFromMeta ? userFromMeta(meta) : undefined;
-      for (const sel of selections) {
-        if (!isRgaSelection(sel)) continue;
+      const user: PresenceUser | undefined = userFromMeta ? userFromMeta(entry[0][5] as Meta) : undefined;
+      for (const rs of slots) {
+        const displayed = rs.displayed;
+        if (!displayed) continue;
+        if (!isRgaSelection(displayed)) continue;
         let strSelections: StrSelectionStrict[];
         try {
-          strSelections = strPresence.fromDto(model, sel);
+          strSelections = strPresence.fromDto(model, displayed);
         } catch {
           continue;
         }
@@ -179,6 +176,7 @@ export class QuillPresence<Meta extends object = object> {
     }
 
     // Remove cursors for peers that are no longer active.
+    const localProcessId = manager.getProcessId();
     for (const cursor of cursorsModule.cursors()) {
       if (!activePeerIds.has(cursor.id) && cursor.id !== localProcessId) {
         cursorsModule.removeCursor(cursor.id);
@@ -190,9 +188,10 @@ export class QuillPresence<Meta extends object = object> {
     if (this.destroyed) return;
     this.destroyed = true;
     this.unsub();
+    this.modelUnsub?.();
+    this.modelUnsub = null;
     const {quill} = this.opts;
     quill.off('selection-change', this.onSelectionChange);
-    quill.off('text-change', this.onTextChange);
     clearInterval(this.gcTimer);
     this.cursorsModule.clearCursors();
   }

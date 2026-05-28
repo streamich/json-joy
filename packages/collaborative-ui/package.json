@@ -46,7 +46,9 @@
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-quill": "workspace:*",
     "@jsonjoy.com/collaborative-quill-react": "workspace:*",
+    "@jsonjoy.com/collaborative-slate": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",
+    "@jsonjoy.com/json-crdt-repo": "workspace:*",
     "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
@@ -69,10 +71,22 @@
     "react": "*",
     "react-dom": "*",
     "rxjs": "*",
+    "slate": ">=0.100.0",
+    "slate-history": ">=0.100.0",
+    "slate-react": ">=0.100.0",
     "tslib": "2"
   },
   "peerDependenciesMeta": {
     "codemirror": {
+      "optional": true
+    },
+    "slate": {
+      "optional": true
+    },
+    "slate-history": {
+      "optional": true
+    },
+    "slate-react": {
       "optional": true
     }
   },
@@ -80,7 +94,10 @@
     "@monaco-editor/react": "^4.7.0",
     "codemirror": "^6.0.2",
     "monaco-editor": "^0.55.1",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "slate": "^0.124.1",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.124.2"
   },
   "engines": {
     "node": ">=10.0"

@@ -117,9 +117,9 @@
     "@types/react-dom": "^19",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "slate": "^0.123.0",
-    "slate-dom": "^0.123.0",
+    "slate": "^0.124.1",
+    "slate-dom": "^0.124.1",
     "slate-history": "^0.113.1",
-    "slate-react": "^0.123.0"
+    "slate-react": "^0.124.2"
   }
 }
