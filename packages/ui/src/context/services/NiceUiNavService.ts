@@ -6,6 +6,7 @@ import type {LocationState, ReadonlyBehaviorSubject} from 'rx-use';
 
 const mapPath = (pathname: string) => {
   if (pathname[0] === '/') pathname = pathname.slice(1);
+  if (pathname.length > 0 && pathname[pathname.length - 1] === '/') pathname = pathname.slice(0, -1);
   return pathname.split('/');
 };
 

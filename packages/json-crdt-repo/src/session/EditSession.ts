@@ -2,7 +2,7 @@ import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {type JsonNode, Model, type Patch} from 'json-joy/lib/json-crdt';
 import {concurrency} from 'thingies/lib/concurrency';
 import {createRace} from 'thingies/lib/createRace';
-import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
+import {SESSION_GLOBAL} from '../constants';
 import {Subject} from 'rxjs';
 import {first, takeUntil} from 'rxjs/operators';
 import type {
@@ -232,7 +232,7 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
       const patchId = patch.getId();
       if (!patchId) continue;
       const patchSid = patchId.sid;
-      if (patchSid === SESSION.GLOBAL) continue;
+      if (patchSid === SESSION_GLOBAL) continue;
       if (patchSid === sid && patchId.time < end.clock.time) continue;
       end.applyPatch(patch);
       start.applyPatch(patch);

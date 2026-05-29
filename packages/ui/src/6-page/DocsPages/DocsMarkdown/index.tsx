@@ -33,9 +33,10 @@ const blockClass = drule({
     ...lightTheme.font.ui1.mid,
     lh: '1.5em',
   },
-  '& p+p, & pre+p, & pre+ul, & pre+div, & ul+p, & div:not(.invisible)+p, & ul+div:not(.invisible)': {
-    padt: '2em',
-  },
+  '& p+p, & pre+p, & pre+:is(ul,ol), & pre+div, & :is(ul,ol)+p, & div:not(.invisible)+p, & :is(ul,ol)+div:not(.invisible)':
+    {
+      padt: '2em',
+    },
   '& p+pre, & p+div, & div+div': {
     mart: '2em',
   },
@@ -43,18 +44,18 @@ const blockClass = drule({
     padt: '1em',
   },
   'h1+div,h2+div,h3+div,h4+div,h5+div,h6+div': {
-    mart: '1em',
+    mart: '1.25em',
   },
-  'h1+ul,h2+ul,h3+ul,h4+ul,h5+ul,h6+ul': {
-    mart: '1em',
+  'h1+:is(ul,ol),h2+:is(ul,ol),h3+:is(ul,ol),h4+:is(ul,ol),h5+:is(ul,ol),h6+:is(ul,ol)': {
+    mart: '1.25em',
   },
   'h1+pre,h2+pre,h3+pre,h4+pre,h5+pre,h6+pre': {
-    mart: '1em',
+    mart: '1.25em',
   },
-  'p+ul': {
+  'p+:is(ul,ol)': {
     padt: '1em',
   },
-  'ul p+ul': {
+  ':is(ul,ol) p+:is(ul,ol)': {
     padt: 0,
   },
   'h1,h2,h3,h4,h5,h6': {

@@ -1,8 +1,7 @@
 import type {LibPage} from '@jsonjoy.com/ui/src/types/libs';
 
 export const page: LibPage = {
-  name: 'rpc-codec-base',
-  title: 'rpc-codec-base',
+  name: 'RPC Codec Base',
   type: 'lib',
   subtitle: 'Base types and utilities shared by Reactive RPC message codecs.',
   children: [],

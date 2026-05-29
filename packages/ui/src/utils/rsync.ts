@@ -4,7 +4,7 @@ import {deepEqual} from '@jsonjoy.com/json-equal';
 
 export class ReactValue<T> extends Value<T> {
   public use(): T {
-    return useSyncExternalStore(this.subscribe, this.getSnapshot);
+    return useSyncExternalStore(this.subscribe, this.getSnapshot, this.getSnapshot);
   }
 
   public set(value: T): void {
@@ -21,7 +21,7 @@ export const val = <T>(value: T) => new ReactValue<T>(value);
 
 export class ReactComputed<N, V extends unknown[] = any> extends Computed<N, V> {
   public use(): N {
-    return useSyncExternalStore(this.subscribe, this.getSnapshot);
+    return useSyncExternalStore(this.subscribe, this.getSnapshot, this.getSnapshot);
   }
 
   public toString(): string {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useT} from 'use-t';
-import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
+import {MuTxtLogoV3} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogoV3';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useExplorer} from '../../context';
@@ -53,12 +53,7 @@ const logoTileClass = rule({
   d: 'inline-flex',
   ai: 'center',
   jc: 'center',
-  w: '128px',
-  h: '80px',
-  bdrad: '32px',
-  mr: '0 auto',
-  pd: '8px 0 0',
-  bxz: 'border-box',
+  mr: '0 auto 32px',
 });
 
 const titleClass = rule({
@@ -66,6 +61,7 @@ const titleClass = rule({
   ai: 'center',
   jc: 'center',
   gap: '6px',
+  pd: '0 12px 0 0',
   fontSize: '28px',
   lineHeight: '1.2em',
   fontWeight: 700,
@@ -179,7 +175,7 @@ export const Welcome: React.FC<WelcomeProps> = () => {
       <div className={innerClass}>
         <header className={heroClass}>
           <div className={logoTileClass}>
-            <MuTxtLogo size={108} />
+            <MuTxtLogoV3 size={96} />
           </div>
           <h1 className={titleClass} style={{color: theme.g(0.08, 0.97)}}>
             <span>{t('Welcome to')}</span>
