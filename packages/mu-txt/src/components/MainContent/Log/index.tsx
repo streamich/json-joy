@@ -4,7 +4,7 @@ import {useT} from 'use-t';
 import {useExplorer} from '../../../context';
 import {useBehaviorSubject, useBehaviorSubjectOpt} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonCrdtLog} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog';
-import * as ScrollArea from '@jsonjoy.com/ui/src/4-card/ScrollArea';
+import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import type {Model} from 'json-joy/lib/json-crdt';
