@@ -1,12 +1,11 @@
 import {BehaviorSubject, defer, type Observable, Subject, type Subscription} from 'rxjs';
-import {catchError, filter, finalize, map, share, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, finalize, map, retry, share, switchMap, takeUntil} from 'rxjs/operators';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {deepEqual} from '@jsonjoy.com/json-equal/lib/deepEqual';
 import {RpcError} from '@jsonjoy.com/rpc-error';
-import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
-import {once} from 'thingies/lib/once';
+import {SESSION_GLOBAL} from '../../constants';
 import {timeout} from 'thingies/lib/timeout';
 import {pubsub} from '../../pubsub';
 import type {ServerBatch, ServerHistory, ServerPatch} from '../../remote/types';
@@ -207,8 +206,8 @@ export class LevelLocalRepo implements LocalRepo {
   private _stopped = false;
   private readonly _stop$ = new Subject<void>();
 
-  @once
   public stop(): void {
+    if (this._stopped) return;
     this._remoteSyncLoopActive = false;
     clearTimeout(this._remoteSyncDelayTimer as any);
     this._stopped = true;
@@ -419,8 +418,9 @@ export class LevelLocalRepo implements LocalRepo {
 
   public async readFrontierTip(keyBase: string): Promise<Patch | undefined> {
     const frontierBase = this.frontierKeyBase(keyBase);
+    const gt = frontierBase;
     const lte = frontierBase + '~';
-    for await (const blob of this.kv.values({lte, limit: 1, reverse: true}))
+    for await (const blob of this.kv.values({gt, lte, limit: 1, reverse: true}))
       return Patch.fromBinary(await this.decrypt(blob, false));
     return;
   }
@@ -828,7 +828,7 @@ export class LevelLocalRepo implements LocalRepo {
     if (typeof reqTime === 'number') {
       lastKnownTime = reqTime;
       const firstPatch = patches?.[0];
-      if (firstPatch?.getId()?.sid === SESSION.GLOBAL) lastKnownTime = firstPatch.getId()!.time + firstPatch.span() - 1;
+      if (firstPatch?.getId()?.sid === SESSION_GLOBAL) lastKnownTime = firstPatch.getId()!.time + firstPatch.span() - 1;
     } else if (patches?.length) {
       const firstPatchTime = patches?.[0]?.getId()?.time;
       if (typeof firstPatchTime === 'number') lastKnownTime = firstPatchTime - 1;
@@ -857,7 +857,7 @@ export class LevelLocalRepo implements LocalRepo {
         const patch = patches[i];
         const patchId = patch.getId();
         if (!patchId) throw new Error('PATCH_ID_MISSING');
-        const isSchemaPatch = patchId.sid === SESSION.GLOBAL && patchId.time === 1;
+        const isSchemaPatch = patchId.sid === SESSION_GLOBAL && patchId.time === 1;
         if (isSchemaPatch) {
           const patchAheadOfTip = patchId.time >= nextTick;
           if (!patchAheadOfTip) continue;
@@ -1070,7 +1070,7 @@ export class LevelLocalRepo implements LocalRepo {
 
   public change$(id: BlockId): Observable<LocalRepoEvent> {
     return defer(() => {
-      const remoteSubscription = this._subRemote(id).subscribe(() => {});
+      const remoteSubscription = this._subRemote(id).subscribe({next: () => {}, error: () => {}});
       return this.pubsub.bus$.pipe(
         takeUntil(this._stop$),
         map((msg) => {
@@ -1093,7 +1093,7 @@ export class LevelLocalRepo implements LocalRepo {
               const merge: Patch[] = [];
               for (const blob of msg.patches) {
                 const patch = Patch.fromBinary(blob);
-                if (patch.getId()?.sid === SESSION.GLOBAL) continue;
+                if (patch.getId()?.sid === SESSION_GLOBAL) continue;
                 merge.push(patch);
               }
               if (!merge.length) return;
@@ -1142,7 +1142,7 @@ export class LevelLocalRepo implements LocalRepo {
       ),
     );
     sub = source.pipe(
-      catchError(() => source),
+      retry({delay: 1000, resetOnSuccess: true}),
       finalize<void>(() => {
         delete this._subs[blockId];
       }),
@@ -1158,8 +1158,6 @@ export class LevelLocalRepo implements LocalRepo {
       const keyBase = await this.blockKeyBase(id);
       const firstPatch = batch.patches[0];
       if (!firstPatch) return;
-      const firstPatchSid = Patch.fromBinary(firstPatch.blob).getId()?.sid;
-      if (firstPatchSid === this.sid) return;
       try {
         const meta = await this.readMeta(keyBase);
         const alreadySynced = meta.seq >= batch.seq;

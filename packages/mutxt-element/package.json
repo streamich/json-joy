@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.25.0",
+  "version": "18.26.0",
   "description": "<mu-txt> custom element to render mutxt.com rich-text editor",
   "author": {
     "name": "streamich",
@@ -63,10 +63,10 @@
     "mutxt-react": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "slate": "^0.123.0",
-    "slate-dom": "^0.123.0",
+    "slate": "^0.124.1",
+    "slate-dom": "^0.124.1",
     "slate-history": "^0.113.1",
-    "slate-react": "^0.123.0"
+    "slate-react": "^0.124.2"
   },
   "devDependencies": {
     "@types/react": "^19",

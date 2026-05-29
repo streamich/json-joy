@@ -1,2 +1,3 @@
 export type * from './types';
-export {LevelLocalRepo, LevelLocalRepoOpts} from './level/LevelLocalRepo';
+export {LevelLocalRepo} from './level/LevelLocalRepo';
+export type {LevelLocalRepoOpts} from './level/LevelLocalRepo';

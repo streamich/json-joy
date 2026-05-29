@@ -7,3 +7,4 @@ export {id, str, peritext};
 export * from './constants';
 export * from './types';
 export * from './PresenceManager';
+export * from './ResolvedSelection';

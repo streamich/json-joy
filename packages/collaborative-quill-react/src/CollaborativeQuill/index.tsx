@@ -47,9 +47,9 @@ export const CollaborativeQuill: React.FC<CollaborativeQuillProps> = ({
 
   options.readOnly = readonly;
 
-  // When a presence manager is provided, enable the quill-cursors module.
+  // When a presence manager is provided, enable the quill-cursors module
   if (presenceManager) {
-    options.modules = {...(options.modules ?? {}), cursors: true};
+    options.modules = {...(options.modules ?? {}), cursors: {transformOnTextChange: true}};
   }
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: editor is intentionally recreated only when display options change

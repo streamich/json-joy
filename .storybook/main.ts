@@ -107,6 +107,8 @@ const config: StorybookConfig = {
       '@jsonjoy.com/collaborative-react': resolve(__dirname, '../packages/collaborative-react/src'),
       '@jsonjoy.com/collaborative-presence/lib': resolve(__dirname, '../packages/collaborative-presence/src'),
       '@jsonjoy.com/collaborative-presence': resolve(__dirname, '../packages/collaborative-presence/src'),
+      '@jsonjoy.com/json-crdt-repo/lib': resolve(__dirname, '../packages/json-crdt-repo/src'),
+      '@jsonjoy.com/json-crdt-repo': resolve(__dirname, '../packages/json-crdt-repo/src'),
       '@jsonjoy.com/json-equal/lib': resolve(__dirname, '../packages/json-equal/src'),
       '@jsonjoy.com/json-equal': resolve(__dirname, '../packages/json-equal/src'),
       '@jsonjoy.com/keyboard/lib': resolve(__dirname, '../packages/keyboard/src'),

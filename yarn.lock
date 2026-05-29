@@ -3001,10 +3001,10 @@ __metadata:
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-embed: "npm:^3.7.0"
-    slate: "npm:^0.123.0"
-    slate-dom: "npm:^0.123.0"
+    slate: "npm:^0.124.1"
+    slate-dom: "npm:^0.124.1"
     slate-history: "npm:^0.113.1"
-    slate-react: "npm:^0.123.0"
+    slate-react: "npm:^0.124.2"
   peerDependencies:
     react: ">=18"
     react-dom: ">=18"
@@ -3051,7 +3051,9 @@ __metadata:
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@jsonjoy.com/collaborative-quill-react": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/json-crdt-repo": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
@@ -3067,6 +3069,9 @@ __metadata:
     quill-delta: "npm:^5.1.0"
     react-use: "npm:^17.6.0"
     rxjs: "npm:^7.8.2"
+    slate: "npm:^0.124.1"
+    slate-history: "npm:^0.113.1"
+    slate-react: "npm:^0.124.2"
     sonic-forest: "npm:^1.2.1"
     thingies: "npm:^2.6.0"
     use-t: "npm:^1.6.4"
@@ -3077,9 +3082,18 @@ __metadata:
     react: "*"
     react-dom: "*"
     rxjs: "*"
+    slate: ">=0.100.0"
+    slate-history: ">=0.100.0"
+    slate-react: ">=0.100.0"
     tslib: 2
   peerDependenciesMeta:
     codemirror:
+      optional: true
+    slate:
+      optional: true
+    slate-history:
+      optional: true
+    slate-react:
       optional: true
   languageName: unknown
   linkType: soft
@@ -3204,6 +3218,7 @@ __metadata:
   resolution: "@jsonjoy.com/jit-router@workspace:packages/jit-router"
   dependencies:
     "@jsonjoy.com/util": "workspace:*"
+    find-my-way: "npm:^9.6.0"
     sonic-forest: "npm:^1.2.1"
   peerDependencies:
     rxjs: 7
@@ -3237,7 +3252,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/json-crdt-repo@workspace:packages/json-crdt-repo":
+"@jsonjoy.com/json-crdt-repo@workspace:*, @jsonjoy.com/json-crdt-repo@workspace:packages/json-crdt-repo":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-crdt-repo@workspace:packages/json-crdt-repo"
   dependencies:
@@ -9984,6 +9999,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-decode-uri-component@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "fast-decode-uri-component@npm:1.0.1"
+  checksum: 10c0/039d50c2e99d64f999c3f2126c23fbf75a04a4117e218a149ca0b1d2aeb8c834b7b19d643b9d35d4eabce357189a6a94085f78cf48869e6e26cc59b036284bc3
+  languageName: node
+  linkType: hard
+
 "fast-deep-equal@npm:3.1.3, fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
@@ -10043,6 +10065,15 @@ __metadata:
   version: 2.1.0
   resolution: "fast-json-stable-stringify@npm:2.1.0"
   checksum: 10c0/7f081eb0b8a64e0057b3bb03f974b3ef00135fbf36c1c710895cd9300f13c94ba809bb3a81cf4e1b03f6e5285610a61abbd7602d0652de423144dfee5a389c9b
+  languageName: node
+  linkType: hard
+
+"fast-querystring@npm:^1.0.0":
+  version: 1.1.2
+  resolution: "fast-querystring@npm:1.1.2"
+  dependencies:
+    fast-decode-uri-component: "npm:^1.0.1"
+  checksum: 10c0/e8223273a9b199722f760f5a047a77ad049a14bd444b821502cb8218f5925e3a5fffb56b64389bca73ab2ac6f1aa7aebbe4e203e5f6e53ff5978de97c0fde4e3
   languageName: node
   linkType: hard
 
@@ -10222,6 +10253,17 @@ __metadata:
     make-dir: "npm:^3.0.2"
     pkg-dir: "npm:^4.1.0"
   checksum: 10c0/92747cda42bff47a0266b06014610981cfbb71f55d60f2c8216bc3108c83d9745507fb0b14ecf6ab71112bed29cd6fb1a137ee7436179ea36e11287e3159e587
+  languageName: node
+  linkType: hard
+
+"find-my-way@npm:^9.6.0":
+  version: 9.6.0
+  resolution: "find-my-way@npm:9.6.0"
+  dependencies:
+    fast-deep-equal: "npm:^3.1.3"
+    fast-querystring: "npm:^1.0.0"
+    safe-regex2: "npm:^5.0.0"
+  checksum: 10c0/d103e51a1e73e202e7533b2efc42e40c3618f8bd24a37cfa140da5e079c2baf5d5baeb01b2b8a7c104d680aa09c4b716851184f8ae103be374e8f46b17f6608d
   languageName: node
   linkType: hard
 
@@ -12866,7 +12908,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     rxjs: "npm:^7.8.2"
-    slate: "npm:^0.120.0"
+    slate: "npm:^0.124.1"
     sonic-forest: "npm:^1.2.1"
     thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
@@ -14188,10 +14230,10 @@ __metadata:
     mutxt-react: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
-    slate: "npm:^0.123.0"
-    slate-dom: "npm:^0.123.0"
+    slate: "npm:^0.124.1"
+    slate-dom: "npm:^0.124.1"
     slate-history: "npm:^0.113.1"
-    slate-react: "npm:^0.123.0"
+    slate-react: "npm:^0.124.2"
     style-loader: "npm:^4.0.0"
     terser-webpack-plugin: "npm:^5.3.16"
     ts-loader: "npm:^9.5.4"
@@ -14229,10 +14271,10 @@ __metadata:
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-embed: "npm:^3.7.0"
-    slate: "npm:^0.123.0"
-    slate-dom: "npm:^0.123.0"
+    slate: "npm:^0.124.1"
+    slate-dom: "npm:^0.124.1"
     slate-history: "npm:^0.113.1"
-    slate-react: "npm:^0.123.0"
+    slate-react: "npm:^0.124.2"
     use-t: "npm:^1.6.4"
   peerDependencies:
     react: ">=18"
@@ -16506,6 +16548,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ret@npm:~0.5.0":
+  version: 0.5.0
+  resolution: "ret@npm:0.5.0"
+  checksum: 10c0/220868b194f87bf1998e32e409086eec6b39e860c052bf267f8ad4d0131706a9773d45fd3f91acfb1a7c928fce002b694ab86fdba90bc8d4b8df68fa8645c5cc
+  languageName: node
+  linkType: hard
+
 "retry@npm:^0.12.0":
   version: 0.12.0
   resolution: "retry@npm:0.12.0"
@@ -16756,6 +16805,17 @@ __metadata:
   version: 5.1.2
   resolution: "safe-buffer@npm:5.1.2"
   checksum: 10c0/780ba6b5d99cc9a40f7b951d47152297d0e260f0df01472a1b99d4889679a4b94a13d644f7dbc4f022572f09ae9005fa2fbb93bbbd83643316f365a3e9a45b21
+  languageName: node
+  linkType: hard
+
+"safe-regex2@npm:^5.0.0":
+  version: 5.1.1
+  resolution: "safe-regex2@npm:5.1.1"
+  dependencies:
+    ret: "npm:~0.5.0"
+  bin:
+    safe-regex2: bin/safe-regex2.js
+  checksum: 10c0/65c59fb33de8e500fa1d7254cc7f9b6b8b932f925bcfc8d92273ec024c259052a2b3c975bbf5a9f9dd49cd3b0fa394fb56f36d6b10e394404056edfd1223fd17
   languageName: node
   linkType: hard
 
@@ -17225,9 +17285,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"slate-dom@npm:^0.123.0":
-  version: 0.123.0
-  resolution: "slate-dom@npm:0.123.0"
+"slate-dom@npm:^0.124.1":
+  version: 0.124.1
+  resolution: "slate-dom@npm:0.124.1"
   dependencies:
     "@juggle/resize-observer": "npm:^3.4.0"
     direction: "npm:^1.0.4"
@@ -17238,7 +17298,7 @@ __metadata:
     tiny-invariant: "npm:1.3.1"
   peerDependencies:
     slate: ">=0.121.0"
-  checksum: 10c0/ca1fc5d1f8c2f51466267d4e71007bcf4427263fc641118be6057f5353b6ff6a75ebeb45c5fd4c914c1a3ae1370c58d88c81f675e5c2e0eb32a73e821e91ffd7
+  checksum: 10c0/1956f90986b614e6d590c3a8a2107dc60d27ed6502fd6d2d19c2aa343d4e0fe385494864cf8b48ad32d1c82c599dcf84faa78fe1a2a2d2e7df1ec268fb589fd3
   languageName: node
   linkType: hard
 
@@ -17253,9 +17313,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"slate-react@npm:^0.123.0":
-  version: 0.123.0
-  resolution: "slate-react@npm:0.123.0"
+"slate-react@npm:^0.124.2":
+  version: 0.124.2
+  resolution: "slate-react@npm:0.124.2"
   dependencies:
     "@juggle/resize-observer": "npm:^3.4.0"
     direction: "npm:^1.0.4"
@@ -17268,21 +17328,14 @@ __metadata:
     react-dom: ">=18.2.0"
     slate: ">=0.121.0"
     slate-dom: ">=0.119.1"
-  checksum: 10c0/7b0aeb8f914bb3670423d09936ab84a7a9e3145e01cad79bd37cf485d7d64f5b4e97802345a87fbdbaf8596c66cd05ee9ac5ed20a281bff83460e34cae5b51e2
+  checksum: 10c0/e32c66cac9ebb6effb7018fa3bd83e1cb991075155e2b8aeb7b9a236a171e084d9c3a0aa3e0a189f1b8d6f015243e8c4c16b8a74f40ef8faa62fbc648659511e
   languageName: node
   linkType: hard
 
-"slate@npm:^0.120.0":
-  version: 0.120.0
-  resolution: "slate@npm:0.120.0"
-  checksum: 10c0/af83b41f2b076444eb441e4d8747f1d629a7a555b5234adf79cc12ea37b517a35722e779270a421eaec803b04b805a0a6f284e31f9da2b063b097ba99a4c9ecb
-  languageName: node
-  linkType: hard
-
-"slate@npm:^0.123.0":
-  version: 0.123.0
-  resolution: "slate@npm:0.123.0"
-  checksum: 10c0/c26d116f4db3e92b0baee9855ce77848542ef930b3173317141071b37cfe17ff100836af48c7c9bdd30cd1e0e09412c2623648122b8766344f7219c9577f4041
+"slate@npm:^0.124.1":
+  version: 0.124.1
+  resolution: "slate@npm:0.124.1"
+  checksum: 10c0/761fff36a83748ce77c14db341d53a816f4997c3737bdd94de63374ad05fe9b857d49f60eab804440121a0283fde1ab3c4f9d36e4d05fa44375f4388be9c2f80
   languageName: node
   linkType: hard
 

@@ -19,14 +19,14 @@ const muClass = rule({
   ...theme.font.serif.mid,
   letterSpacing: '.05em',
   d: 'inline-flex',
-  tr: 'translateY(1px)',
+  tr: 'translateY(3px)',
   sub: {
     fz: `${(fontSize * 15.3) / 22.5}px`,
   },
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
     letterSpacing: '-0.065em',
-    tr: 'translateY(1px)',
+    tr: 'translateY(3px)',
   },
 });
 

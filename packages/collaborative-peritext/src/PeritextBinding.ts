@@ -26,7 +26,6 @@ export class PeritextBinding {
   };
 
   public syncFromModel(): void {
-    // console.log('syncFromModel');
     const peritext = this.peritext();
     const facade = this.facade;
     const txt = peritext.txt;
@@ -49,12 +48,10 @@ export class PeritextBinding {
     const peritext = this.peritext;
     const txt = peritext().txt;
     if (operation) {
-      // console.log('syncFromEditor (fast)', operation);
       const [pos, del, ins] = operation;
       if (del > 0) txt.delAt(pos, del);
       if (ins) txt.insAt(pos, ins);
     } else {
-      // console.log('syncFromEditor (full merge)');
       const viewRange = this.facade.get();
       txt.editor.merge(viewRange);
     }
@@ -66,6 +63,7 @@ export class PeritextBinding {
 
   private _s0: FanOutUnsubscribe | null = null;
   private _s1: FanOutUnsubscribe | null = null;
+  private _s2: FanOutUnsubscribe | null = null;
 
   /** Last known selection before a local change, if any. */
   private _selection: PeritextSelection | undefined = undefined;
@@ -76,6 +74,17 @@ export class PeritextBinding {
     editor.onchange = this.onEditorChange;
     const peritext = this.peritext();
     this._s0 = peritext.onSubtreeChange(this.onModelChange);
+
+    // Model resets replace the entire node tree. The `onSubtreeChange`
+    // listener may miss resets when only deep descendants changed (because
+    // only nodes whose NodeApi was accessed are tracked). Subscribe to
+    // the model-level `onReset` to guarantee we re-sync the editor.
+    this._s2 = peritext.api.onReset.listen(() => {
+      this.race(() => {
+        this.syncFromModel();
+      });
+    });
+
     const facade = this.facade;
     if (facade.getSelection) {
       const storeSelection = () => {
@@ -88,6 +97,7 @@ export class PeritextBinding {
   public readonly unbind = () => {
     this._s0?.();
     this._s1?.();
+    this._s2?.();
     this.facade.dispose?.();
   };
 }

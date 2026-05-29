@@ -1,8 +1,8 @@
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {type JsonNode, Model, type Patch} from 'json-joy/lib/json-crdt';
-import {concurrency} from 'thingies/lib/concurrencyDecorator';
+import {concurrency} from 'thingies/lib/concurrency';
 import {createRace} from 'thingies/lib/createRace';
-import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
+import {SESSION_GLOBAL} from '../constants';
 import {Subject} from 'rxjs';
 import {first, takeUntil} from 'rxjs/operators';
 import type {
@@ -21,12 +21,6 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
   protected _stop$ = new Subject<void>();
   public onsyncerror?: (error: Error | unknown) => void;
   private _syncRace = createRace();
-
-  /** Reference count — `dispose()` only tears the session down at zero. */
-  protected _refs = 1;
-
-  /** Invoked exactly once on final teardown (after the last `dispose`). */
-  public onTeardown?: () => void;
 
   public get model(): Model<N> {
     return this.log.end;
@@ -59,17 +53,10 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
     this.repo.change$(this.id).pipe(takeUntil(this._stop$)).subscribe(this.onEvent);
   }
 
-  /** Increment the reference count — for a new caller sharing this session. */
-  public acquire(): void {
-    this._refs++;
-  }
-
   public dispose(): void {
     if (this._stopped) return;
-    if (--this._refs > 0) return;
     this._stopped = true;
     this._stop$.next();
-    this.onTeardown?.();
   }
 
   protected clear(): void {
@@ -81,12 +68,17 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
   }
 
   private saveInProgress = false;
+  private readonly _syncQueue = concurrency(1);
 
   /**
    * Push (persist) any in-memory changes and pull (load) the latest state
    * from the local repo.
    */
-  @concurrency(1) public async sync(): Promise<null | {remote?: Promise<void>}> {
+  public sync(): Promise<null | {remote?: Promise<void>}> {
+    return this._syncQueue(() => this._sync());
+  }
+
+  private async _sync(): Promise<null | {remote?: Promise<void>}> {
     if (this._stopped) return null;
     const log = this.log;
     const api = log.end.api;
@@ -157,13 +149,16 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
   }
 
   public syncLog(): void {
-    if (!this.log.patches.size()) return;
+    if (!this.log.patches.size()) {
+      return;
+    }
     this._syncRace(() => {
       this.sync()
-        .then((error) => {
-          if (error instanceof Error) this.onsyncerror?.(error);
+        .then((result) => {
+          if (result instanceof Error) this.onsyncerror?.(result);
         })
         .catch((error) => {
+          console.error('syncLog: sync error', error);
           this.onsyncerror?.(error);
         });
     });
@@ -193,8 +188,10 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
     this.start = model.clone();
     const log = this.log;
     const end = log.end;
+    const ext = end.ext;
     if (end.api.builder.patch.ops.length) end.api.flush();
     end.reset(model);
+    end.ext = ext;
     log.patches.forEach((patch) => end.applyPatch(patch.v));
   }
 
@@ -220,7 +217,9 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
     });
     log.patches.clear();
     for (const patch of rebased) log.patches.set(patch.getId()!, patch);
+    const ext = log.end.ext;
     log.end.reset(newEnd);
+    log.end.ext = ext;
   }
 
   protected merge(patches: Patch[]): void {
@@ -233,7 +232,7 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
       const patchId = patch.getId();
       if (!patchId) continue;
       const patchSid = patchId.sid;
-      if (patchSid === SESSION.GLOBAL) continue;
+      if (patchSid === SESSION_GLOBAL) continue;
       if (patchSid === sid && patchId.time < end.clock.time) continue;
       end.applyPatch(patch);
       start.applyPatch(patch);

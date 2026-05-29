@@ -1,6 +1,6 @@
 {
   "name": "json-joy",
-  "version": "18.25.0",
+  "version": "18.26.0",
   "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
@@ -117,7 +117,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rxjs": "^7.8.2",
-    "slate": "^0.120.0",
+    "slate": "^0.124.1",
     "ts-jest": "^29.4.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",

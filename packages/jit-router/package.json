@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.25.0",
+  "version": "18.26.0",
   "description": "High-performance HTTP router with JIT compilation.",
   "author": {
     "name": "streamich",
@@ -38,6 +38,9 @@
     "@jsonjoy.com/util": "workspace:*",
     "sonic-forest": "^1.2.1"
   },
+  "devDependencies": {
+    "find-my-way": "^9.6.0"
+  },
   "engines": {
     "node": ">=10.0"
   },
@@ -53,7 +56,9 @@
     "build": "tsc -b tsconfig.build.json",
     "typedoc": "typedoc",
     "typecheck": "tsc -b --noEmit",
-    "test": "jest --maxWorkers 7"
+    "test": "jest --maxWorkers 7",
+    "bench": "npx ts-node src/__bench__/realistic.bench.ts",
+    "bench:router": "npx ts-node src/__bench__/router-benchmark.bench.ts"
   },
   "jest": {
     "preset": "ts-jest",

@@ -1,11 +1,9 @@
 import type {LibPage} from '@jsonjoy.com/ui/src/types/libs';
 
 export const page: LibPage = {
-  name: 'rpc-messages',
-  title: 'rpc-messages',
+  name: 'RPC Messages',
   type: 'lib',
   subtitle: 'Message types for the JSON Reactive RPC (JSON Rx) protocol.',
-  children: [],
   pkg: '@jsonjoy.com/rpc-messages',
   group: 'sync',
   repo: 'streamich/json-joy',
