@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.25.0",
+  "version": "18.26.0",
   "description": "Implements Reactive RPC procedure calling semantics abstracted away from any transport or serialization format.",
   "author": {
     "name": "streamich",
