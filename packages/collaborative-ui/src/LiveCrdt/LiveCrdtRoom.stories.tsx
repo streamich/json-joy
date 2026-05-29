@@ -67,12 +67,7 @@ const QuillRoom: React.FC<React.ComponentProps<typeof LiveCrdtRoom>> = (props) =
     return m;
   });
   return (
-    <LiveCrdtRoom
-      title="Live Collaborative Quill Editor"
-      schema={ext.quill.new('Hello! Start typing here...')}
-      setup={setup}
-      {...props}
-    >
+    <LiveCrdtRoom schema={ext.quill.new('Hello! Start typing here...')} setup={setup} {...props}>
       {(model: Model<any>, session: EditSession, repo) => {
         const id = String(session.id[1] ?? session.id[0] ?? '');
         return <QuillRoomBody model={model} repo={repo} id={id} manager={manager} />;

@@ -5,7 +5,7 @@ import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {deepEqual} from '@jsonjoy.com/json-equal/lib/deepEqual';
 import {RpcError} from '@jsonjoy.com/rpc-error';
-import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
+import {SESSION_GLOBAL} from '../../constants';
 import {timeout} from 'thingies/lib/timeout';
 import {pubsub} from '../../pubsub';
 import type {ServerBatch, ServerHistory, ServerPatch} from '../../remote/types';
@@ -828,7 +828,7 @@ export class LevelLocalRepo implements LocalRepo {
     if (typeof reqTime === 'number') {
       lastKnownTime = reqTime;
       const firstPatch = patches?.[0];
-      if (firstPatch?.getId()?.sid === SESSION.GLOBAL) lastKnownTime = firstPatch.getId()!.time + firstPatch.span() - 1;
+      if (firstPatch?.getId()?.sid === SESSION_GLOBAL) lastKnownTime = firstPatch.getId()!.time + firstPatch.span() - 1;
     } else if (patches?.length) {
       const firstPatchTime = patches?.[0]?.getId()?.time;
       if (typeof firstPatchTime === 'number') lastKnownTime = firstPatchTime - 1;
@@ -857,7 +857,7 @@ export class LevelLocalRepo implements LocalRepo {
         const patch = patches[i];
         const patchId = patch.getId();
         if (!patchId) throw new Error('PATCH_ID_MISSING');
-        const isSchemaPatch = patchId.sid === SESSION.GLOBAL && patchId.time === 1;
+        const isSchemaPatch = patchId.sid === SESSION_GLOBAL && patchId.time === 1;
         if (isSchemaPatch) {
           const patchAheadOfTip = patchId.time >= nextTick;
           if (!patchAheadOfTip) continue;
@@ -1093,7 +1093,7 @@ export class LevelLocalRepo implements LocalRepo {
               const merge: Patch[] = [];
               for (const blob of msg.patches) {
                 const patch = Patch.fromBinary(blob);
-                if (patch.getId()?.sid === SESSION.GLOBAL) continue;
+                if (patch.getId()?.sid === SESSION_GLOBAL) continue;
                 merge.push(patch);
               }
               if (!merge.length) return;

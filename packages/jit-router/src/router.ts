@@ -61,7 +61,8 @@ export class Router<Data = unknown> implements Printable {
 
 export class Destination implements Printable {
   public static from(def: string | string[], data: unknown, defaultUntil?: string): Destination {
-    const routes = typeof def === 'string' ? [Route.from(def, defaultUntil)] : def.map((r) => Route.from(r));
+    const routes =
+      typeof def === 'string' ? [Route.from(def, defaultUntil)] : def.map((r) => Route.from(r, defaultUntil));
     return new Destination(routes, data);
   }
 
@@ -93,7 +94,7 @@ export class Route implements Printable {
     const matches = str.match(/\{[^\}]*\}/g);
     let i = 0;
     for (const match of matches ?? []) {
-      const index = str.indexOf(match);
+      const index = str.indexOf(match, i);
       if (index > i) tokens.push(str.substring(i, index));
       tokens.push(match);
       i = index + match.length;

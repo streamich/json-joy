@@ -1,8 +1,7 @@
 import type {LibPage} from '@jsonjoy.com/ui/src/types/libs';
 
 export const page: LibPage = {
-  name: 'rpc-calls',
-  title: 'rpc-calls',
+  name: 'RPC Calls',
   type: 'lib',
   subtitle: 'Transport-agnostic Reactive RPC procedure calling semantics.',
   children: [],
