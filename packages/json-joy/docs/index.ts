@@ -1,6 +1,5 @@
 import type {LibPage} from '@jsonjoy.com/ui/src/types/libs';
 import {page as gettingStartedPage} from './getting-started';
-import {page as jsonPackPage} from './json-pack';
 import {page as jsonCrdtPage} from './json-crdt';
 import {page as jsonCrdtPatchPage} from './json-crdt-patch';
 import {page as jsonBinaryPage} from './json-binary';
@@ -30,7 +29,6 @@ export const page: LibPage = {
     gettingStartedPage,
     jsonCrdtPage,
     jsonCrdtPatchPage,
-    jsonPackPage,
     jsonPatchPage,
     jsonPointerPage,
     jsonBinaryPage,
