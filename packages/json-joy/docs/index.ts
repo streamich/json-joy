@@ -6,7 +6,6 @@ import {page as jsonCrdtPatchPage} from './json-crdt-patch';
 import {page as jsonBinaryPage} from './json-binary';
 import {page as jsonBrandPage} from './json-brand';
 import {page as jsonClonePage} from './json-clone';
-import {page as jsonExpressionPage} from './json-expression';
 import {page as jsonEqualPage} from './json-equal';
 import {page as jsonPatchPage} from './json-patch';
 import {page as jsonPointerPage} from './json-pointer';
@@ -34,7 +33,6 @@ export const page: LibPage = {
     jsonPackPage,
     jsonPatchPage,
     jsonPointerPage,
-    jsonExpressionPage,
     jsonBinaryPage,
     jsonEqualPage,
     jsonClonePage,
