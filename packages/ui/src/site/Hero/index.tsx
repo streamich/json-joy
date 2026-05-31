@@ -42,6 +42,8 @@ export interface HeroProps {
   proof?: React.ReactNode;
   /** CTA buttons rendered in a centered row. */
   ctas?: HeroCta[];
+  /** Custom CTA slot override. */
+  cta?: React.ReactNode;
   /** Small supporting line under the CTAs. */
   supporting?: React.ReactNode;
   /** Render the floating decorative doodle layer behind the content. */
@@ -103,6 +105,7 @@ export const Hero: React.FC<HeroProps> = ({
   badge,
   proof,
   ctas,
+  cta,
   supporting,
   doodles,
   top,
@@ -124,9 +127,7 @@ export const Hero: React.FC<HeroProps> = ({
           {!!badge && <div style={{display: 'flex', justifyContent: 'center', paddingBottom: 24}}>{badge}</div>}
           <DisplayTitle h1 big center eyebrow={eyebrow} color={accentColor} title={title} subtitle={subtitle} />
           {proof}
-          {!!ctas?.length && (
-            // The proof strip carries its own bottom padding; without it, lift
-            // the buttons off the subtitle so they don't crowd it.
+          {!!cta ? cta : !!ctas?.length && (
             <div className={ctaRowClass} style={{marginTop: proof ? 0 : 32}}>
               {ctas.map((cta, i) => {
                 const primary = (cta.variant ?? (i === 0 ? 'invert' : 'outline')) === 'invert';
