@@ -94,7 +94,7 @@ export const ContextMenuHeading: React.FC<ContextMenuHeadingProps> = ({item, com
   const inner = (
     <>
       {collapsible && (
-        <span className={chevronClass}>
+        <span className={chevronClass} style={{color: styles.g(0.5)}}>
           <Arrow direction={collapsed ? 'r' : 'd'} style={{width: 12, height: 12}} />
         </span>
       )}
