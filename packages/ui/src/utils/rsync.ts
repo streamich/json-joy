@@ -4,6 +4,7 @@ import {deepEqual} from '@jsonjoy.com/json-equal';
 
 export class ReactValue<T> extends Value<T> {
   public use(): T {
+    // biome-ignore lint/correctness/useHookAtTopLevel: `.use()` is a hook by convention, called from component render
     return useSyncExternalStore(this.subscribe, this.getSnapshot, this.getSnapshot);
   }
 
@@ -21,6 +22,7 @@ export const val = <T>(value: T) => new ReactValue<T>(value);
 
 export class ReactComputed<N, V extends unknown[] = any> extends Computed<N, V> {
   public use(): N {
+    // biome-ignore lint/correctness/useHookAtTopLevel: `.use()` is a hook by convention, called from component render
     return useSyncExternalStore(this.subscribe, this.getSnapshot, this.getSnapshot);
   }
 

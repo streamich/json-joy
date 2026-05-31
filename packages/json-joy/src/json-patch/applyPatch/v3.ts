@@ -88,7 +88,7 @@ export function applyOperation(doc: unknown, operation: Operation): OpResult {
         break;
       }
       obj = obj[key];
-    } else if (typeof obj === 'object' && !!obj) {
+    } else if (typeof obj === 'object' && obj) {
       key = unescapeComponent(key);
       if (indexOfSlash === -1) {
         switch (operation.op) {

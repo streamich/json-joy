@@ -222,7 +222,7 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     element = <span {...props}>{element}</span>;
   }
 
-  if (isPrivate || badge || isOP || !!bottomRight) {
+  if (isPrivate || badge || isOP || bottomRight) {
     const size = computedWidth || 32;
     let lock: React.ReactElement | undefined;
     let badgeElement: React.ReactElement | undefined;

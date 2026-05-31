@@ -127,7 +127,7 @@ export const Hero: React.FC<HeroProps> = ({
           {!!badge && <div style={{display: 'flex', justifyContent: 'center', paddingBottom: 24}}>{badge}</div>}
           <DisplayTitle h1 big center eyebrow={eyebrow} color={accentColor} title={title} subtitle={subtitle} />
           {proof}
-          {!!cta
+          {cta
             ? cta
             : !!ctas?.length && (
                 <div className={ctaRowClass} style={{marginTop: proof ? 0 : 32}}>

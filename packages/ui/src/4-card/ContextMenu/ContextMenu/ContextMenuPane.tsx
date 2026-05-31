@@ -151,7 +151,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
     }
     const subChildren = child.children;
     const expand = child.expand;
-    if (expand && !!subChildren && !!subChildren.length) {
+    if (expand && subChildren && subChildren.length) {
       bigIcons.flush();
       const id = (child.id ?? child.name) + '-title';
       nodes.push(
@@ -209,7 +209,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
 
   const searchHeight = doShowSearch ? HEIGHT.SEARCH : 0;
   const doShowHeader = !depth && !!path.length;
-  const headerHeight = doShowHeader || !!header ? HEIGHT.HEADER : 0;
+  const headerHeight = doShowHeader || header ? HEIGHT.HEADER : 0;
 
   const minWidth = menu.minWidth ?? state.minWidth ?? 220;
   const paneStyle = pane?.style ?? {};

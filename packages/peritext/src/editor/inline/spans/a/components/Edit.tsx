@@ -137,7 +137,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
       <ContextSep />
       <ContextTitle>Preview</ContextTitle>
 
-      {!!data && data.href.length > 3 ? (
+      {data && data.href.length > 3 ? (
         <div style={{display: 'flex', padding: '14px 32px 26px', alignItems: 'center', justifyContent: 'center'}}>
           <UrlDisplayCard url={data.href} title={data.title} />
         </div>

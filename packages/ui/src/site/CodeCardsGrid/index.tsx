@@ -100,7 +100,7 @@ export const CodeCardsGrid: React.FC<CodeCardsGridProps> = ({eyebrow, heading, s
     <div className={gridClass}>
       {items.map((item, i) => {
         const header =
-          !!item.title || !!item.intro ? (
+          item.title || item.intro ? (
             <>
               {!!item.title && <h3 className={titleClass}>{item.title}</h3>}
               {!!item.intro && (

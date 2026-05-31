@@ -121,7 +121,7 @@ export const ClickCard: React.FC<ClickCardProps> = ({
   const stageCls = stageClass({col: styles.g(0.6)});
 
   const labelElement =
-    !!icon || !!label || !!header ? (
+    icon || label || header ? (
       <span style={{height: 24, display: 'flex', alignItems: 'center'}}>
         {icon}
         {!!label && (

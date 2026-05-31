@@ -41,7 +41,7 @@ const tryExtractPeritextOperation = (tr: Transaction, txt: Peritext, doc: PmNode
   const step = steps[0];
   if (!(step instanceof ReplaceStep)) return;
   const slice = step.slice;
-  if (!!slice.openStart || !!slice.openEnd) return;
+  if (slice.openStart || slice.openEnd) return;
   const content = slice.content;
   let insertedText = '';
   const deleteLen = step.to - step.from;

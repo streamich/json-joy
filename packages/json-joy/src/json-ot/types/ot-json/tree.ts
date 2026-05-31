@@ -354,7 +354,7 @@ export class OpTree {
           clone.regId = reg.id;
         }
       }
-      if (!!d1.parent && !!d2.parent) {
+      if (d1.parent && d2.parent) {
         const child = d1.parent.children.get(d1.index);
         if (child) this.removeDrop(child);
         d1.parent.children.set(d2.index, clone);

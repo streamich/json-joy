@@ -112,7 +112,7 @@ export const BasicTooltip: React.FC<BasicTooltipProps> = ({
   const C = Component as any;
 
   let drop: React.ReactNode = null;
-  if (!!renderTooltip && (typeof show === 'boolean' ? show : !!visible)) {
+  if (renderTooltip && (typeof show === 'boolean' ? show : !!visible)) {
     const {dy} = handle.get();
     drop = (
       <PositionPopup fadeIn={fadeIn}>

@@ -27,7 +27,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   if (item.visible && visibleStore === false) return null;
 
   const id = item.id ?? item.name;
-  const children = !!item.children && !!item.children.length ? item.children : void 0;
+  const children = item.children && item.children.length ? item.children : void 0;
   const hasPane = !!item.pane;
   const hasPanel = !!item.panel;
   const hasArgs = !!item.params?.length;
