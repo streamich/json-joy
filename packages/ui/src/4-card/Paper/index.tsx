@@ -44,7 +44,7 @@ export const Paper: React.FC<PaperProps> = (props) => {
   } = props;
   const styles = useStyles();
   const light = styles.light;
-  const bg = styles.surface.fg.pct(0, 0, 0, .75);
+  const bg = styles.surface.fg.pct(0, 0, 0, .75) + '';
 
   const style: React.CSSProperties = {};
 
