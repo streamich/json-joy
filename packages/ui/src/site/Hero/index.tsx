@@ -127,24 +127,26 @@ export const Hero: React.FC<HeroProps> = ({
           {!!badge && <div style={{display: 'flex', justifyContent: 'center', paddingBottom: 24}}>{badge}</div>}
           <DisplayTitle h1 big center eyebrow={eyebrow} color={accentColor} title={title} subtitle={subtitle} />
           {proof}
-          {!!cta ? cta : !!ctas?.length && (
-            <div className={ctaRowClass} style={{marginTop: proof ? 0 : 32}}>
-              {ctas.map((cta, i) => {
-                const primary = (cta.variant ?? (i === 0 ? 'invert' : 'outline')) === 'invert';
-                const ButtonCta = primary ? ButtonCta1 : ButtonCta2;
-                return (
-                  <ButtonCta
-                    key={i}
-                    color={primary ? (cta.color ?? accentColor) : undefined}
-                    href={cta.to}
-                    onClick={cta.to ? undefined : cta.onClick}
-                  >
-                    {cta.label}
-                  </ButtonCta>
-                );
-              })}
-            </div>
-          )}
+          {!!cta
+            ? cta
+            : !!ctas?.length && (
+                <div className={ctaRowClass} style={{marginTop: proof ? 0 : 32}}>
+                  {ctas.map((cta, i) => {
+                    const primary = (cta.variant ?? (i === 0 ? 'invert' : 'outline')) === 'invert';
+                    const ButtonCta = primary ? ButtonCta1 : ButtonCta2;
+                    return (
+                      <ButtonCta
+                        key={i}
+                        color={primary ? (cta.color ?? accentColor) : undefined}
+                        href={cta.to}
+                        onClick={cta.to ? undefined : cta.onClick}
+                      >
+                        {cta.label}
+                      </ButtonCta>
+                    );
+                  })}
+                </div>
+              )}
           {!!supporting && (
             <p className={supportingClass} style={{color: styles.g(0.55)}}>
               {supporting}

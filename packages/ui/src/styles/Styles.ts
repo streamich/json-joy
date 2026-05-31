@@ -38,7 +38,7 @@ export class Styles {
   public readonly txt: Fonts;
 
   constructor(public readonly theme: StyleTheme) {
-    const light = this.light = theme.light ?? true;
+    const light = (this.light = theme.light ?? true);
     this.col = new Colors(theme.color);
     this.txt = new Fonts(theme.font);
     const lightSurface = HslColor.from('#F8F9FA')!;
