@@ -2,7 +2,7 @@ import * as React from 'react';
 import {lightTheme as theme, rule, drule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
+const blockClass = drule({
   ...theme.font.mono.bold,
   d: 'inline-block',
   pd: '.1em .2em',
@@ -71,7 +71,6 @@ export const Code: React.FC<CodeProps> = ({
 
   const style: React.CSSProperties = {
     color: styles.neutral.g(0.9, 0.86),
-    background: styles.neutral.g(0.8, 0.08),
   };
 
   if (size) {
@@ -119,14 +118,19 @@ export const Code: React.FC<CodeProps> = ({
   return (
     <code
       className={
-        blockClass +
+        blockClass({
+          bg: styles.neutral.g(0.8, 0.08),
+          '&:hover': {
+            bg: styles.neutral.g(0.3, 0.1),
+          },
+        }) +
         (outline
           ? outlineClass({
               bd: `1px solid ${styles.g(0, 0.05)}`,
               bxsh: `inset 0 1px 0 ${styles.g(1, 0.16)}, 0 1px 2px ${styles.g(0, 0.06)}`,
               col: styles.g(0.08),
               '&:hover': {
-                bd: `1px solid ${styles.g(0, 0.16)}`,
+                bd: `1px solid ${styles.g(0, 0.2)}`,
                 bxsh: `inset 0 1px 0 ${styles.g(1, 0.08)}, 0 1px 2px ${styles.g(0, 0.03)}`,
                 col: styles.g(0.02),
               },
