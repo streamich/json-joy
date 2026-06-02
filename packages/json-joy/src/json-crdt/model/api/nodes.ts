@@ -76,7 +76,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       }
       throw new Error('CANNOT_IN');
     }
-    if (typeof path === 'string' && !!path && path[0] !== '/') path = '/' + path;
+    if (typeof path === 'string' && path && path[0] !== '/') path = '/' + path;
     if (typeof path === 'number') path = [path];
     while (node instanceof ValNode) node = node.child()!;
     return find(node, path);

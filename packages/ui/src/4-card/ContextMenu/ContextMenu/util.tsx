@@ -82,7 +82,7 @@ export const findMenuItems = (root: MenuItem, query: string, opts: FindMenuItems
   const find = (path: MenuItem[], curr: MenuItem) => {
     if (curr.sep || curr.heading) return;
     // Skip inline-only raw items
-    if (!!curr.raw && !curr.children && !curr.pane && !curr.onSelect && !curr.params?.length) {
+    if (curr.raw && !curr.children && !curr.pane && !curr.onSelect && !curr.params?.length) {
       return;
     }
     const name = curr.name || '';
@@ -107,7 +107,7 @@ export const findMenuItems = (root: MenuItem, query: string, opts: FindMenuItems
     }
   };
   find([], root);
-  if (result.length === 1 && !!result[0].item.children && result[0].item.children.length) {
+  if (result.length === 1 && result[0].item.children && result[0].item.children.length) {
     const {item, path, score} = result.pop()!;
     path.push(item);
     const children = item.children;

@@ -20,7 +20,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = (props) => {
 
   let under: React.ReactNode | undefined;
 
-  if (!!newSlice && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
+  if (newSlice && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
     under = (
       <BottomPanePortal>
         <FmtNewPane formatting={newSlice} onSave={() => newSlice.save()} />

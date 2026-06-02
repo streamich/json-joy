@@ -202,17 +202,18 @@ export class JsonDecoder implements BinaryJsonDecoder {
     const uint8 = reader.uint8;
     const char = uint8[x];
     switch (char) {
-      case 34 /* " */: {
-        if (uint8[x + 1] === 0x64 /* d */) {
-          const bin = this.tryReadBin();
-          if (bin) return bin;
-          if (isUndefined(uint8, x + 2)) {
-            reader.x = x + 35;
-            return undefined;
+      case 34 /* " */:
+        {
+          if (uint8[x + 1] === 0x64 /* d */) {
+            const bin = this.tryReadBin();
+            if (bin) return bin;
+            if (isUndefined(uint8, x + 2)) {
+              reader.x = x + 35;
+              return undefined;
+            }
           }
+          return this.readStr();
         }
-        return this.readStr();
-      }
       case 91 /* [ */:
         return this.readArr();
       case 102 /* f */:

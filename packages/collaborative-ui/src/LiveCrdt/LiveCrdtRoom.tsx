@@ -4,9 +4,9 @@ import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {CopyInput} from '@jsonjoy.com/ui/lib/2-inline-block/CopyInput';
 import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {LiveCrdt, type LiveCrdtProps} from '.';
-import {MiniTitle} from '@jsonjoy.com/ui/src/3-list-item/MiniTitle';
-import {Separator} from '@jsonjoy.com/ui/src/3-list-item/Separator';
-import {Split} from '@jsonjoy.com/ui/src/3-list-item/Split';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 
 export interface LiveCrdtRoomProps extends Omit<LiveCrdtProps, 'id'> {
   /** Optional initial room ID. When omitted the entry screen is shown. */

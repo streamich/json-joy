@@ -11,7 +11,6 @@ export const CopyCode: React.FC<CopyCodeProps> = ({value, truncate, onMouseDown,
   const codeStyle = truncate ? {minWidth: 0, maxWidth: '100%', ...(style || {})} : style;
   return (
     <Code
-      gray
       spacious
       {...rest}
       style={codeStyle}

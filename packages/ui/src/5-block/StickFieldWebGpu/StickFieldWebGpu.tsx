@@ -16,6 +16,7 @@ const canvasClass = rule({
   h: '100%',
   d: 'block',
   pointerEvents: 'none',
+  z: -1,
 });
 
 /**

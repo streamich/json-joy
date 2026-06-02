@@ -58,7 +58,7 @@ export const find = (val: unknown, path: Path): Reference => {
         }
       }
       val = obj[key];
-    } else if (typeof obj === 'object' && !!obj) {
+    } else if (typeof obj === 'object' && obj) {
       val = has(obj, key as string) ? (obj as any)[key] : undefined;
     } else throw new Error('NOT_FOUND');
   }

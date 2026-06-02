@@ -391,8 +391,7 @@ export class LevelLocalRepo implements LocalRepo {
       const model = Model.load(blob, this.sid);
       return model;
     } catch (error) {
-      if (!!error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND')
-        throw new Error('NOT_FOUND');
+      if (error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') throw new Error('NOT_FOUND');
       throw error;
     }
   }
@@ -487,7 +486,7 @@ export class LevelLocalRepo implements LocalRepo {
       const meta = await this.readMeta(keyBase);
       if (meta.seq === -1) {
         remote.create(remoteId).catch((error) => {
-          const code = !!error && typeof error === 'object' ? (error as any).code : undefined;
+          const code = error && typeof error === 'object' ? (error as any).code : undefined;
           const message = error instanceof Error ? error.message : undefined;
           if (code === 'CONFLICT' || message === 'CONFLICT') return;
           this.emitSyncError(error);
@@ -747,7 +746,7 @@ export class LevelLocalRepo implements LocalRepo {
       if (!model) throw RpcError.notFound();
       return {model, cursor};
     } catch (error) {
-      const code = !!error && typeof error === 'object' ? (error as any).code : undefined;
+      const code = error && typeof error === 'object' ? (error as any).code : undefined;
       const message = error instanceof Error ? error.message : undefined;
       const notFound = code === 'NOT_FOUND' || message === 'NOT_FOUND' || message === 'Not Found';
       if (remote && notFound) return await this.load(id);
@@ -967,7 +966,7 @@ export class LevelLocalRepo implements LocalRepo {
       const {model, meta} = await this.pullExisting(id, keyBase);
       return {model, cursor: meta.seq};
     } catch (error) {
-      if (!!error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
+      if (error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
         try {
           const {model, meta} = await this.pullNew(id, keyBase);
           return {model, cursor: meta.seq};
@@ -1168,7 +1167,7 @@ export class LevelLocalRepo implements LocalRepo {
           return;
         }
       } catch (error) {
-        if (!!error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
+        if (error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
           if (this._stopped) return;
           await this.pullNew(id, keyBase);
           return;

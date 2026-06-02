@@ -26,7 +26,7 @@ export const JsonBlockClickable: React.FC<JsonBlockClickableProps> = ({value, pa
   }, [value, path]);
 
   return (
-    <div className={css.block} style={{paddingLeft: !!view && typeof view === 'object' ? undefined : '1px'}}>
+    <div className={css.block} style={{paddingLeft: view && typeof view === 'object' ? undefined : '1px'}}>
       <ClickableJson
         doc={view}
         compact

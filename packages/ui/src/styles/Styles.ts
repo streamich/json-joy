@@ -10,7 +10,9 @@ export class Styles {
 
   public bg: ThemeColor;
   public grey: ThemeColor;
+  public surface: ThemeColor;
   public neutral: ThemeColor;
+
   public accent: ThemeColor;
   public accent2: ThemeColor;
   public positive: ThemeColor;
@@ -36,12 +38,11 @@ export class Styles {
   public readonly txt: Fonts;
 
   constructor(public readonly theme: StyleTheme) {
-    this.light = theme.light ?? true;
+    const light = (this.light = theme.light ?? true);
     this.col = new Colors(theme.color);
     this.txt = new Fonts(theme.font);
     const lightSurface = HslColor.from('#F8F9FA')!;
-    const darkSurface = HslColor.from('#1A1A1B')!;
-    const surface = this.light ? lightSurface : darkSurface;
+    const surface = light ? lightSurface : HslColor.from('#1A1A1B')!;
     const grey = new ThemeColor(new HslColor(0, 0, 0.5), lightSurface);
     const neutral = new ThemeColor(new HslColor(0.155, 0.43, 0.62), lightSurface);
     const accent = new ThemeColor(new HslColor(0.575, 0.91, 0.56), lightSurface);
@@ -60,7 +61,8 @@ export class Styles {
     const brand4 = new ThemeColor(HslColor.from('#F6A832')!, lightSurface); // orange
     const brand5 = new ThemeColor(HslColor.from('#5FCC8A')!, lightSurface); // green
     const brand6 = new ThemeColor(HslColor.from('#58B9F8')!, lightSurface); // blue
-    this.bg = new ThemeColor(surface, surface);
+    this.bg = light ? new ThemeColor(HslColor.from('#fff')!, lightSurface) : new ThemeColor(surface, surface);
+    this.surface = new ThemeColor(surface, surface);
     this.grey = this.light ? grey : grey.toDarkTheme(surface);
     this.neutral = this.light ? neutral : neutral.toDarkTheme(surface);
     this.accent = this.light ? accent : accent.toDarkTheme(surface);

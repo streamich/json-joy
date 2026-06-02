@@ -64,7 +64,7 @@ export class EditSessionFactory {
       return session;
     } catch (error) {
       const errorCode =
-        !!error && typeof error === 'object'
+        error && typeof error === 'object'
           ? (error as Record<string, unknown>).code || (error as Record<string, unknown>).message || ''
           : '';
       if (errorCode === 'NOT_FOUND') {
@@ -81,7 +81,7 @@ export class EditSessionFactory {
             return session;
           } catch (error) {
             const errorCode =
-              !!error && typeof error === 'object'
+              error && typeof error === 'object'
                 ? (error as Record<string, unknown>).code || (error as Record<string, unknown>).message || ''
                 : '';
             switch (errorCode) {

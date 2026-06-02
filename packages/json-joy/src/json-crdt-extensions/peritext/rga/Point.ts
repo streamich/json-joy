@@ -195,7 +195,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     } else {
       chunk = this.chunk();
       if (!chunk) return undefined;
-      if (!chunk.del || !!deleted) {
+      if (!chunk.del || deleted) {
         const offset = id.time - chunk.id.time;
         const span = chunk.span;
         if (offset + remaining < span) return tick(id, remaining);
@@ -234,7 +234,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const {id, rga} = this;
     let chunk = this.chunk();
     if (!chunk) return rga.id;
-    if (!chunk.del || !!deleted) {
+    if (!chunk.del || deleted) {
       const offset = id.time - chunk.id.time;
       if (offset >= remaining) return tick(id, -remaining);
       remaining -= offset;

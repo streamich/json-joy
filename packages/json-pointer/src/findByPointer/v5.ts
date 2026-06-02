@@ -27,7 +27,7 @@ export const findByPointer = (pointer: string, val: unknown): Reference => {
         if (key < 0) throw 'INVALID_INDEX';
       }
       val = obj[key];
-    } else if (typeof obj === 'object' && !!obj) {
+    } else if (typeof obj === 'object' && obj) {
       key = unescapeComponent(key);
       val = has(obj, key) ? (obj as any)[key] : undefined;
     } else throw 'NOT_FOUND';

@@ -246,7 +246,7 @@ export class EditorState implements UiLifeCycles {
             this.surface.rerender();
             return;
           }
-          if (cursorCardinality === 1 && !!mainCursor && !mainCursor.isCollapsed()) {
+          if (cursorCardinality === 1 && mainCursor && !mainCursor.isCollapsed()) {
             mainCursor.set(mainCursor.focus());
             this.surface.rerender();
             return;

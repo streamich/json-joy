@@ -1107,6 +1107,7 @@ export class StickFieldGlState {
   };
 
   private bindProgram(p: WebGLProgram): void {
+    // biome-ignore lint/correctness/useHookAtTopLevel: `useProgram` is the WebGL API, not a React hook
     this.gl!.useProgram(p);
   }
 

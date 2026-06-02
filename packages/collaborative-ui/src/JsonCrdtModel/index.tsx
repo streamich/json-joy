@@ -229,7 +229,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
       listItems.push(
         <JsonCrdtModelView key="view" readonly={readonly} model={model} state={state} filename={filename} />,
       );
-    } else if (item === 'display' && !!renderDisplay) {
+    } else if (item === 'display' && renderDisplay) {
       listItems.push(
         <Display
           key="display"

@@ -298,7 +298,7 @@ export class Slice<T = string> extends Range<T> implements Stateful, Printable {
     const {model} = this;
     const diff = new JsonCrdtDiff(model);
     diff.shallowConBin = true;
-    if (this.dataNode() instanceof ObjApi && !!data && typeof data === 'object' && !Array.isArray(data)) {
+    if (this.dataNode() instanceof ObjApi && data && typeof data === 'object' && !Array.isArray(data)) {
       const dataNode = this.dataAsObj();
       const patch = diff.diff(dataNode.node, data);
       model.applyPatch(patch);

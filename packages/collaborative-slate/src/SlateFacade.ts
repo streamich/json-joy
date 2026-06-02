@@ -115,7 +115,7 @@ export class SlateFacade implements RichtextEditorFacade {
     if (installHistory) withHistory(editor);
     this._origOnChange = (editor as any).onChange;
     (editor.onChange as SlateEditorOnChange) = this._slateOnChange = (options?: {operation?: SlateOperation}) => {
-      if (this._disposed || !!this._remoteCnt) {
+      if (this._disposed || this._remoteCnt) {
         this._origOnChange?.call(editor);
         return;
       }
