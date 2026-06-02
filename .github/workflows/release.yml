@@ -57,12 +57,6 @@ jobs:
       - name: Run typecheck
         run: yarn typecheck
 
-      - name: Bundle mutxt-element (Webpack)
-        run: yarn workspace mutxt-element run bundle
-
-      - name: Build mu-txt Electron (renderer + main process)
-        run: yarn workspace mu-txt run electron:build
-
       - name: Run tests (vitest)
         run: yarn vitest
 
