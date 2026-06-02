@@ -9,6 +9,80 @@ export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
   $: JsonNodeApi<N>;
 }
 
+/**
+ * `WProxyNode` is the *writable* counterpart of `view()`: it mirrors the
+ * plain-JSON view of the document, but reading and writing it records CRDT
+ * operations. It is shaped exactly like the data — there are no node handles in
+ * the type, so it edits like a plain object/array:
+ *
+ * ```ts
+ * model.w.title = 'Hello';              // ObjApi.set({title: 'Hello'})
+ * model.w.tracks.push(track);           // ArrApi.push(track)
+ * model.w.tracks[0].name = 'opening';   // deep field edit on element 0
+ * model.w.config = {fps: 30};           // whole-object assignment
+ * ```
+ *
+ * This is the read/write sibling of the two existing proxies: `view()` is a
+ * detached read-only snapshot, `.s` is the node proxy that exposes every
+ * handle (`$`, `ins`/`del`, …) for manual control, and `.w` is the ergonomic
+ * plain read/write layer. When you need a node handle from inside a `.w` edit,
+ * reach for `.s` (e.g. `model.s.title.$.ins(5, '!')` for in-place string ops).
+ *
+ * Notes:
+ * - `val` nodes are transparent — `.w` resolves through them to the inner value.
+ * - Leaf nodes (`con`/`str`/`bin`) read back as their raw value; `str` widens to
+ *   `string` and `bin` to `Uint8Array` so reassignment type-checks.
+ * - Deleting a (non-optional) declared key still needs the usual TS cast, since
+ *   `delete` is only allowed on optional properties.
+ */
+// prettier-ignore
+export type WProxyNode<N> =
+  N extends nodes.ConNode<infer V>
+    ? V
+    : N extends nodes.RootNode<infer M>
+      ? WProxyNode<M>
+      : N extends nodes.ValNode<infer T>
+        ? WProxyNode<T>
+        : N extends nodes.StrNode
+          ? string
+          : N extends nodes.BinNode
+            ? Uint8Array
+            : N extends nodes.ArrNode<infer E>
+              ? WProxyNodeArr<E>
+              : N extends nodes.ObjNode<infer M>
+                ? WProxyNodeObj<M>
+                : N extends nodes.VecNode<any>
+                  ? WProxyNodeVec<N>
+                  : unknown;
+
+export type WProxyNodeObj<M extends Record<string, nodes.JsonNode>> = {
+  -readonly [K in keyof M]: WProxyNode<M[K]>;
+};
+
+/**
+ * `arr` nodes read and mutate like an ordinary array: indexing, `length`,
+ * iteration, and the standard methods (`map`/`filter`/`forEach`/…) all work,
+ * and the mutating methods (`push`/`pop`/`shift`/`unshift`/`splice`/`sort`/
+ * `reverse`/`fill`) record CRDT operations. Indexing and the element-returning
+ * methods (`arr[i]`, `at`, `find`, iteration, …) yield each element's writable
+ * proxy, so nested containers stay deeply navigable and mutable.
+ */
+export type WProxyNodeArr<E extends nodes.JsonNode> = WProxyNode<E>[];
+
+export type WProxyNodeVec<N extends nodes.VecNode<any>> = {
+  -readonly [K in keyof nodes.JsonNodeView<N>]: JsonNodeToWProxyElement<N, K>;
+};
+
+// Helper: element type of a `vec` tuple at key `K`, as a writable proxy node.
+type JsonNodeToWProxyElement<N extends nodes.VecNode<any>, K> =
+  N extends nodes.VecNode<infer T>
+    ? K extends keyof T
+      ? T[K] extends nodes.JsonNode
+        ? WProxyNode<T[K]>
+        : unknown
+      : unknown
+    : unknown;
+
 export type ProxyNodeCon<N extends nodes.ConNode<any>> = ProxyNode<N>;
 export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {
   _: JsonNodeToProxyNode<ReturnType<N['child']>>;

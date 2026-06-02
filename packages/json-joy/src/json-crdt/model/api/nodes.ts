@@ -346,6 +346,21 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return {$: this} as unknown as types.ProxyNode<N>;
   }
 
+  /**
+   * Returns a *writable* plain proxy of this node — the read/write sibling of
+   * `view()` (read-only snapshot) and `.s` (node proxy with all handles).
+   * Reading container properties returns nested writable proxies, reading leaf
+   * nodes (`con`/`str`/`bin`) returns their raw value, and assignment records
+   * CRDT operations. It is shaped like the plain data; for node handles use
+   * `.s`. See {@link types.WProxyNode} for details and caveats.
+   *
+   * The base implementation covers leaf nodes by returning their view; `obj`,
+   * `arr`, `vec` and `val` nodes override it with the appropriate proxy.
+   */
+  public get w(): types.WProxyNode<N> {
+    return this.view() as types.WProxyNode<N>;
+  }
+
   public get $(): JsonNodeToProxyPathNode<N> {
     return proxy$((path) => {
       try {
@@ -534,6 +549,16 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
     };
     return <any>proxy;
   }
+
+  /**
+   * Writable proxy of this `val` node. `val` registers are transparent in the
+   * view, so `.w` resolves through to the inner value's writable proxy. To
+   * overwrite the register itself use `.set(value)` (or assign through the
+   * parent container).
+   */
+  public get w(): types.WProxyNode<N> {
+    return (this.api.wrap(this.node.node()) as any).w;
+  }
 }
 
 type UnVecNode<N> = N extends VecNode<infer T> ? T : never;
@@ -604,6 +629,42 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
       },
     );
     return proxy as types.ProxyNodeVec<N>;
+  }
+
+  /**
+   * Writable, view-shaped proxy of this `vec` node. Elements are addressed by
+   * index; assigning to an index overwrites that element. The vector length is
+   * fixed, so out-of-range indices are rejected.
+   */
+  public get w(): types.WProxyNode<N> {
+    return new Proxy([] as unknown[], {
+      get: (target, prop) => {
+        if (prop === '$') return this;
+        if (prop === 'length') return this.length();
+        if (typeof prop === 'string') {
+          const index = Number(prop);
+          if (!Number.isNaN(index)) {
+            const child = this.node.get(index);
+            return child ? (this.api.wrap(child as JsonNode) as any).w : undefined;
+          }
+        }
+        // Delegate other reads (iteration, map, JSON serialization, …) to a
+        // materialized array of element proxies.
+        const length = this.length();
+        const elements = new Array(length);
+        for (let i = 0; i < length; i++) elements[i] = (this.api.wrap(this.node.get(i) as JsonNode) as any).w;
+        const value = (elements as any)[prop];
+        return typeof value === 'function' ? value.bind(elements) : value;
+      },
+      set: (target, prop, value) => {
+        if (prop === '$' || prop === 'length' || typeof prop === 'symbol') return false;
+        const index = Number(prop);
+        if (Number.isNaN(index) || index < 0 || index >= this.length()) return false;
+        this.set([[index, value as unknown]]);
+        return true;
+      },
+      deleteProperty: () => false, // vectors are fixed-length
+    }) as types.WProxyNode<N>;
   }
 }
 
@@ -699,6 +760,50 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       },
     );
     return proxy as types.ProxyNodeObj<N>;
+  }
+
+  /**
+   * Writable, view-shaped proxy of this `obj` node. Reading a key returns the
+   * nested writable proxy (containers) or the raw value (leaves); assigning a
+   * key records an `obj` set operation; deleting a key records a delete.
+   * Missing keys read back as `undefined` (rather than throwing, unlike `.s`),
+   * matching plain-object semantics. Use `.s` for node handles.
+   */
+  public get w(): types.WProxyNode<N> {
+    return new Proxy(
+      {},
+      {
+        get: (target, prop) => {
+          if (prop === '$') return this;
+          if (typeof prop === 'symbol') return (target as any)[prop];
+          const child = this.node.get(String(prop));
+          if (!child) return undefined;
+          return (this.api.wrap(child) as any).w;
+        },
+        set: (target, prop, value) => {
+          if (prop === '$' || typeof prop === 'symbol') return false;
+          this.set({[String(prop)]: value} as Partial<JsonNodeView<N>>);
+          return true;
+        },
+        deleteProperty: (target, prop) => {
+          if (typeof prop === 'symbol') return false;
+          this.del([String(prop)]);
+          return true;
+        },
+        has: (target, prop) => {
+          if (prop === '$') return true;
+          if (typeof prop === 'symbol') return false;
+          // Mirror the view: keys deleted via a `con(undefined)` tombstone are
+          // absent from the view and must read as absent here too.
+          return String(prop) in (this.view() as object);
+        },
+        ownKeys: () => Object.keys(this.view() as object),
+        getOwnPropertyDescriptor: (target, prop) => {
+          if (typeof prop === 'symbol' || !(String(prop) in (this.view() as object))) return undefined;
+          return {enumerable: true, configurable: true};
+        },
+      },
+    ) as types.WProxyNode<N>;
   }
 }
 
@@ -962,6 +1067,118 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
       },
     );
     return proxy as types.ProxyNodeArr<N>;
+  }
+
+  /**
+   * Writable proxy of this `arr` node that behaves like an ordinary JavaScript
+   * array. Indexing, `length`, iteration and the standard read methods all
+   * work; the mutating methods record CRDT operations:
+   *
+   * - `push`/`pop`/`shift`/`unshift`/`splice` map directly to insert/delete ops
+   * - `sort`/`reverse`/`fill` compute the resulting array and reconcile it via
+   *   `merge()` (minimal ops)
+   * - `arr[i] = value` overwrites, `arr[length] = value` appends, `delete arr[i]`
+   *   removes, `arr.length = n` truncates
+   *
+   * Indexing (`arr[i]`) and every element-returning method (`at`, `map`,
+   * `find`, iteration, spread, …) return that element's writable proxy, so
+   * nested containers are deeply navigable and mutable — e.g.
+   * `arr.at(0).field = x` records an op. For leaf elements (`con`/`str`) that
+   * proxy is just the raw value, so primitive arrays behave exactly like plain
+   * arrays. Use `.s` for the imperative node API.
+   */
+  public get w(): types.WProxyNode<N> {
+    type El = JsonNodeView<N>[number];
+    const mutators: Record<string, (...args: any[]) => unknown> = {
+      push: (...items: El[]) => {
+        if (items.length) this.push(...items);
+        return this.length();
+      },
+      pop: () => {
+        const len = this.length();
+        if (!len) return undefined;
+        const value = (this.view() as unknown[])[len - 1];
+        this.del(len - 1, 1);
+        return value;
+      },
+      shift: () => {
+        if (!this.length()) return undefined;
+        const value = (this.view() as unknown[])[0];
+        this.del(0, 1);
+        return value;
+      },
+      unshift: (...items: El[]) => {
+        if (items.length) this.ins(0, items);
+        return this.length();
+      },
+      splice: (start: number, deleteCount?: number, ...items: El[]) => {
+        const len = this.length();
+        const from = start < 0 ? Math.max(len + start, 0) : Math.min(start, len);
+        const count = deleteCount === undefined ? len - from : Math.max(0, Math.min(deleteCount, len - from));
+        const removed = (this.view() as unknown[]).slice(from, from + count);
+        if (count) this.del(from, count);
+        if (items.length) this.ins(from, items);
+        return removed;
+      },
+      reverse: () => {
+        this.merge((this.view() as unknown[]).slice().reverse());
+        return this.w;
+      },
+      sort: (compareFn?: (a: unknown, b: unknown) => number) => {
+        this.merge((this.view() as unknown[]).slice().sort(compareFn));
+        return this.w;
+      },
+      fill: (value: El, start?: number, end?: number) => {
+        this.merge((this.view() as unknown[]).slice().fill(value, start, end));
+        return this.w;
+      },
+    };
+    return new Proxy([] as unknown[], {
+      get: (target, prop) => {
+        if (prop === '$') return this;
+        if (prop === 'length') return this.length();
+        if (typeof prop === 'string') {
+          if (prop in mutators) return mutators[prop];
+          const index = Number(prop);
+          if (!Number.isNaN(index)) {
+            const child = this.node.getNode(index);
+            return child ? (this.api.wrap(child) as any).w : undefined;
+          }
+        }
+        // Delegate every other read (iteration, map, at, find, …) to a
+        // materialized array of element *proxies*, so element access stays live
+        // and deeply mutable and the proxy otherwise behaves like a plain array.
+        const length = this.length();
+        const elements = new Array(length);
+        for (let i = 0; i < length; i++) elements[i] = (this.api.wrap(this.node.getNode(i)!) as any).w;
+        const value = (elements as any)[prop];
+        return typeof value === 'function' ? value.bind(elements) : value;
+      },
+      set: (target, prop, value) => {
+        if (prop === '$' || typeof prop === 'symbol') return false;
+        if (prop === 'length') {
+          const next = Number(value);
+          const len = this.length();
+          if (Number.isNaN(next) || next < 0) return false;
+          if (next < len) this.del(next, len - next);
+          return true;
+        }
+        const index = Number(prop);
+        if (Number.isNaN(index) || index < 0) return false;
+        const len = this.length();
+        if (index < len) this.upd(index, value as El);
+        else if (index === len) this.ins(index, [value as El]);
+        else throw new Error('OUT_OF_BOUNDS');
+        return true;
+      },
+      deleteProperty: (target, prop) => {
+        if (typeof prop === 'symbol') return false;
+        const index = Number(prop);
+        if (Number.isNaN(index) || index < 0 || index >= this.length()) return false;
+        this.del(index, 1);
+        return true;
+      },
+    }) as types.WProxyNode<N>;
   }
 }
 

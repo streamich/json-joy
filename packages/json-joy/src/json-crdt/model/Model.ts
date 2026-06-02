@@ -270,6 +270,26 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
+   * Experimental *writable* plain proxy of the document — the read/write
+   * sibling of {@link view} (a detached read-only snapshot) and {@link s} (the
+   * node proxy that exposes every handle for manual control). Reading mirrors
+   * the plain-JSON view and assignment records CRDT operations, so the document
+   * can be edited like an ordinary JavaScript object/array:
+   *
+   * ```ts
+   * model.w.title = 'Hello';
+   * model.w.tracks.push(track);          // arrays are real arrays
+   * model.w.tracks[0].name = 'opening';  // deep element edits
+   * ```
+   *
+   * For node handles (in-place string ops, etc.) use `.s`. Automatically
+   * resolves nested "val" nodes. See the `NodeApi.w` accessor.
+   */
+  public get w() {
+    return this.api.w;
+  }
+
+  /**
    * Experimental strictly typed node retrieval API using proxy objects.
    * Automatically resolves nested "val" nodes.
    */
