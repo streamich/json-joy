@@ -20,6 +20,7 @@
     { "path": "packages/collaborative-str/tsconfig.build.json" },
     { "path": "packages/collaborative-presence/tsconfig.build.json" },
     { "path": "packages/collaborative-react/tsconfig.build.json" },
+    { "path": "packages/collaborative-vue/tsconfig.build.json" },
     { "path": "packages/collaborative-input/tsconfig.build.json" },
     { "path": "packages/collaborative-ace/tsconfig.build.json" },
     { "path": "packages/collaborative-codemirror/tsconfig.build.json" },
