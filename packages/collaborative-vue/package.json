@@ -1,0 +1,67 @@
+{
+  "name": "@jsonjoy.com/collaborative-vue",
+  "version": "18.27.0",
+  "description": "JSON CRDT Vue.js composables, components, and context helpers — the Vue counterpart of @jsonjoy.com/collaborative-react.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "collaborative",
+    "multiplayer",
+    "binding",
+    "collaborative-vue",
+    "composables",
+    "vue",
+    "json-crdt",
+    "json",
+    "crdt",
+    "local-first"
+  ],
+  "dependencies": {
+    "json-joy": "workspace:*"
+  },
+  "peerDependencies": {
+    "tslib": "*",
+    "vue": "^3.4"
+  },
+  "devDependencies": {
+    "jest-environment-jsdom": "^30",
+    "vue": "^3.5.13"
+  },
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "test": "jest --maxWorkers 7",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}
