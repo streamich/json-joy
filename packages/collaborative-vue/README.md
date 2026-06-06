@@ -117,6 +117,39 @@ Re-renders its default slot on the given node event; the slot receives the node.
 </UseNode>
 ```
 
+## High-level `collaborate()` (optional)
+
+For plain-object ergonomics and `v-model` two-way binding, `collaborate(model)`
+returns a single fine-grained reactive `state` proxy you read and mutate directly.
+It is **sugar on top of the composables** — the same per-node `onNodeChange('self')`
+subscription for reactivity, writes dispatched through the existing node verbs.
+Drop down to the composables when you need precise control (in-place text ops,
+`merge` vs `set`, explicit event granularity).
+
+```vue
+<script setup lang="ts">
+import {Model} from 'json-joy/lib/json-crdt';
+import {collaborate} from '@jsonjoy.com/collaborative-vue';
+
+const model = Model.create({title: 'Untitled', notes: []});
+const {state} = collaborate<Board>(model);
+
+const addNote = () => state.notes.push({by: me, text: '', at: Date.now()});
+</script>
+
+<template>
+  <input v-model="state.title" />                <!-- two-way bound to the CRDT -->
+  <li v-for="(note, i) in state.notes" :key="i">
+    <input v-model="note.text" />                <!-- deep, in place -->
+  </li>
+</template>
+```
+
+- `collaborate<T>(model): { state: T; dispose(): void }`
+- `dispose()` runs automatically when called inside a component `setup()`.
+- Reads subscribe per node; writes record CRDT ops; remote `applyPatch` re-renders
+  only the nodes that changed.
+
 ## Notes
 
 - Reactivity granularity follows json-joy's node events. `'subtree'` re-renders on
