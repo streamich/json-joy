@@ -1,3 +1,6 @@
+import {mkdtempSync, rmSync} from 'fs';
+import {tmpdir} from 'os';
+import {join} from 'path';
 import {MemoryLevel} from 'memory-level';
 import {CalleeCaller} from '@jsonjoy.com/rpc-calls/lib/caller/CalleeCaller';
 import {createCaller} from '../routes';
@@ -46,10 +49,19 @@ export const setupLevelMemory = async () => {
 };
 
 export const setupLevelClassic = async () => {
-  const kv = new ClassicLevel<string, Uint8Array>('./db', {valueEncoding: 'view'});
+  // Use a unique temp directory per setup so each test is fully isolated: no
+  // shared state or leftover data across tests/runs, and no `LOCK already held`
+  // contention if one test fails before it can close its database.
+  const dir = mkdtempSync(join(tmpdir(), 'json-crdt-server-level-'));
+  const kv = new ClassicLevel<string, Uint8Array>(dir, {valueEncoding: 'view'});
   await kv.open();
   const store = new LevelStore(<any>kv);
-  return setup(store, async () => kv.close());
+  return setup(store, async () => {
+    await kv.close();
+    try {
+      rmSync(dir, {recursive: true, force: true});
+    } catch {}
+  });
 };
 
 export type JsonCrdtTestSetup = typeof setup;
