@@ -2456,6 +2456,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-hash@workspace:*, @jsonjoy.com/json-hash@workspace:packages/json-hash":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-hash@workspace:packages/json-hash"
+  dependencies:
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-random": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-pack@npm:17.67.0, @jsonjoy.com/json-pack@npm:^17.65.0":
   version: 17.67.0
   resolution: "@jsonjoy.com/json-pack@npm:17.67.0"
@@ -10095,6 +10107,7 @@ __metadata:
     "@jsonjoy.com/buffers": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-expression": "workspace:*"
+    "@jsonjoy.com/json-hash": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
     "@jsonjoy.com/json-random": "workspace:*"
