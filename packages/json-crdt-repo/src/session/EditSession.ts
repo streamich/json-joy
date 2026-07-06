@@ -120,15 +120,23 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
         const cursorBehind = this.cursor !== res.cursor;
         if (cursorBehind) {
           const timer = setTimeout(async () => {
-            if (this._stopped) return;
-            const get = await this.repo.getIf({
-              id: this.id,
-              cursor: this.cursor,
-            });
-            if (this._stopped) return;
-            if (!get) return;
-            this.reset(<any>get.model);
-            this.cursor = get.cursor;
+            try {
+              if (this._stopped) return;
+              const get = await this.repo.getIf({
+                id: this.id,
+                cursor: this.cursor,
+              });
+              if (this._stopped) return;
+              if (!get) return;
+              this.reset(<any>get.model);
+              this.cursor = get.cursor;
+            } catch {
+              // Best-effort catch-up in a detached timer. The block may have
+              // been deleted (getIf throws "NotFound") or the repo stopped
+              // between scheduling and firing. Deletion is handled via the
+              // change$/onEvent delete flow, so swallow the error here instead
+              // of letting it surface as an unhandled promise rejection.
+            }
           }, 50);
           (timer as {unref?: () => void}).unref?.();
         }
