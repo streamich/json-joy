@@ -14,8 +14,8 @@ import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type Json
 import * as str from '../util/diff/str';
 import * as bin from '../util/diff/bin';
 import * as line from '../util/diff/line';
-import {structHashCrdt} from '../json-hash/structHashCrdt';
-import {structHashSchema} from '../json-hash/structHashSchema';
+import {structHashCrdt} from './structHashCrdt';
+import {structHashSchema} from './structHashSchema';
 import type {Model} from '../json-crdt/model';
 
 export class DiffError extends Error {

@@ -1,7 +1,7 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {ArrNode, BinNode, ConNode, type JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../json-crdt/nodes';
 import {hash} from '@jsonjoy.com/json-hash';
-import {structHash} from './structHash';
+import {structHash} from '../json-crdt-patch/structHash';
 
 /**
  * Constructs a structural hash of the view of the node.
