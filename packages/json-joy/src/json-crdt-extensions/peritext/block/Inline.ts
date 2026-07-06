@@ -5,7 +5,7 @@ import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
-import {updateNum} from '../../../json-hash/hash';
+import {updateNum} from '@jsonjoy.com/json-hash';
 import {formatStep} from '../slice/util';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';

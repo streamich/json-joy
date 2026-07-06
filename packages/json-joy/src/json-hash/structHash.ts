@@ -1,5 +1,5 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
-import {hash} from './hash';
+import {hash} from '@jsonjoy.com/json-hash';
 import {Timestamp} from '../json-crdt-patch';
 
 /**

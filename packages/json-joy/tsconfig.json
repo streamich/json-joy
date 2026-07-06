@@ -21,6 +21,9 @@
       "path": "../json-equal"
     },
     {
+      "path": "../json-hash"
+    },
+    {
       "path": "../json-pack"
     },
     {

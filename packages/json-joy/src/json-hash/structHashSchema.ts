@@ -1,6 +1,6 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {nodes, type SchemaNode} from '../json-crdt-patch/schema';
-import {hash} from './hash';
+import {hash} from '@jsonjoy.com/json-hash';
 import {structHash} from './structHash';
 
 export const structHashSchema = (node?: SchemaNode | unknown): string => {

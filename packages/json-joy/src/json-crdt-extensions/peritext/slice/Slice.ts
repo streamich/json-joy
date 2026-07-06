@@ -11,7 +11,7 @@ import {
   SliceStackingName,
   SliceTypeCon,
 } from './constants';
-import {CONST} from '../../../json-hash/hash';
+import {CONST} from '@jsonjoy.com/json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {formatType, validateType} from './util';

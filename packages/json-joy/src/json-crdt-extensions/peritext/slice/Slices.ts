@@ -3,7 +3,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {Slice} from './Slice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
 import {updateRga} from '../../../json-crdt/hash';
-import {CONST, updateNum} from '../../../json-hash/hash';
+import {CONST, updateNum} from '@jsonjoy.com/json-hash';
 import {SliceHeaderShift, SliceStacking, SliceTupleIndex} from './constants';
 import {VecNode} from '../../../json-crdt/nodes';
 import {Anchor} from '../rga/constants';
