@@ -1,6 +1,6 @@
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
-import {Value} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'thingies/lib/sync';
 import {WebFacade} from '../dom/facade/WebFacade';
 import type {PeritextHeadless} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {PeritextPlugin} from '../react/types';

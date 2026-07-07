@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {Value} from 'json-joy/lib/util/events/sync-store';
+import type {Value} from 'thingies/lib/sync';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {DebugState} from './state';
 

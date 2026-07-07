@@ -44,7 +44,8 @@
     "@jsonjoy.com/collaborative-ui": "workspace:*",
     "@jsonjoy.com/keyboard": "workspace:*",
     "json-joy": "workspace:*",
-    "mathlive": "^0.109.0"
+    "mathlive": "^0.109.0",
+    "thingies": "^2.6.0"
   },
   "peerDependencies": {
     "react": "*",

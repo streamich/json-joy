@@ -1,7 +1,7 @@
 import {useState, useMemo, useCallback, useSyncExternalStore, useEffect} from 'react';
 import {useCtxModelStrict, useCtxNodeStrict} from './context';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
-import type {SyncStore} from 'json-joy/lib/util/events/sync-store';
+import type {SyncStore} from 'thingies/lib/sync';
 import type {Model, JsonNodeView, ArrApi, ObjApi, StrApi} from 'json-joy/lib/json-crdt';
 import type {ChangeEvent} from 'json-joy/lib/json-crdt/model/api/events';
 import type {ApiPath} from 'json-joy/lib/json-crdt/model/api/types';

@@ -2081,6 +2081,7 @@ __metadata:
     json-joy: "workspace:*"
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     react: ^19
     tslib: "*"
@@ -2690,6 +2691,7 @@ __metadata:
     "@jsonjoy.com/keyboard": "workspace:*"
     json-joy: "workspace:*"
     mathlive: "npm:^0.109.0"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     react: "*"
     tslib: "*"

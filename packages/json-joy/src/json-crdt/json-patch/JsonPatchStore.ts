@@ -1,4 +1,4 @@
-import type {SyncStore} from '../../util/events/sync-store';
+import type {SyncStore} from 'thingies/lib/sync';
 import type {JsonNodeApi} from '../model/api/types';
 import {JsonPatch} from './JsonPatch';
 import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
