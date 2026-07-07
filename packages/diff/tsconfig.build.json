@@ -21,28 +21,5 @@
     "src/**/__stories__/**/*.*",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
-  ],
-  "references": [
-    {
-      "path": "../collaborative-peritext/tsconfig.build.json"
-    },
-    {
-      "path": "../collaborative-presence/tsconfig.build.json"
-    },
-    {
-      "path": "../diff/tsconfig.build.json"
-    },
-    {
-      "path": "../json-equal/tsconfig.build.json"
-    },
-    {
-      "path": "../ui/tsconfig.build.json"
-    },
-    {
-      "path": "../json-joy/tsconfig.build.json"
-    },
-    {
-      "path": "../nano-theme/tsconfig.build.json"
-    }
   ]
 }

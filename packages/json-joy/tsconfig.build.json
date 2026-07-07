@@ -30,6 +30,9 @@
       "path": "../buffers/tsconfig.build.json"
     },
     {
+      "path": "../diff/tsconfig.build.json"
+    },
+    {
       "path": "../json-expression/tsconfig.build.json"
     },
     {

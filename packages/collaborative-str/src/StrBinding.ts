@@ -1,7 +1,7 @@
 import {invokeFirstOnly} from './util';
 import {Selection} from './Selection';
 import {applyChange} from './util';
-import {diff, diffEdit} from 'json-joy/lib/util/diff/str';
+import {diff, diffEdit} from '@jsonjoy.com/diff/lib/str';
 import type {CollaborativeStr, EditorFacade, SimpleChange} from './types';
 
 const enum PATCH_OP_TYPE {

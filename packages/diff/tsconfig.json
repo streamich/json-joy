@@ -22,28 +22,5 @@
     "*.spec.ts",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
-  ],
-  "references": [
-    {
-      "path": "../collaborative-peritext"
-    },
-    {
-      "path": "../collaborative-presence"
-    },
-    {
-      "path": "../diff"
-    },
-    {
-      "path": "../json-equal"
-    },
-    {
-      "path": "../ui"
-    },
-    {
-      "path": "../json-joy"
-    },
-    {
-      "path": "../nano-theme"
-    }
   ]
 }

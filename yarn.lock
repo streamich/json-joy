@@ -2095,6 +2095,7 @@ __metadata:
     "@jsonjoy.com/collaborative-peritext": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/diff": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
     "@types/react": "npm:^19"
@@ -2132,6 +2133,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-str@workspace:packages/collaborative-str"
   dependencies:
+    "@jsonjoy.com/diff": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2200,6 +2202,18 @@ __metadata:
       optional: true
     slate-react:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/diff@workspace:*, @jsonjoy.com/diff@workspace:packages/diff":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/diff@workspace:packages/diff"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/json-random": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+  peerDependencies:
+    tslib: "*"
   languageName: unknown
   linkType: soft
 
@@ -2688,6 +2702,7 @@ __metadata:
     "@cortex-js/compute-engine": "npm:^0.55.6"
     "@jsonjoy.com/collaborative-react": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/diff": "workspace:*"
     "@jsonjoy.com/keyboard": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     json-joy: "workspace:*"
@@ -10108,6 +10123,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/base64": "workspace:*"
     "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/diff": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-expression": "workspace:*"
     "@jsonjoy.com/json-hash": "workspace:*"

@@ -35,6 +35,7 @@
     "crdt"
   ],
   "dependencies": {
+    "@jsonjoy.com/diff": "workspace:*",
     "json-joy": "workspace:*"
   },
   "peerDependencies": {

@@ -24,6 +24,9 @@
   ],
   "references": [
     {
+      "path": "../diff/tsconfig.build.json"
+    },
+    {
       "path": "../collaborative-react/tsconfig.build.json"
     },
     {

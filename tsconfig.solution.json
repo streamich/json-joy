@@ -6,6 +6,7 @@
     { "path": "packages/codegen/tsconfig.build.json" },
     { "path": "packages/channel/tsconfig.build.json" },
     { "path": "packages/json-equal/tsconfig.build.json" },
+    { "path": "packages/diff/tsconfig.build.json" },
     { "path": "packages/json-hash/tsconfig.build.json" },
     { "path": "packages/json-random/tsconfig.build.json" },
     { "path": "packages/json-path/tsconfig.build.json" },

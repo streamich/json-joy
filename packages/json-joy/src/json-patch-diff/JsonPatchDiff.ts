@@ -1,6 +1,6 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import * as str from '../util/diff/str';
-import * as line from '../util/diff/line';
+import * as str from '@jsonjoy.com/diff/lib/str';
+import * as line from '@jsonjoy.com/diff/lib/line';
 import {structHash} from '../json-crdt-patch/structHash';
 import {escapeComponent} from '@jsonjoy.com/json-pointer/lib/util';
 import type {Operation} from '../json-patch/codec/json/types';

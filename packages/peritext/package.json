@@ -42,6 +42,7 @@
     "@cortex-js/compute-engine": "^0.55.6",
     "@jsonjoy.com/collaborative-react": "workspace:*",
     "@jsonjoy.com/collaborative-ui": "workspace:*",
+    "@jsonjoy.com/diff": "workspace:*",
     "@jsonjoy.com/keyboard": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "json-joy": "workspace:*",
