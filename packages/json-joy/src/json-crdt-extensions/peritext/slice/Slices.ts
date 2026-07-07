@@ -7,7 +7,7 @@ import {CONST, updateNum} from '@jsonjoy.com/json-hash';
 import {SliceHeaderShift, SliceStacking, SliceTupleIndex} from './constants';
 import {VecNode} from '../../../json-crdt/nodes';
 import {Anchor} from '../rga/constants';
-import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 import * as schema from './schema';
 import type {Range} from '../rga/Range';
 import type {SliceType} from './types';

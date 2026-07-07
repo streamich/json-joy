@@ -10,7 +10,7 @@ import {toLine} from 'pojo-dump/lib/toLine';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {Value} from '../../../util/events/sync-store';
-import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 import {
   type Patch,
   tick,

@@ -1,4 +1,4 @@
-import {UndEndIterator, type UndEndNext} from '../util/iterator';
+import {UndEndIterator, type UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 import type {JsonMlNode} from './types';
 
 export const walk0 = (node: JsonMlNode): UndEndNext<JsonMlNode> => {

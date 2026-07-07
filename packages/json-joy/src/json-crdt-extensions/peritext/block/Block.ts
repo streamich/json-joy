@@ -1,6 +1,6 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '@jsonjoy.com/json-hash';
-import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 import {Inline} from './Inline';
 import {formatStep, getTag} from '../slice/util';
 import {Range} from '../rga/Range';

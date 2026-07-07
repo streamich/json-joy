@@ -8,7 +8,7 @@ import {OverlayPoint} from './OverlayPoint';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '@jsonjoy.com/json-hash';
 import {Slice} from '../slice/Slice';
-import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 import {SliceStacking} from '../slice/constants';
 import {OverlayRefSliceStart} from './refs';
 import type {Point} from '../rga/Point';
