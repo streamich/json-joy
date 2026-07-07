@@ -1,4 +1,4 @@
-import {con as printCon} from '../../../util/print';
+import {con as printCon} from '../../../json-crdt-patch/print';
 import {NewConOp} from '../../../json-crdt-patch';
 import {type IClockVector, type ITimestampStruct, printTs, Timestamp} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';

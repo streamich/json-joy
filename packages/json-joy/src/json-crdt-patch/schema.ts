@@ -1,6 +1,6 @@
 import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
 import {Timestamp, type ITimestampStruct} from './clock';
-import * as print from '../util/print';
+import * as print from './print';
 import {printTree, type Printable} from 'tree-dump';
 import type {PatchBuilder} from './PatchBuilder';
 

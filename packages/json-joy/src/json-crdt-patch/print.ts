@@ -1,5 +1,5 @@
 import {toLine} from 'pojo-dump/lib/toLine';
-import {printTs, Timestamp} from '../json-crdt-patch';
+import {printTs, Timestamp} from './clock';
 
 export const line = toLine;
 
