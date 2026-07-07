@@ -11,8 +11,9 @@ Fast diff algorithms for strings, lines, and binary data. Zero dependencies.
 ```ts
 import {str} from '@jsonjoy.com/diff';
 
-const patch = str.diff('hello world', 'hello there world');
-str.apply(patch, src.length, /* ... */);
+const src = 'hello world';
+const patch = str.diff(src, 'hello there world');
+str.apply(patch, src.length, onInsert, onDelete);
 str.src(patch); // 'hello world'
 str.dst(patch); // 'hello there world'
 ```
