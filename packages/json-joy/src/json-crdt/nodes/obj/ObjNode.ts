@@ -87,7 +87,10 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   /** @ignore */
   public children(callback: (node: JsonNode) => void) {
     const index = this.doc.index;
-    this.keys.forEach((id, key) => callback(index.get(id)!));
+    this.keys.forEach((id) => {
+      const node = index.get(id);
+      if (node) callback(node);
+    });
   }
 
   /** @ignore */
