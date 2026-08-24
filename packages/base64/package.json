@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.27.0",
+  "version": "18.28.0",
   "description": "High-performance Base64 encoder and decoder",
   "author": {
     "name": "streamich",
