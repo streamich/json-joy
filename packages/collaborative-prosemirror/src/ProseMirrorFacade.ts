@@ -217,7 +217,12 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     if (!tr.docChanged) return;
     const newAnchor = tr.mapping.map(selection.anchor);
     const newHead = tr.mapping.map(selection.head);
-    tr.setSelection(TextSelection.create(tr.doc, newAnchor, newHead));
+    // `TextSelection.between` never throws: when a full-document replace maps the
+    // old selection outside inline content, `TextSelection.create` throws — and,
+    // because `set()` runs inside `PeritextBinding.bind()`'s initial
+    // `syncFromModel()`, that exception aborts the whole binding: the editor stays
+    // permanently unwired and local edits are silently lost.
+    tr.setSelection(TextSelection.between(tr.doc.resolve(newAnchor), tr.doc.resolve(newHead)));
     const meta: SyncPluginTransactionMeta = {orig: TransactionOrigin.REMOTE};
     tr.setMeta(SYNC_PLUGIN_KEY, meta);
     tr.setMeta('addToHistory', false);
@@ -250,7 +255,10 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const headPoint = startIsAnchor ? range.end : range.start;
     const anchor = pointToPmPos(rootBlock, anchorPoint, doc);
     const head = pointToPmPos(rootBlock, headPoint, doc);
-    const newSelection = TextSelection.create(doc, anchor, head);
+    // Same hazard as `set()` above: a CRDT-space selection can resolve to a
+    // position without inline content (e.g. around block boundaries mid-sync);
+    // `between` clamps to the nearest valid text selection instead of throwing.
+    const newSelection = TextSelection.between(doc.resolve(anchor), doc.resolve(head));
     const tr = state.tr.setSelection(newSelection);
     const meta: SyncPluginTransactionMeta = {orig: TransactionOrigin.REMOTE};
     tr.setMeta(SYNC_PLUGIN_KEY, meta);
