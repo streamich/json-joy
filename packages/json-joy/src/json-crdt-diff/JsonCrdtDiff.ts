@@ -11,11 +11,11 @@ import {
   tss,
 } from '../json-crdt-patch';
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
-import * as str from '../util/diff/str';
-import * as bin from '../util/diff/bin';
-import * as line from '../util/diff/line';
-import {structHashCrdt} from '../json-hash/structHashCrdt';
-import {structHashSchema} from '../json-hash/structHashSchema';
+import * as str from '@jsonjoy.com/diff/lib/str';
+import * as bin from '@jsonjoy.com/diff/lib/bin';
+import * as line from '@jsonjoy.com/diff/lib/line';
+import {structHashCrdt} from './structHashCrdt';
+import {structHashSchema} from './structHashSchema';
 import type {Model} from '../json-crdt/model';
 
 export class DiffError extends Error {

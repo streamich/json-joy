@@ -1,5 +1,5 @@
 import * as React from 'react';
-// import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+// import {ValueSyncStore} from 'thingies/lib/sync';
 import {secondBrain} from '../menus';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 // import {type LeafBlock, type Peritext} from 'json-joy/lib/json-crdt-extensions';

@@ -15,10 +15,16 @@
       "path": "../buffers"
     },
     {
+      "path": "../diff"
+    },
+    {
       "path": "../json-expression"
     },
     {
       "path": "../json-equal"
+    },
+    {
+      "path": "../json-hash"
     },
     {
       "path": "../json-pack"

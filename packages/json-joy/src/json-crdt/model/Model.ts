@@ -11,7 +11,7 @@ import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import {cmpNode} from '../equal/cmpNode';
-import {indent} from '../../util/print';
+import {indent} from '../../json-crdt-patch/print';
 import {Delta, type DeltaMutator} from '../delta/Delta';
 import {Batch} from '../../json-crdt-patch/Batch';
 import {type JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';

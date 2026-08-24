@@ -9,7 +9,7 @@ import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
 import {tick} from '../../json-crdt-patch/clock';
 import {Model, type StrApi} from '../../json-crdt/model';
-import {CONST, updateNum} from '../../json-hash/hash';
+import {CONST, updateNum} from '@jsonjoy.com/json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
 import {ExtraSlices} from './slice/ExtraSlices';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Chrome} from './Chrome';
 import {context, type MinimalPluginContextValue} from './context';
-import {Value} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'thingies/lib/sync';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {ChangeDetail} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 

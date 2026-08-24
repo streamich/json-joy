@@ -25,6 +25,9 @@
   ],
   "references": [
     {
+      "path": "../diff"
+    },
+    {
       "path": "../collaborative-react"
     },
     {
@@ -35,6 +38,9 @@
     },
     {
       "path": "../keyboard"
+    },
+    {
+      "path": "../util"
     }
   ]
 }

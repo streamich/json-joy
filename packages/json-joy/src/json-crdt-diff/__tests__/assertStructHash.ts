@@ -1,4 +1,4 @@
-import {structHash as structHash_} from '../structHash';
+import {structHash as structHash_} from '../../json-crdt-patch/structHash';
 import {structHashCrdt} from '../structHashCrdt';
 import {structHashSchema} from '../structHashSchema';
 import {Model} from '../../json-crdt';

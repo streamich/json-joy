@@ -1,4 +1,4 @@
-import type {UndEndNext} from '../../../util/iterator';
+import type {UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {SliceType} from '../slice';

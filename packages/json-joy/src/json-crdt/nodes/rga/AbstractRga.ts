@@ -16,7 +16,7 @@ import {insert2, remove2} from 'sonic-forest/lib/util2';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
-import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '@jsonjoy.com/util/lib/iterator';
 
 /**
  * @category CRDT Node

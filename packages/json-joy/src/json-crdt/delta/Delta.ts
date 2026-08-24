@@ -2,7 +2,7 @@ import {printTree} from 'tree-dump';
 import type {Batch} from '../../json-crdt-patch/Batch';
 import type {IClockVector} from '../../json-crdt-patch';
 import {encoder, decoder} from './codec/binary/shared';
-import {indent} from '../../util/print';
+import {indent} from '../../json-crdt-patch/print';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonCrdtOperation} from '../../json-crdt-patch/operations';
 

@@ -5,7 +5,7 @@
  */
 
 import {Transforms, Editor} from 'slate';
-import * as str from 'json-joy/lib/util/diff/str';
+import * as str from '@jsonjoy.com/diff/lib/str';
 import {deepEqual} from '@jsonjoy.com/json-equal';
 import type {SlateDescendantNode, SlateDocument, SlateElementNode, SlateTextNode} from '../types';
 

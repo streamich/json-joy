@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {SyncStore} from 'json-joy/lib/util/events/sync-store';
+import type {SyncStore} from 'thingies/lib/sync';
 
 export const useIsoLayoutEffect =
   typeof window === 'object' && window.document ? React.useLayoutEffect : React.useEffect;

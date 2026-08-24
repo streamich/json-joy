@@ -1,4 +1,4 @@
-import {Value} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'thingies/lib/sync';
 import type {UiLifeCycles} from '../../../web/types';
 
 export class DebugState implements UiLifeCycles {

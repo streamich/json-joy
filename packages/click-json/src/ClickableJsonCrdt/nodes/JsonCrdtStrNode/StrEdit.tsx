@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {theme} from 'nano-theme';
-import {bind} from 'collaborative-input';
+import {bind} from '@jsonjoy.com/collaborative-input';
 import {FlexibleInput} from 'flexible-input';
 import {useT} from 'use-t';
-import type {NodeRef} from '../../NodeRef';
 import * as css from '../../../css';
 import {selectOnFocus} from '../../../utils/selectOnFocus';
 import {inputStyle} from '../../../ClickableJson/utils';
 import {CancelAction} from '../../../buttons/Action/CancelAction';
 import {SubmitAction} from '../../../buttons/Action/SubmitAction';
 import {useJsonCrdt} from '../../context';
+import type {NodeRef} from '../../NodeRef';
 import type {StrNode} from 'json-joy/lib/json-crdt';
 
 export interface StrEditProps {

@@ -70,7 +70,6 @@
   "engines": {
     "node": ">=18.0"
   },
-  "private": true,
   "scripts": {
     "start": "npx ts-node --transpile-only src/main.ts",
     "clean": "npx rimraf lib",

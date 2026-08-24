@@ -1,4 +1,4 @@
-# `json-hash`
+# `@jsonjoy.com/json-hash`
 
 Computes a 32-bit hash given an arbitrary JSON value. Sorts keys, so objects
 with different key orders will have the same hash.
@@ -6,7 +6,7 @@ with different key orders will have the same hash.
 Implements DJB2 hash function.
 
 ```ts
-import {hash} from 'json-joy/lib/json-hash';
+import {hash} from '@jsonjoy.com/json-hash';
 
 const num1 = hash({
   foo: 1,

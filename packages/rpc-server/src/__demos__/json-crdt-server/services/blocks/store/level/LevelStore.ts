@@ -95,7 +95,7 @@ export class LevelStore implements types.Store {
   public async seq(id: string): Promise<number | undefined> {
     return await this.mutex.acquire(id, async () => {
       const base = this.batchBase(id);
-      const keys = await this.kv.keys({lt: base + '~', limit: 1, reverse: true}).all();
+      const keys = await this.kv.keys({gte: base, lt: base + '~', limit: 1, reverse: true}).all();
       if (!keys || keys.length < 1) return;
       const key = keys[0].slice(base.length);
       if (!key) return;

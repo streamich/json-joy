@@ -1,6 +1,6 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
-import {hash} from './hash';
-import {Timestamp} from '../json-crdt-patch';
+import {hash} from '@jsonjoy.com/json-hash';
+import {Timestamp} from './clock';
 
 /**
  * Produces a *structural hash* of a JSON value.

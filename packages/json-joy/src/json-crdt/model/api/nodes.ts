@@ -22,7 +22,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {ApiOperation, ApiPath, JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
 import type {Patch} from '../../../json-crdt-patch';
-import type {SyncStore} from '../../../util/events/sync-store';
+import type {SyncStore} from 'thingies/lib/sync';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 

@@ -82,6 +82,7 @@
   "dependencies": {
     "@jsonjoy.com/collaborative-peritext": "workspace:*",
     "@jsonjoy.com/collaborative-presence": "workspace:*",
+    "@jsonjoy.com/diff": "workspace:*",
     "@jsonjoy.com/json-equal": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
     "code-colors": "^2.4.0",

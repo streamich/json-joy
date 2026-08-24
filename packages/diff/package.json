@@ -1,0 +1,79 @@
+{
+  "name": "@jsonjoy.com/diff",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.28.0",
+  "description": "Fast diff algorithms for strings, lines, and binary data",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/diff",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/diff"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "diff",
+    "patch",
+    "text-diff",
+    "string-diff",
+    "binary-diff",
+    "line-diff",
+    "myers",
+    "diff-match-patch"
+  ],
+  "peerDependencies": {
+    "tslib": "*"
+  },
+  "devDependencies": {
+    "@jsonjoy.com/buffers": "workspace:*",
+    "@jsonjoy.com/json-random": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "fast-diff": "^1.3.0"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}

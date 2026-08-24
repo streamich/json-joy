@@ -1,7 +1,7 @@
 import {clone} from '@jsonjoy.com/util/lib/json-clone';
 import {structHash as structHash_} from '../structHash';
 import {RandomJson} from '@jsonjoy.com/json-random';
-import {ts} from '../../json-crdt-patch';
+import {ts} from '../clock';
 
 const isASCII = (str: string) => /^[\x00-\x7F]*$/.test(str);
 

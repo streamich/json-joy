@@ -1,4 +1,4 @@
-import {saveSelection} from '../../../../util/dom';
+import {saveSelection} from '../../util/dom';
 import {MemPlatformClipboard} from './MemPlatformClipboard';
 import type {PeritextClipboard, PeritextClipboardData, PlatformClipboard} from './types';
 

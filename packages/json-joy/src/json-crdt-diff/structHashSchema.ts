@@ -1,7 +1,7 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {nodes, type SchemaNode} from '../json-crdt-patch/schema';
-import {hash} from './hash';
-import {structHash} from './structHash';
+import {hash} from '@jsonjoy.com/json-hash';
+import {structHash} from '../json-crdt-patch/structHash';
 
 export const structHashSchema = (node?: SchemaNode | unknown): string => {
   if (node instanceof nodes.con || node instanceof nodes.str || node instanceof nodes.bin) return structHash(node.raw);

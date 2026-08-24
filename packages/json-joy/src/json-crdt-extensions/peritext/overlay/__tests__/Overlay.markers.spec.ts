@@ -1,4 +1,4 @@
-import {UndEndIterator} from '../../../../util/iterator';
+import {UndEndIterator} from '@jsonjoy.com/util/lib/iterator';
 import {type Kit, runNumbersKitTestSuite} from '../../__tests__/setup';
 import type {Point} from '../../rga/Point';
 import {OverlayPoint} from '../OverlayPoint';

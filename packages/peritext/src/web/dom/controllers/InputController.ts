@@ -2,7 +2,7 @@ import {unit} from '../../util';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions/peritext/events/PeritextEventTarget';
-import type {TypedEventTarget} from 'json-joy/lib/util/events/TypedEventTarget';
+import type {TypedEventTarget} from '@jsonjoy.com/util/lib/events/TypedEventTarget';
 import type {UiLifeCycles} from '../../types';
 import type {DomController} from './../DomController';
 

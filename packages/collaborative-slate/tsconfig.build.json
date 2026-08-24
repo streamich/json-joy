@@ -30,6 +30,9 @@
       "path": "../collaborative-presence/tsconfig.build.json"
     },
     {
+      "path": "../diff/tsconfig.build.json"
+    },
+    {
       "path": "../json-equal/tsconfig.build.json"
     },
     {

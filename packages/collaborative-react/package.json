@@ -32,7 +32,8 @@
     "crdt"
   ],
   "dependencies": {
-    "json-joy": "workspace:*"
+    "json-joy": "workspace:*",
+    "thingies": "^2.6.0"
   },
   "peerDependencies": {
     "react": "^19",

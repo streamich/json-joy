@@ -2081,6 +2081,7 @@ __metadata:
     json-joy: "workspace:*"
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     react: ^19
     tslib: "*"
@@ -2094,6 +2095,7 @@ __metadata:
     "@jsonjoy.com/collaborative-peritext": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/diff": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
     "@types/react": "npm:^19"
@@ -2131,6 +2133,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-str@workspace:packages/collaborative-str"
   dependencies:
+    "@jsonjoy.com/diff": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2199,6 +2202,19 @@ __metadata:
       optional: true
     slate-react:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/diff@workspace:*, @jsonjoy.com/diff@workspace:packages/diff":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/diff@workspace:packages/diff"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/json-random": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    fast-diff: "npm:^1.3.0"
+  peerDependencies:
+    tslib: "*"
   languageName: unknown
   linkType: soft
 
@@ -2456,6 +2472,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-hash@workspace:*, @jsonjoy.com/json-hash@workspace:packages/json-hash":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-hash@workspace:packages/json-hash"
+  dependencies:
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-random": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-pack@npm:17.67.0, @jsonjoy.com/json-pack@npm:^17.65.0":
   version: 17.67.0
   resolution: "@jsonjoy.com/json-pack@npm:17.67.0"
@@ -2675,9 +2703,12 @@ __metadata:
     "@cortex-js/compute-engine": "npm:^0.55.6"
     "@jsonjoy.com/collaborative-react": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/diff": "workspace:*"
     "@jsonjoy.com/keyboard": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
     json-joy: "workspace:*"
     mathlive: "npm:^0.109.0"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     react: "*"
     tslib: "*"
@@ -10093,8 +10124,10 @@ __metadata:
   dependencies:
     "@jsonjoy.com/base64": "workspace:*"
     "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/diff": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-expression": "workspace:*"
+    "@jsonjoy.com/json-hash": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
     "@jsonjoy.com/json-random": "workspace:*"
@@ -10111,7 +10144,6 @@ __metadata:
     collaborative-input: "npm:^1.7.0"
     collaborative-ui: "npm:^1.7.1"
     editing-traces: "https://github.com/streamich/editing-traces#71c6d732956dbe08a490f8cd9764214bd3d4c9b7"
-    fast-diff: "npm:^1.3.0"
     fast-json-patch: "npm:^3.1.1"
     html-webpack-plugin: "npm:^5.6.0"
     hyperdyperid: "npm:^1.2.0"
