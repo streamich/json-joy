@@ -46,7 +46,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
         this.strIns(op.path, op.pos, op.str);
         break;
       case 'str_del':
-        this.strDel(op.path, op.pos, op.len ?? 0, op.str);
+        this.strDel(op.path, op.pos, op.len ?? op.str?.length ?? 0, op.str);
         break;
       default:
         throw new Error('UNKNOWN_OP');
