@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {rule} from 'nano-theme';
-import {SpinnerBars} from '../SpinnerBars';
-import {Outline} from '../Outline';
+import * as React from 'react';
 import {Split} from '../../3-list-item/Split';
 import {fonts} from '../../styles';
 import {useStyles} from '../../styles/context';
+import {Outline} from '../Outline';
+import {SpinnerBars} from '../SpinnerBars';
 
 const inpClass = rule({
   ...fonts.get('ui', 'bold', 1),
@@ -24,12 +24,18 @@ const inpClass = rule({
   },
 });
 
-const {useState, useCallback, useRef, useEffect} = React;
+const textareaClass = rule({
+  resize: 'none',
+});
+
+const {useState, useCallback, useRef, useEffect, useLayoutEffect} = React;
 const noop = () => {};
 
 export interface InputProps {
   disabled?: boolean;
-  type?: 'text' | 'password' | 'email' | 'number';
+  /** Paint the outline in the error color, e.g. after a failed validation. */
+  invalid?: boolean;
+  type?: 'text' | 'password' | 'email' | 'number' | 'color';
   value?: string;
   placeholder?: string;
   label?: string;
@@ -44,6 +50,10 @@ export interface InputProps {
   align?: 'left' | 'center' | 'right';
   ghost?: boolean | 'hint';
   multiline?: boolean;
+  /** Minimum visible rows in multiline mode. */
+  rows?: number;
+  /** Rows after which a multiline input stops growing and scrolls. */
+  maxRows?: number;
   mono?: boolean;
   right?: React.ReactNode;
   inp?: (input: HTMLInputElement | null) => void;
@@ -60,6 +70,7 @@ export interface InputProps {
 export const Input: React.FC<InputProps> = (props) => {
   const {
     disabled,
+    invalid,
     value,
     placeholder,
     onPaste,
@@ -76,6 +87,8 @@ export const Input: React.FC<InputProps> = (props) => {
     ghost,
     right,
     multiline,
+    rows,
+    maxRows,
     mono,
     onChange,
     onKeyDown,
@@ -118,11 +131,24 @@ export const Input: React.FC<InputProps> = (props) => {
       if (props.isInForm && e.key === 'Enter') {
         ref.current.blur();
       } else if (e.key === 'Escape') onEsc?.(e);
-      else if (e.key === 'Enter') (onEnter || onSubmit)?.(e);
+      // In multiline mode plain Enter inserts a newline; Cmd/Ctrl+Enter submits.
+      else if (e.key === 'Enter' && (!multiline || e.metaKey || e.ctrlKey)) (onEnter || onSubmit)?.(e);
       else onKeyDown?.(e);
     },
-    [onEsc, onEnter, onSubmit, onKeyDown, props.isInForm],
+    [onEsc, onEnter, onSubmit, onKeyDown, props.isInForm, multiline],
   );
+
+  // Auto-grow the textarea with content
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!multiline || !el) return;
+    const resize = () => {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    };
+    if (el.scrollHeight) resize();
+    else requestAnimationFrame(() => requestAnimationFrame(resize));
+  }, [multiline, value]);
 
   let rightElement: React.ReactNode = null;
 
@@ -155,17 +181,21 @@ export const Input: React.FC<InputProps> = (props) => {
     style.textAlign = 'center';
   }
 
+  if (multiline) {
+    style.minHeight = `${Math.round((rows ?? 2) * 1.4 * 10) / 10}em`;
+    if (maxRows) style.maxHeight = `${Math.round(maxRows * 1.4 * 10) / 10}em`;
+  }
+
   const inputAttr: any = {
     ref: (input: HTMLInputElement | null) => {
       ref.current = input;
       props.inp?.(input);
     },
-    className: inpClass,
+    className: inpClass + (multiline ? textareaClass : ''),
     style,
     disabled,
     value,
     placeholder: placeholder || '',
-    type,
     readOnly,
     onFocus,
     onBlur,
@@ -173,10 +203,14 @@ export const Input: React.FC<InputProps> = (props) => {
     onPaste,
   };
 
+  if (multiline) inputAttr.rows = rows ?? 2;
+  else inputAttr.type = type;
+
   return (
     <Outline
       label={label}
       active={focus}
+      invalid={invalid}
       disabled={disabled || readOnly}
       size={size}
       center={center}
@@ -185,7 +219,7 @@ export const Input: React.FC<InputProps> = (props) => {
         if (ref.current) ref.current.focus();
       }}
     >
-      <Split style={{alignItems: 'center'}}>
+      <Split style={{alignItems: multiline ? 'flex-start' : 'center'}}>
         {React.createElement(multiline ? 'textarea' : 'input', {
           ...inputAttr,
           onChange: onChange ? (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value) : undefined,

@@ -51,7 +51,7 @@ export class RmRecordEncoder<W extends IWriter & IWriterGrowable = IWriter & IWr
    */
   public startRecord(): number {
     const writer = this.writer;
-    const rmHeaderPosition = writer.x;
+    const rmHeaderPosition = writer.x - writer.x0;
     writer.x += RM_HEADER_SIZE;
     return rmHeaderPosition;
   }
@@ -67,16 +67,17 @@ export class RmRecordEncoder<W extends IWriter & IWriterGrowable = IWriter & IWr
    */
   public endRecord(rmHeaderPosition: number): void {
     const writer = this.writer;
-    const totalSize = writer.x - rmHeaderPosition - RM_HEADER_SIZE;
+    const rmFrameStart = writer.x0 + rmHeaderPosition;
+    const totalSize = writer.x - rmFrameStart - RM_HEADER_SIZE;
     if (totalSize <= MAX_SINGLE_FRAME_SIZE) {
       const currentX = writer.x;
-      writer.x = rmHeaderPosition;
+      writer.x = rmFrameStart;
       this.writeHdr(1, totalSize);
       writer.x = currentX;
     } else {
       const currentX = writer.x;
-      writer.x = rmHeaderPosition;
-      const data = writer.uint8.subarray(rmHeaderPosition + RM_HEADER_SIZE, currentX);
+      writer.x = rmFrameStart;
+      const data = writer.uint8.subarray(rmFrameStart + RM_HEADER_SIZE, currentX);
       writer.reset();
       this.writeRecord(data);
     }

@@ -54,7 +54,7 @@
     "memory-level": "^1.0.0",
     "rx-use": "^1.8.2",
     "sonic-forest": "^1.2.1",
-    "thingies": "^2.6.0"
+    "thingies": "^2.6.1"
   },
   "engines": {
     "node": ">=10.0"

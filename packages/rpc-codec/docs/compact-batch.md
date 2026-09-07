@@ -1,14 +1,15 @@
-## Compact batch helpers
+## Batch codecs
 
-Two standalone codecs that implement the
-[`BatchCodec` interface](/libs/rpc-codec-base) for the Compact envelope.
-Unlike `MessageCodec`, they take a `Message[]` in and produce a single
-chunk out --- no shared `Writer`, no streaming.
+Three codecs that implement the
+[`BatchCodec` interface](/libs/rpc-codec-base). Unlike `MessageCodec`, they
+take a `Message[]` in and produce a single chunk out --- no shared `Writer`,
+no streaming.
 
 | Class | Chunk type | When to use |
 |---|---|---|
 | `CompactStrBatchCodec` | `string` | Text transports (e.g. WebSocket text frame) |
 | `CompactBinBatchCodec` | `Uint8Array` | Binary transports; encodes the string codec's output to UTF-8 |
+| `RpcBinBatchCodec` | `Uint8Array` | Binary transports, with the envelope and values taken from an `RpcCodec` |
 
 
 ## `CompactStrBatchCodec`
@@ -47,6 +48,22 @@ const messages = codec.fromChunk(bytes);
 ```
 
 `id`: `'bin-rx-compact-lite'`. `format`: `RpcMessageFormat.Compact`.
+
+
+## `RpcBinBatchCodec`
+
+```ts
+import {RpcBinBatchCodec, RpcCodec} from '@jsonjoy.com/rpc-codec';
+import {RxCompactMessageCodec} from '@jsonjoy.com/rpc-codec-compact';
+import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+
+const val = new CborJsonValueCodec(new Writer(1024 * 4));
+const codec = new RpcCodec(new RxCompactMessageCodec(), val, val);
+const batch = new RpcBinBatchCodec(codec);
+
+batch.id; // 'rpc.rx.compact.cbor'
+```
 
 
 ## When to use these vs. `RpcCodec`

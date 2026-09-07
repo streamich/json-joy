@@ -1,12 +1,12 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.encoding.ts
 
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {type IBenchmark, runBenchmarkAndSave} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {payloads} from '../../__bench__/payloads';
-import {type IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
-import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
-import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';
 import {Encoder as IndexedEncoder} from '../codec/indexed/binary/Encoder';
 import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
-import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
+import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';
 import {Model} from '../model';
 
 const cborEncoder = new CborEncoder();

@@ -17,8 +17,7 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
   ) {}
 
   public read(uint8: Uint8Array): PackValue {
-    this.reader.reset(uint8);
-    return this.readAny() as PackValue;
+    return this.decode(uint8) as PackValue;
   }
 
   public decode(uint8: Uint8Array): unknown {
@@ -84,10 +83,10 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
     } else {
       if (minor < 27) {
         return minor === 25 ? this.reader.u16() : this.reader.u32();
-      } else {
+      } else if (minor === 27) {
         const num = this.reader.u64();
         return num > CONST.MAX_UINT ? num : Number(num);
-      }
+      } else throw ERROR.UNEXPECTED_MINOR;
     }
   }
 
@@ -99,10 +98,10 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
     } else {
       if (minor < 27) {
         return minor === 25 ? -this.reader.u16() - 1 : -this.reader.u32() - 1;
-      } else {
+      } else if (minor === 27) {
         const num = this.reader.u64();
         return num > CONST.MAX_UINT - 1 ? -num - BigInt(1) : -Number(num) - 1;
-      }
+      } else throw ERROR.UNEXPECTED_MINOR;
     }
   }
 
@@ -269,6 +268,7 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < length; i++) {
       const key = this.key();
+      if (key === '__proto__') throw ERROR.UNEXPECTED_OBJ_KEY;
       const value = this.readAny();
       obj[key] = value;
     }
@@ -279,6 +279,7 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
     const obj: Record<string, unknown> = {};
     while (this.reader.peak() !== CONST.END) {
       const key = this.key();
+      if (key === '__proto__') throw ERROR.UNEXPECTED_OBJ_KEY;
       if (this.reader.peak() === CONST.END) throw ERROR.UNEXPECTED_OBJ_BREAK;
       const value = this.readAny();
       obj[key] = value;
@@ -288,14 +289,16 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
   }
 
   public key(): string {
-    const octet = this.reader.u8();
+    const reader = this.reader;
+    const octet = reader.u8();
     const major = octet >> 5;
     const minor = octet & CONST.MINOR_MASK;
     if (major !== MAJOR.STR) return String(this.readAnyRaw(octet));
     const length = this.readStrLen(minor);
-    if (length > 31) return this.reader.utf8(length);
-    const key = this.keyDecoder.decode(this.reader.uint8, this.reader.x, length);
-    this.reader.skip(length);
+    if (length > 31) return reader.utf8(length);
+    if (length > reader.size()) throw ERROR.UNEXPECTED_EOF;
+    const key = this.keyDecoder.decode(reader.uint8, reader.x, length);
+    reader.skip(length);
     return key;
   }
 

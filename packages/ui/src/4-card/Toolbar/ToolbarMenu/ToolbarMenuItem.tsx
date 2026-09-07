@@ -1,14 +1,14 @@
 import * as React from 'react';
-import {ToolbarItem} from '../ToolbarItem';
 import {FixedColumn} from '../../../3-list-item/FixedColumn';
-import Arrow from '../../../icons/interactive/Arrow';
-import {ToolbarMenuPopup} from './ToolbarMenuPopup';
-import {useToolbarMenu} from './context';
-import {ToolbarMenuItemTerminal} from './ToolbarMenuItemTerminal';
 import {useBehaviorSubjectOpt} from '../../../hooks/useBehaviorSubject';
 import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
 import {Iconista} from '../../../icons/Iconista';
+import Arrow from '../../../icons/interactive/Arrow';
 import type {MenuItem} from '../../StructuralMenu/types';
+import {ToolbarItem} from '../ToolbarItem';
+import {useToolbarMenu} from './context';
+import {ToolbarMenuItemTerminal} from './ToolbarMenuItemTerminal';
+import {ToolbarMenuPopup} from './ToolbarMenuPopup';
 
 export interface ToolbarMenuItemProps {
   item: MenuItem;
@@ -19,7 +19,7 @@ export interface ToolbarMenuItemProps {
 }
 
 export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
-  const {item, disabled} = props;
+  const {item, disabled, small} = props;
   const arrow = React.useRef<HTMLDivElement | null>(null);
   const toolbar = useToolbarMenu();
   const openPanel = toolbar?.openPanel;
@@ -41,6 +41,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
       <>
         <ToolbarItem
           compact
+          small={small}
           disabled={disabled}
           selected={active}
           bdradR={2}
@@ -57,6 +58,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
           <ToolbarItem
             narrow
             compact
+            small={small}
             disabled={disabled}
             selected={selected}
             bdradL={2}
@@ -93,8 +95,9 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
   return (
     <ToolbarMenuPopup header={!item.noHeader} open={selected} item={item}>
       <ToolbarItem
-        {...(item.pane ? {} : {width: 'auto'})}
+        {...(item.pane || item.chevronOnly || item.iconOnly ? {} : {width: 'auto'})}
         compact
+        small={small}
         selected={selected || active}
         onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
         onMouseMove={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
@@ -106,8 +109,20 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
           renderTooltip: () => item.name ?? item.id ?? '',
         }}
       >
-        {item.pane ? (
+        {item.pane || item.iconOnly ? (
           (item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />)
+        ) : item.chevronOnly ? (
+          <div ref={arrow} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <Arrow
+              direction={
+                selected
+                  ? (arrow.current?.getBoundingClientRect()?.top ?? 0) * 2 + 16 >= window.innerHeight
+                    ? 'u'
+                    : 'd'
+                  : 'r'
+              }
+            />
+          </div>
         ) : (
           <FixedColumn right={16} style={{alignItems: 'center'}}>
             {item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />}

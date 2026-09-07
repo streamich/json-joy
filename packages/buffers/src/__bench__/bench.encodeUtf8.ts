@@ -1,6 +1,6 @@
 // yarn build && npx ts-node src/__bench__/bench.encodeUtf8.ts
 
-import {runBenchmark} from './runBenchmark';
+import {runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {Writer} from '../Writer';
 
 const hasBuffer = typeof Buffer === 'function';

@@ -1,6 +1,16 @@
 import {decodeUtf8} from './utf8/decodeUtf8';
 import type {IReader, IReaderResettable} from './types';
 
+const oob = (): never => {
+  throw new RangeError('OUT_OF_BOUNDS');
+};
+
+/**
+ * Reads binary data. Every read is bounded by {@link Reader.end}: a read that
+ * would go past it throws a `RangeError` instead of returning a value made up
+ * of bytes that are not there. Decoders parse untrusted input, so a length that
+ * the input does not back has to fail loudly, not quietly.
+ */
 export class Reader implements IReader, IReaderResettable {
   constructor(
     public uint8: Uint8Array = new Uint8Array([]),
@@ -11,6 +21,7 @@ export class Reader implements IReader, IReaderResettable {
 
   public reset(uint8: Uint8Array): void {
     this.x = 0;
+    this.end = uint8.length;
     this.uint8 = uint8;
     this.view = new DataView(uint8.buffer as ArrayBuffer, uint8.byteOffset, uint8.length);
   }
@@ -40,6 +51,9 @@ export class Reader implements IReader, IReaderResettable {
   public buf(size: number = this.size()): Uint8Array {
     const x = this.x;
     const end = x + size;
+    // Negated so that a `NaN` size, which is what a truncated length header
+    // decodes to, fails the check rather than passing it.
+    if (!(end <= this.end)) return oob();
     const bin = this.uint8.subarray(x, end);
     this.x = end;
     return bin;
@@ -85,77 +99,93 @@ export class Reader implements IReader, IReaderResettable {
   }
 
   public u8(): number {
-    return this.uint8[this.x++];
-    // return this.view.getUint8(this.x++);
+    const x = this.x;
+    if (x >= this.end) return oob();
+    this.x = x + 1;
+    return this.uint8[x];
   }
 
   public i8(): number {
-    return this.view.getInt8(this.x++);
+    const x = this.x;
+    if (x >= this.end) return oob();
+    this.x = x + 1;
+    return this.view.getInt8(x);
   }
 
   public u16(): number {
-    // const num = this.view.getUint16(this.x);
-    // this.x += 2;
-    // return num;
     let x = this.x;
+    if (x + 2 > this.end) return oob();
     const num = (this.uint8[x++] << 8) + this.uint8[x++];
     this.x = x;
     return num;
   }
 
   public i16(): number {
-    const num = this.view.getInt16(this.x);
-    this.x += 2;
-    return num;
+    const x = this.x;
+    if (x + 2 > this.end) return oob();
+    this.x = x + 2;
+    return this.view.getInt16(x);
   }
 
   public u32(): number {
-    const num = this.view.getUint32(this.x);
-    this.x += 4;
-    return num;
+    const x = this.x;
+    if (x + 4 > this.end) return oob();
+    this.x = x + 4;
+    return this.view.getUint32(x);
   }
 
   public i32(): number {
-    const num = this.view.getInt32(this.x);
-    this.x += 4;
-    return num;
+    const x = this.x;
+    if (x + 4 > this.end) return oob();
+    this.x = x + 4;
+    return this.view.getInt32(x);
   }
 
   public u64(): bigint {
-    const num = this.view.getBigUint64(this.x);
-    this.x += 8;
-    return num;
+    const x = this.x;
+    if (x + 8 > this.end) return oob();
+    this.x = x + 8;
+    return this.view.getBigUint64(x);
   }
 
   public i64(): bigint {
-    const num = this.view.getBigInt64(this.x);
-    this.x += 8;
-    return num;
+    const x = this.x;
+    if (x + 8 > this.end) return oob();
+    this.x = x + 8;
+    return this.view.getBigInt64(x);
   }
 
   public f32(): number {
-    const pos = this.x;
-    this.x += 4;
-    return this.view.getFloat32(pos);
+    const x = this.x;
+    if (x + 4 > this.end) return oob();
+    this.x = x + 4;
+    return this.view.getFloat32(x);
   }
 
   public f64(): number {
-    const pos = this.x;
-    this.x += 8;
-    return this.view.getFloat64(pos);
+    const x = this.x;
+    if (x + 8 > this.end) return oob();
+    this.x = x + 8;
+    return this.view.getFloat64(x);
   }
 
   public utf8(size: number): string {
     const start = this.x;
-    this.x += size;
+    const end = start + size;
+    // Negated so that a `NaN` size, which is what a truncated length header
+    // decodes to, fails the check rather than passing it.
+    if (!(end <= this.end)) return oob();
+    this.x = end;
     return decodeUtf8(this.uint8, start, size);
   }
 
   public ascii(length: number): string {
     const uint8 = this.uint8;
     let str = '';
-    const end = this.x + length;
-    for (let i = this.x; i < end; i++) str += String.fromCharCode(uint8[i]);
+    const x = this.x;
+    const end = x + length;
+    if (!(end <= this.end)) return oob();
+    for (let i = x; i < end; i++) str += String.fromCharCode(uint8[i]);
     this.x = end;
     return str;
   }

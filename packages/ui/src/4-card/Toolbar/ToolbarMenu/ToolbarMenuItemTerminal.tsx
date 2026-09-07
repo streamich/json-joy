@@ -1,9 +1,9 @@
 import * as React from 'react';
+import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
+import {usePopup} from '../../Popup/context';
 import type {MenuItem} from '../../StructuralMenu/types';
 import {ToolbarItem} from '../ToolbarItem';
-import {usePopup} from '../../Popup/context';
 import {useToolbarMenu} from './context';
-import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
 
 export interface ToolbarMenuItemTerminalProps {
   item: MenuItem;

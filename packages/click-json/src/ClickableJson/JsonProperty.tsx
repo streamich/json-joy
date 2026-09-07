@@ -3,6 +3,7 @@ import {useTheme} from 'nano-theme';
 import {escapeComponent, unescapeComponent} from '@jsonjoy.com/json-pointer';
 import * as css from '../css';
 import {FlexibleInput} from 'flexible-input';
+import {context} from './context';
 import {useStyles} from '../context/style';
 import type {OnChange} from './types';
 
@@ -19,6 +20,15 @@ export const JsonProperty: React.FC<JsonPropertyProps> = ({pointer, onChange}) =
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [focused, setFocused] = React.useState(false);
   const theme = useTheme();
+  const {edit} = React.useContext(context);
+
+  // Focus the key input.
+  React.useEffect(() => {
+    if (!edit) return;
+    return edit.subscribe((p, target) => {
+      if (target === 'key' && p === pointer) inputRef.current?.focus();
+    });
+  }, [edit, pointer]);
 
   const style: React.CSSProperties = {
     color: theme.g(0.1),

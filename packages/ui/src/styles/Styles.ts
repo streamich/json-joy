@@ -4,8 +4,10 @@ import {Fonts} from './font/Fonts';
 import {theme as ltheme} from './theme/light';
 import {theme as dtheme} from './theme/dark';
 import {HslColor, ThemeColor} from './color';
+import {easing, TEasing} from './easing';
 
 export class Styles {
+  public readonly easing = easing;
   public static readonly make = (theme?: StyleTheme, dark?: boolean) => new Styles(theme ?? (dark ? dtheme : ltheme));
 
   public bg: ThemeColor;
@@ -119,12 +121,14 @@ export class Styles {
       '--colLineTint': this.neutral.fg.pct(0, -0.3, -0.1, -0.6) + '',
 
       // Background colors for selection and hover of buttons.
+      '--colBg': this.neutral.fg.pct(0, -0.2, 0.7, -0.8) + '',
       '--colBgHover': this.neutral.fg.pct(0, -0.2, 0.5, -0.72) + '',
       '--colBgActiveDim': this.neutral.fg.pct(0, -0.3, 0.5, -0.85) + '',
       '--colBgActive': this.accent.fg.pct(0, -0.1, 0.5, -0.85) + '',
 
       // Links
       '--colLink': this.link.fg + '',
+      '--colAccent': this.accent.fg + '',
     };
     return out;
   }

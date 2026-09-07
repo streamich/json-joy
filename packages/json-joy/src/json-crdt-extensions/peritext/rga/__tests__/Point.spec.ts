@@ -2,7 +2,8 @@ import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../constants';
 import {tick} from '../../../../json-crdt-patch/clock';
-import type {Point} from '../Point';
+import {Point} from '../Point';
+import type {PointDto} from '../../editor/types';
 
 const setup = () => {
   const model = Model.create();
@@ -1437,6 +1438,53 @@ describe('.halfstep()', () => {
       expect(p1.cmpSpatial(p2)).toBe(0);
       expect(p1.viewPos()).toBe(i);
       expect(p2.viewPos()).toBe(i);
+    }
+  });
+});
+
+describe('.toDto()', () => {
+  test('serializes an "after" anchored point to [sid, time, anchor]', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAt(1, Anchor.After);
+    expect(point.toDto()).toEqual([point.id.sid, point.id.time, Anchor.After]);
+  });
+
+  test('serializes a "before" anchored point to [sid, time, anchor]', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAt(2, Anchor.Before);
+    expect(point.toDto()).toEqual([point.id.sid, point.id.time, Anchor.Before]);
+  });
+});
+
+describe('.fromDto()', () => {
+  test('reconstructs a point from a [sid, time, anchor] tuple', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAt(1, Anchor.After);
+    const restored = Point.fromDto(peritext.str, point.toDto());
+    expect(restored.id.sid).toBe(point.id.sid);
+    expect(restored.id.time).toBe(point.id.time);
+    expect(restored.anchor).toBe(Anchor.After);
+    expect(restored.cmp(point)).toBe(0);
+  });
+
+  test('defaults the anchor to "before" (0) when omitted', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAt(0, Anchor.Before);
+    const dto: PointDto = [point.id.sid, point.id.time];
+    const restored = Point.fromDto(peritext.str, dto);
+    expect(restored.anchor).toBe(Anchor.Before);
+    expect(restored.cmp(point)).toBe(0);
+  });
+
+  test('round-trips through .toDto() for every point in the document', () => {
+    const {peritext} = setup();
+    for (let pos = 0; pos < 3; pos++) {
+      for (const anchor of [Anchor.Before, Anchor.After]) {
+        const point = peritext.pointAt(pos, anchor);
+        const restored = Point.fromDto(peritext.str, point.toDto());
+        expect(restored.cmp(point)).toBe(0);
+        expect(restored.viewPos()).toBe(point.viewPos());
+      }
     }
   });
 });

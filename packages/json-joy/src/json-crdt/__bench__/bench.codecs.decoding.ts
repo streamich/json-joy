@@ -1,17 +1,17 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.decoding.ts
 
-import {payloads} from '../../__bench__/payloads';
-import {type IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
-import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
-import {Decoder as CompactDecoder} from '../codec/structural/compact/Decoder';
-import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';
-import {Decoder as VerboseDecoder} from '../codec/structural/verbose/Decoder';
-import {Encoder as IndexedEncoder} from '../codec/indexed/binary/Encoder';
-import {Decoder as IndexedDecoder} from '../codec/indexed/binary/Decoder';
-import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
-import {Decoder as SidecarDecoder} from '../codec/sidecar/binary/Decoder';
-import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {type IBenchmark, runBenchmarkAndSave} from '@jsonjoy.com/util/lib/bench/runBenchmark';
+import {payloads} from '../../__bench__/payloads';
+import {Decoder as IndexedDecoder} from '../codec/indexed/binary/Decoder';
+import {Encoder as IndexedEncoder} from '../codec/indexed/binary/Encoder';
+import {Decoder as SidecarDecoder} from '../codec/sidecar/binary/Decoder';
+import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
+import {Decoder as CompactDecoder} from '../codec/structural/compact/Decoder';
+import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
+import {Decoder as VerboseDecoder} from '../codec/structural/verbose/Decoder';
+import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';
 import {Model} from '../model';
 
 const cborEncoder = new CborEncoder();

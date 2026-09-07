@@ -1,15 +1,15 @@
 // npx ts-node src/json-crdt-patch/__bench__/bench.encoding.ts
 
-import {runBenchmark, type IBenchmark} from '../../__bench__/runBenchmark';
-import json1 from '../../__tests__/fixtures/json/small-object';
+import {encode as encodeCbor} from '@jsonjoy.com/json-pack/lib/cbor/shared';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import json2 from '../../__tests__/fixtures/json/simple-json-patch';
+import json1 from '../../__tests__/fixtures/json/small-object';
 import {LogicalClock} from '../clock';
-import type {Patch} from '../Patch';
-import {PatchBuilder} from '../PatchBuilder';
 import {encode as encodeBinary} from '../codec/binary';
 import {encode as encodeCompact} from '../codec/compact-binary';
 import {encode as encodeJson} from '../codec/verbose';
-import {encode as encodeCbor} from '@jsonjoy.com/json-pack/lib/cbor/shared';
+import type {Patch} from '../Patch';
+import {PatchBuilder} from '../PatchBuilder';
 
 const createPatch = (json: any) => {
   const clock = new LogicalClock(123456, 0);

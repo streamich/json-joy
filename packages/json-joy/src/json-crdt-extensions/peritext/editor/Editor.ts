@@ -25,7 +25,7 @@ import {
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import {ArrApi} from '../../../json-crdt/model';
 import * as schema from '../slice/schema';
-import type {Point} from '../rga/Point';
+import {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
@@ -41,6 +41,7 @@ import type {
   EditorUi,
   EditorSelection,
   MarkerUpdateTarget,
+  PointDto,
 } from './types';
 import type {ApiOperation} from '../../../json-crdt/model/api/types';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
@@ -1600,7 +1601,14 @@ export class Editor<T = string> implements Printable {
 
   public pos2point(at: EditorPosition<T>): Point<T> {
     const txt = this.txt;
-    return typeof at === 'number' ? txt.pointAt(at) : Array.isArray(at) ? txt.pointAt(at[0], at[1]) : at;
+    if (typeof at === 'number') return txt.pointAt(at);
+    if (at instanceof Point) return at;
+    if (Array.isArray(at)) {
+      const [a, b] = at;
+      if (b > 1) return Point.fromDto(this.txt.str, at as PointDto);
+      else return txt.pointAt(a, b);
+    }
+    return at;
   }
 
   public sel2range(at: EditorSelection<T>): [range: Range<T>, anchor: CursorAnchor] {

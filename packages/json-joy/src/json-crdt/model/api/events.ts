@@ -9,8 +9,10 @@ import {
   UpdArrOp,
   DelOp,
 } from '../../../json-crdt-patch';
-import type {JsonNode} from '../../nodes';
+import {pathTo} from '../pathTo';
 import type {ModelApi} from './nodes';
+import type {Path} from '@jsonjoy.com/json-pointer';
+import type {JsonNode} from '../../nodes';
 
 export const enum ChangeEventOrigin {
   Local = 0,
@@ -131,5 +133,23 @@ export class ChangeEvent {
       }
     }
     return parents;
+  }
+
+  private _paths: Path[] | null = null;
+
+  /**
+   * Paths of nodes directly affected by this change event, relative to the
+   * document root. Nodes not reachable from the root are omitted.
+   */
+  public paths(): Path[] {
+    let paths = this._paths;
+    if (!paths) {
+      this._paths = paths = [];
+      for (const node of this.direct()) {
+        const path = pathTo(node);
+        if (path) paths.push(path);
+      }
+    }
+    return paths;
   }
 }

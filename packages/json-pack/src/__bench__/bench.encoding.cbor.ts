@@ -1,9 +1,9 @@
 // npx ts-node src/__bench__/bench.encoding.cbor.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {CborEncoderFast} from '../cbor/CborEncoderFast';
-import {CborEncoder} from '../cbor/CborEncoder';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {payloads} from '../__bench__/payloads';
+import {CborEncoder} from '../cbor/CborEncoder';
+import {CborEncoderFast} from '../cbor/CborEncoderFast';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

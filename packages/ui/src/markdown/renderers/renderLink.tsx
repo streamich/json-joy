@@ -14,6 +14,12 @@ const renderLink: RenderNode = (renderers, flat, idx, props, state) => {
     }
   }
 
+  // An unresolved reference — e.g. stray "[...]" brackets, a bare "T[]", or a
+  // "[text][id]" reference whose "[id]: url" definition is missing.
+  if (url == null) {
+    return <>{node.raw ?? renderers.children(renderers, flat, idx, props, state)}</>;
+  }
+
   if (url[0] === '/') {
     return (
       <Link a to={url} title={title}>

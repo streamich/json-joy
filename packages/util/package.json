@@ -71,7 +71,17 @@
     ]
   },
   "peerDependencies": {
+    "benchmark": "2",
     "tslib": "2"
+  },
+  "peerDependenciesMeta": {
+    "benchmark": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/benchmark": "^2.1.5",
+    "benchmark": "^2.1.4"
   },
   "dependencies": {
     "@jsonjoy.com/buffers": "workspace:*",

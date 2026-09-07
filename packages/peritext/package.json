@@ -40,14 +40,16 @@
   ],
   "dependencies": {
     "@cortex-js/compute-engine": "^0.55.6",
+    "@jsonjoy.com/collaborative-input-react": "workspace:*",
     "@jsonjoy.com/collaborative-react": "workspace:*",
+    "@jsonjoy.com/collaborative-str": "workspace:*",
     "@jsonjoy.com/collaborative-ui": "workspace:*",
     "@jsonjoy.com/diff": "workspace:*",
     "@jsonjoy.com/keyboard": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "json-joy": "workspace:*",
     "mathlive": "^0.109.0",
-    "thingies": "^2.6.0"
+    "thingies": "^2.6.1"
   },
   "peerDependencies": {
     "react": "*",

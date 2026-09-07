@@ -1,8 +1,8 @@
 // npx ts-node src/__bench__/bench.resp.encoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {RespEncoder} from '../resp/RespEncoder';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import encodeCommand from '@redis/client/dist/lib/client/RESP2/encoder';
+import {RespEncoder} from '../resp/RespEncoder';
 
 const data = ['set', 'production:project-name:keys:foobarbaz', 'PX', 'NX', 'EX', '60000', 'KEEPTTL'];
 const redisClientEncode = (cmd: string[]) => {

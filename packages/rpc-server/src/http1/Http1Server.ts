@@ -12,6 +12,7 @@ import {PayloadTooLarge} from '../errors';
 import {setCodecs} from './util';
 import {findTokenInText} from '../util';
 import {Http1ConnectionContext, WsConnectionContext} from './context';
+import {Http1Cors, type CorsOpts} from './Http1Cors';
 import {RpcCodecs} from '@jsonjoy.com/rpc-codec';
 import {RpcMessageCodecs} from '@jsonjoy.com/rpc-codec';
 import {NullObject} from '@jsonjoy.com/util/lib/NullObject';
@@ -164,6 +165,8 @@ export class Http1Server implements Printable {
   protected readonly httpRouter = new Router<Http1EndpointMatch>();
   protected httpMatcher: RouteMatcher<Http1EndpointMatch> = () => undefined;
 
+  public cors: Http1Cors | null = null;
+
   public route(def: Http1EndpointDefinition): void {
     let path = def.path;
     if (path[0] !== '/') path = '/' + path;
@@ -177,6 +180,9 @@ export class Http1Server implements Printable {
   private readonly onRequest = async (req: http.IncomingMessage, res: http.ServerResponse) => {
     try {
       res.sendDate = false;
+      const cors = this.cors;
+      // Before routing: the 404 and internal-error paths need the headers, too.
+      if (cors) cors.apply(req, res);
       const url = req.url ?? '';
       const queryStartIndex = url.indexOf('?');
       let path = url;
@@ -341,6 +347,22 @@ export class Http1Server implements Printable {
         ctx.res.end(response);
       },
     });
+  }
+
+  /** Attaches CORS headers to every response and answers preflight requests. */
+  public enableCors(opts?: CorsOpts): Http1Cors {
+    const cors = (this.cors = new Http1Cors(opts));
+    this.route({
+      method: 'OPTIONS',
+      path: '/{::\n}',
+      handler: (ctx) => {
+        const res = ctx.res;
+        cors.preflight(res);
+        res.writeHead(204, 'No Content', {'Content-Length': '0'});
+        res.end();
+      },
+    });
+    return cors;
   }
 
   // ---------------------------------------------------------------- Printable

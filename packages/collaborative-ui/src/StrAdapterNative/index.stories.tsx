@@ -1,8 +1,8 @@
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 import * as React from 'react';
-import {StrAdapterNative} from '.';
-import {CollaborativeInput} from '../CollaborativeInput';
 import {CollaborativeFlexibleInput} from '../CollaborativeFlexibleInput';
-import type {CollaborativeStr} from 'collaborative-editor';
+import {CollaborativeInput} from '../CollaborativeInput';
+import {StrAdapterNative} from '.';
 
 export default {
   component: StrAdapterNative,

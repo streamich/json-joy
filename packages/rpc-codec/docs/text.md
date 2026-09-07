@@ -29,7 +29,7 @@ npm install @jsonjoy.com/rpc-codec
 |---|---|
 | [RpcCodec](/libs/rpc-codec/rpccodec) | One concrete codec: encode/decode batches |
 | [RpcCodecs registry](/libs/rpc-codec/rpccodecs) | Resolve codecs by `Content-Type` specifier |
-| [Compact batch helpers](/libs/rpc-codec/compact-batch) | Standalone `BatchCodec` implementations |
+| [Batch codecs](/libs/rpc-codec/compact-batch) | Standalone `BatchCodec` implementations |
 
 
 ## Quick start

@@ -113,27 +113,31 @@ function anyToJsonSchema(type: AnyType, ctx?: TypeExportContext): JsonSchemaAny 
 }
 
 function arrayToJsonSchema(type: ArrType<any, any, any>, ctx?: TypeExportContext): JsonSchemaArray {
-  // TODO: Handle head and tail tuples.
-  //   function tupleToJsonSchema(type: TupType<any>, ctx?: TypeExportContext): JsonSchemaArray {
-  //   const baseSchema = getBaseJsonSchema(type, ctx);
-  //   const types = (type as any).types;
-  //   const result: JsonSchemaArray = {
-  //     type: 'array',
-  //     items: false,
-  //     prefixItems: types.map((t: any) => typeToJsonSchema(t, ctx)),
-  //   };
-
-  //   // Add base properties
-  //   Object.assign(result, baseSchema);
-
-  //   return result;
-  // }
   const schema = type.getSchema();
   const baseSchema = getBaseJsonSchema(type, ctx);
-  const result: JsonSchemaArray = {
-    type: 'array',
-    items: typeToJsonSchema(type._type, ctx),
-  };
+  const {_type, _head, _tail} = type;
+  const hasHead = !!_head && _head.length > 0;
+  const hasTail = !!_tail && _tail.length > 0;
+
+  let result: JsonSchemaArray;
+  if (hasHead || hasTail) {
+    // Tuple: fixed `head`/`tail` element types, with an optional `_type` rest.
+    // Mapped to JSON Schema 2020-12 `prefixItems` + `items`.
+    const prefixItems: JsonSchemaNode[] = [];
+    if (_head) for (const t of _head as AbsType<any>[]) prefixItems.push(typeToJsonSchema(t, ctx));
+    if (_type) {
+      // `head` followed by a variadic rest. JSON Schema cannot express a fixed
+      // `tail` after a rest, so a trailing `tail` (if any) is not represented.
+      result = {type: 'array', prefixItems, items: typeToJsonSchema(_type, ctx)};
+    } else {
+      // Fixed-length tuple: `head` + `tail`, no additional items allowed.
+      if (_tail) for (const t of _tail as AbsType<any>[]) prefixItems.push(typeToJsonSchema(t, ctx));
+      result = {type: 'array', prefixItems, items: false};
+    }
+  } else {
+    // Plain array of a single element type.
+    result = {type: 'array', items: typeToJsonSchema(_type as AbsType<any>, ctx)};
+  }
 
   // Add base properties
   Object.assign(result, baseSchema);

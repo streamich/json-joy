@@ -167,4 +167,37 @@ describe('RmRecordEncoder', () => {
       expect(Array.from(result.slice(4))).toEqual([10, 20, 30]);
     });
   });
+
+  describe('.startRecord() / .endRecord()', () => {
+    test('frames a record written in one pass', () => {
+      const encoder = new RmRecordEncoder(new Writer());
+      const state = encoder.startRecord();
+      encoder.writer.buf(new Uint8Array([1, 2, 3, 4, 5]), 5);
+      encoder.endRecord(state);
+      const result = encoder.writer.flush();
+      expect(result.length).toBe(9);
+      const view = new DataView(result.buffer, result.byteOffset, result.byteLength);
+      expect(view.getUint32(0, false)).toBe(0x80000005);
+      expect(Array.from(result.slice(4))).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    test('survives a mid-record grow after earlier records were flushed', () => {
+      const writer = new Writer(64);
+      const encoder = new RmRecordEncoder(writer);
+      const first = encoder.startRecord();
+      writer.buf(new Uint8Array(10).fill(0x11), 10);
+      encoder.endRecord(first);
+      const record1 = writer.flush().slice();
+      const second = encoder.startRecord();
+      writer.buf(new Uint8Array(200).fill(0x22), 200);
+      encoder.endRecord(second);
+      const record2 = writer.flush();
+      const view1 = new DataView(record1.buffer, record1.byteOffset, record1.byteLength);
+      expect(view1.getUint32(0, false)).toBe(0x8000000a);
+      const view2 = new DataView(record2.buffer, record2.byteOffset, record2.byteLength);
+      expect(record2.length).toBe(204);
+      expect(view2.getUint32(0, false)).toBe(0x800000c8);
+      for (let i = 4; i < record2.length; i++) expect(record2[i]).toBe(0x22);
+    });
+  });
 });

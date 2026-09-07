@@ -183,7 +183,9 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({
           label={searchLabel ? (typeof searchLabel === 'string' ? searchLabel : t('Search')) : void 0}
           size={-2}
           placeholder={searchPlaceholder ?? t('Find') + SYMBOL.ELLIPSIS}
-          right={search ? <BasicButtonClose onClick={() => state.search$.next('')} /> : void 0}
+          right={
+            search ? <BasicButtonClose style={{marginRight: -4}} onClick={() => state.search$.next('')} /> : void 0
+          }
           value={search}
           onChange={(value) => state.search$.next(value)}
           onKeyDown={(e) => {

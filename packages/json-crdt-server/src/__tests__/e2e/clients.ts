@@ -2,18 +2,9 @@ import WebSocket from 'ws';
 import {RxPersistentCaller} from '@jsonjoy.com/rpc-calls/lib/caller/RxPersistentCaller';
 import {FetchCaller} from '@jsonjoy.com/rpc-calls/lib/caller/FetchCaller';
 import {WebSocketChannel} from '@jsonjoy.com/channel/lib/WebSocketChannel';
-import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
+import {RpcBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/RpcBinBatchCodec';
 import type {RpcCodec} from '@jsonjoy.com/rpc-codec';
 import type {RxMessage} from '@jsonjoy.com/rpc-messages';
-import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base';
-
-/** Adapts an {@link RpcCodec} to the {@link BinBatchCodec} interface for use with {@link FetchCaller}. */
-const rpcCodecToBinBatchCodec = (rpcCodec: RpcCodec<RxMessage>): BinBatchCodec<RxMessage> => ({
-  id: rpcCodec.specifier(),
-  format: rpcCodec.msg.format ?? RpcMessageFormat.Compact,
-  toChunk: (messages: RxMessage[]) => rpcCodec.encode(messages, rpcCodec.req),
-  fromChunk: (chunk: Uint8Array) => rpcCodec.decode(chunk, rpcCodec.res),
-});
 
 export const setupRpcPersistentClient = (codec: RpcCodec<RxMessage>) => {
   const port = +(process.env.PORT || 9999);
@@ -38,7 +29,7 @@ export const setupFetchRpcClient = (codec: RpcCodec<RxMessage>) => {
   const url = `http://127.0.0.1:${port}/rx`;
   const caller = new FetchCaller({
     url,
-    codec: rpcCodecToBinBatchCodec(codec),
+    codec: new RpcBinBatchCodec(codec),
     headers: {
       'Content-Type': `application/x.${codec.specifier()}`,
     },

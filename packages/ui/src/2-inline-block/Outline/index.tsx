@@ -1,8 +1,8 @@
-import * as React from 'react';
 import {drule} from 'nano-theme';
+import * as React from 'react';
 import {fonts} from '../../styles';
-import {useStyles} from '../../styles/context';
 import type {ColorName} from '../../styles/color/types';
+import {useStyles} from '../../styles/context';
 
 const blockClass = drule({
   d: 'block',
@@ -28,6 +28,8 @@ export interface OutlineProps extends React.HTMLAttributes<HTMLDivElement & HTML
   label?: React.ReactNode;
   active?: boolean;
   disabled?: boolean;
+  /** Paint the outline (and label) in the error color, e.g. a failed validation. */
+  invalid?: boolean;
   center?: boolean;
   ghost?: boolean | 'hint';
   activeBorderColor?: ColorName;
@@ -42,6 +44,7 @@ export const Outline: React.FC<OutlineProps> = ({
   label,
   active,
   disabled,
+  invalid,
   center,
   ghost,
   activeBorderColor = 'neutral',
@@ -53,22 +56,36 @@ export const Outline: React.FC<OutlineProps> = ({
 
   const padding = !size ? 7 : Math.max(0, 7 + size);
 
+  const borderCol = invalid && !disabled ? 'error' : activeBorderColor;
+  // Error borders use the bright solid step (8), not the dark text step (10).
+  const borderStep = invalid && !disabled ? 8 : 10;
+  const invalidBd = `1px solid ${styles.col.get('error', 8)}`;
   const ghostIdleBg = ghost === 'hint' ? styles.g(0, 0.02) : 'transparent';
   const ghostHoverBg = ghost === 'hint' ? styles.g(0, 0.05) : styles.g(0, 0.04);
   const blockStyle = ghost
     ? {
         bg: active && !disabled ? styles.g(0, 0.06) : ghostIdleBg,
         ta: center ? ('center' as const) : ('start' as const),
-        bd: active && !disabled ? `1px solid ${styles.col.get(activeBorderColor, 10)}` : '1px solid transparent',
-        bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(activeBorderColor, 'border-3')}` : 'none',
+        bd:
+          active && !disabled
+            ? `1px solid ${styles.col.get(borderCol, borderStep)}`
+            : invalid && !disabled
+              ? invalidBd
+              : '1px solid transparent',
+        bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(borderCol, 'border-3')}` : 'none',
         pd: `${padding}px ${padding * 2}px`,
         '& *': {
           op: disabled ? 0.5 : 1,
         },
         '&:hover': {
           bg: disabled ? ghostIdleBg : active ? styles.g(0, 0.06) : ghostHoverBg,
-          bd: active && !disabled ? `1px solid ${styles.col.get(activeBorderColor, 10)}` : '1px solid transparent',
-          bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(activeBorderColor, 10)}` : 'none',
+          bd:
+            active && !disabled
+              ? `1px solid ${styles.col.get(borderCol, borderStep)}`
+              : invalid && !disabled
+                ? invalidBd
+                : '1px solid transparent',
+          bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(borderCol, borderStep)}` : 'none',
           '& *': {
             op: 1,
           },
@@ -80,9 +97,11 @@ export const Outline: React.FC<OutlineProps> = ({
         bd: disabled
           ? `1px dotted ${styles.g(0.8)}`
           : active
-            ? `1px solid ${styles.col.get(activeBorderColor, 10)}`
-            : `1px solid transparent`,
-        bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(activeBorderColor, 'border-3')}` : 'none',
+            ? `1px solid ${styles.col.get(borderCol, borderStep)}`
+            : invalid
+              ? invalidBd
+              : `1px solid transparent`,
+        bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(borderCol, 'border-3')}` : 'none',
         pd: `${padding}px ${padding * 2}px`,
         '& *': {
           op: disabled ? 0.5 : 1,
@@ -91,9 +110,11 @@ export const Outline: React.FC<OutlineProps> = ({
           bd: disabled
             ? `1px solid ${styles.g(0.8)}`
             : active
-              ? `1px solid ${styles.col.get(activeBorderColor, 10)}`
-              : `1px solid ${styles.col.get('neutral', 7)}`,
-          bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(activeBorderColor, 10)}` : 'none',
+              ? `1px solid ${styles.col.get(borderCol, borderStep)}`
+              : invalid
+                ? invalidBd
+                : `1px solid ${styles.col.get('neutral', 7)}`,
+          bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(borderCol, borderStep)}` : 'none',
           '& *': {
             op: 1,
           },
@@ -106,7 +127,7 @@ export const Outline: React.FC<OutlineProps> = ({
         // biome-ignore lint/a11y/noLabelWithoutControl: label is used as visual decoration
         <label
           className={labelClass({
-            col: disabled ? styles.g(0.1) : active ? styles.g(0) : styles.g(0.4),
+            col: disabled ? styles.g(0.1) : invalid ? styles.col.get('error', 9) : active ? styles.g(0) : styles.g(0.4),
           })}
           style={{
             fontSize: 11.5 + 0.5 * (size ?? 0) + 'px',

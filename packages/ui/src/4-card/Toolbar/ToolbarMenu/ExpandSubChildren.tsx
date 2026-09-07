@@ -1,15 +1,16 @@
 import * as React from 'react';
 import type {MenuItem} from '../../StructuralMenu/types';
-import {ToolbarMenuMore} from './ToolbarMenuMore';
 import {ToolbarMenuItem} from './ToolbarMenuItem';
+import {ToolbarMenuMore} from './ToolbarMenuMore';
 
 export interface ExpandSubChildrenProps {
   item: MenuItem;
   parent: MenuItem;
   disabled?: boolean;
+  small?: boolean;
 }
 
-export const ExpandSubChildren: React.FC<ExpandSubChildrenProps> = ({item, parent, disabled}) => {
+export const ExpandSubChildren: React.FC<ExpandSubChildrenProps> = ({item, parent, disabled, small}) => {
   const nodes: React.ReactNode[] = [];
   const children = parent.preview ?? item.preview ?? item.children;
   const length = children?.length ?? 0;
@@ -18,7 +19,8 @@ export const ExpandSubChildren: React.FC<ExpandSubChildrenProps> = ({item, paren
   for (let i = 0; i < length; i++) {
     if (i >= max) break;
     const child = children![i];
-    if (child.icon) nodes.push(<ToolbarMenuItem key={child.id || child.name || i} item={child} disabled={disabled} />);
+    if (child.icon)
+      nodes.push(<ToolbarMenuItem key={child.id || child.name || i} item={child} disabled={disabled} small={small} />);
   }
 
   nodes.push(<ToolbarMenuMore key={'_more'} item={parent} disabled={disabled} />);

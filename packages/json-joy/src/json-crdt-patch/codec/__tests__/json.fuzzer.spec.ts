@@ -8,6 +8,9 @@ import {decode as decodeCompactBinary} from '../compact-binary/decode';
 import {encode as encodeBinary, decode as decodeBinary} from '../binary';
 import type {Patch} from '../../Patch';
 
+/** Patches per codec per environment; `RUN_SLOW_TESTS=1` runs the full count. */
+const ROUNDS = process.env.RUN_SLOW_TESTS && process.env.RUN_SLOW_TESTS !== '0' ? 200 : 60;
+
 const fuzzer = new PatchFuzzer();
 const environments: [string, () => Patch][] = [
   ['logical', () => fuzzer.generateLogicalPatch()],
@@ -25,7 +28,7 @@ for (const [env, createPatch] of environments) {
     for (const [name, encode, decode] of codecs) {
       describe(`${name} codec`, () => {
         test('fuzz testing a patch codec', () => {
-          for (let i = 0; i < 200; i++) {
+          for (let i = 0; i < ROUNDS; i++) {
             const patch = createPatch();
             try {
               const encoded1 = (encode as any)(patch);

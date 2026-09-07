@@ -51,6 +51,7 @@ export const behavior = new (class BgBehavior extends SpanBehavior<SliceStacking
       name,
       cmd: name,
       mono: true,
+      compact: true,
       domain: 'range',
       group: ['Add formatting'],
       params: [

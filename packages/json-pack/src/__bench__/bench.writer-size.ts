@@ -1,11 +1,11 @@
 // npx ts-node src/__bench__/bench.writer-size.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {CborEncoder} from '../cbor/CborEncoder';
-import {CborDecoder} from '../cbor/CborDecoder';
-import {payloads} from '../__bench__/payloads';
-import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {payloads} from '../__bench__/payloads';
+import {CborDecoder} from '../cbor/CborDecoder';
+import {CborEncoder} from '../cbor/CborEncoder';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

@@ -53,6 +53,7 @@ export const behavior = new (class ColBehavior extends SpanBehavior<
       name,
       cmd: name,
       mono: true,
+      compact: true,
       domain: 'range',
       group: ['Add formatting'],
       params: [

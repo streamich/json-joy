@@ -9,7 +9,15 @@ export interface JsonObjectInsertProps {
 }
 
 export const JsonObjectInsert: React.FC<JsonObjectInsertProps> = ({pointer, visible}) => {
-  const {onChange} = React.useContext(context);
+  const {onChange, edit} = React.useContext(context);
+  const [openSignal, setOpenSignal] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!edit) return;
+    return edit.subscribe((p, target) => {
+      if (target === 'insert' && p === pointer) setOpenSignal((x) => x + 1);
+    });
+  }, [edit, pointer]);
 
   if (!onChange) return null;
 
@@ -23,5 +31,5 @@ export const JsonObjectInsert: React.FC<JsonObjectInsertProps> = ({pointer, visi
     onChange([{op: 'add', path: pointer + '/' + escapeComponent(property), value: newValue}]);
   };
 
-  return <ObjectInsert visible={visible} onSubmit={onSubmit} />;
+  return <ObjectInsert visible={visible} openSignal={openSignal} onSubmit={onSubmit} />;
 };

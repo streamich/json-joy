@@ -3,17 +3,29 @@ import {useTheme} from 'nano-theme';
 import * as css from '../css';
 import {inputStyle, typeahead, valueBg, valueColor} from './utils';
 import {FlexibleInput} from 'flexible-input';
+import {context} from './context';
 import {selectOnFocus} from '../utils/selectOnFocus';
 
 export interface ValueInputProps {
   value: unknown;
+  /** JSON Pointer of the value's node; lets a toolbar "Edit value" focus this input. */
+  pointer?: string;
   onChange?: (value: unknown) => void;
 }
 
 export const ValueInput: React.FC<ValueInputProps> = (props) => {
-  const {value, onChange} = props;
+  const {value, pointer, onChange} = props;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
+  const {edit} = React.useContext(context);
+
+  // Focus the value input when the node's toolbar requests an "Edit value".
+  React.useEffect(() => {
+    if (!edit || pointer === undefined) return;
+    return edit.subscribe((p, target) => {
+      if (target === 'value' && p === pointer) inputRef.current?.focus();
+    });
+  }, [edit, pointer]);
   const json = React.useMemo(
     () =>
       value === null

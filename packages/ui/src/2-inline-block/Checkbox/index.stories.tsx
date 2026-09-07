@@ -14,12 +14,27 @@ const meta: Meta<typeof Component> = {
 export default meta;
 
 export const Primary: StoryObj<typeof meta> = {
-  args: {},
+  args: {
+    on: false,
+  },
 };
 
 export const On: StoryObj<typeof meta> = {
   args: {
     on: true,
+  },
+};
+
+export const Undecided: StoryObj<typeof meta> = {
+  args: {
+    on: null,
+  },
+};
+
+export const SmallUndecided: StoryObj<typeof meta> = {
+  args: {
+    on: null,
+    small: true,
   },
 };
 

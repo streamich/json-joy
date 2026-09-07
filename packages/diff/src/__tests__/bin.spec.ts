@@ -203,6 +203,47 @@ describe('apply()', () => {
     expect(insertions.length + deletions.length).toBeGreaterThan(0);
   });
 
+  test('onDelete receives deleted bytes as Uint8Array', () => {
+    const src1 = b(1, 2, 0x80, 0xc8, 0xff, 3, 4);
+    const dst1 = b(1, 2, 3, 4);
+    const patch = diff(src1, dst1);
+    const deletions: {pos: number; len: number; bytes: Uint8Array}[] = [];
+    apply(
+      patch,
+      src1.length,
+      () => {},
+      (pos, len, bytes) => {
+        deletions.push({pos, len, bytes});
+      },
+    );
+    expect(deletions.length).toBe(1);
+    expect(deletions[0].len).toBe(3);
+    expect(deletions[0].bytes).toBeInstanceOf(Uint8Array);
+    expect(deletions[0].bytes).toEqual(b(0x80, 0xc8, 0xff));
+    expect(src1.slice(deletions[0].pos, deletions[0].pos + deletions[0].len)).toEqual(deletions[0].bytes);
+  });
+
+  test('insert and delete positions reconstruct dst from src', () => {
+    const src1 = b(1, 2, 0x90, 0x91, 5, 6, 7, 0xff);
+    const dst1 = b(1, 2, 0xaa, 0xab, 5, 6, 0xfe, 7, 0xff);
+    const patch = diff(src1, dst1);
+    let result: number[] = [...src1];
+    apply(
+      patch,
+      src1.length,
+      (pos, bytes) => {
+        expect(bytes).toBeInstanceOf(Uint8Array);
+        result = [...result.slice(0, pos), ...bytes, ...result.slice(pos)];
+      },
+      (pos, len, bytes) => {
+        expect(bytes).toBeInstanceOf(Uint8Array);
+        expect(new Uint8Array(result.slice(pos, pos + len))).toEqual(bytes);
+        result.splice(pos, len);
+      },
+    );
+    expect(new Uint8Array(result)).toEqual(dst1);
+  });
+
   test('handles empty buffer patches', () => {
     const patch1 = diff(b(), b(1, 2, 3));
     let insertCount = 0;

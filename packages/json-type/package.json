@@ -82,7 +82,7 @@
     "@jsonjoy.com/json-random": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "sonic-forest": "^1.2.1",
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "tree-dump": "^1.1.0"
   }
 }

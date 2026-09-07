@@ -6,9 +6,10 @@ import {ToolbarMenuItem} from './ToolbarMenuItem';
 export interface ExpandChildrenProps {
   item: MenuItem;
   disabled?: boolean;
+  small?: boolean;
 }
 
-export const ExpandChildren: React.FC<ExpandChildrenProps> = ({item, disabled}) => {
+export const ExpandChildren: React.FC<ExpandChildrenProps> = ({item, disabled, small}) => {
   const nodes: React.ReactNode[] = [];
   const children = item.children;
   const length = children?.length ?? 0;
@@ -17,7 +18,7 @@ export const ExpandChildren: React.FC<ExpandChildrenProps> = ({item, disabled}) 
   for (let i = 0; i < length && i < max; i++) {
     const child = children![i];
     if (child.icon) {
-      nodes.push(<ToolbarMenuItem key={child.id || child.name || i} item={child} disabled={disabled} />);
+      nodes.push(<ToolbarMenuItem key={child.id || child.name || i} item={child} disabled={disabled} small={small} />);
     }
   }
 

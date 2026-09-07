@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {rule, theme} from 'nano-theme';
+import * as React from 'react';
 import {useT} from 'use-t';
-import * as css from '../css';
 import {CancelAction} from '../buttons/Action/CancelAction';
 import {EditAction} from '../buttons/Action/EditAction';
+import * as css from '../css';
 
 const hoverableClass = rule({
   d: 'inline-block',
@@ -51,6 +51,7 @@ const toolbarClass = rule({
   pos: 'absolute',
   top: '-11px',
   l: 'calc(100% - 24px)',
+  z: 3,
 });
 
 export interface FocusRegionProps {
@@ -59,9 +60,11 @@ export interface FocusRegionProps {
   compact?: boolean;
   aside?: React.ReactNode;
   toolbar?: React.ReactNode;
+  toolbarStyle?: React.CSSProperties;
   negative?: boolean;
   children: React.ReactNode;
   onClick?: React.MouseEventHandler;
+  onDoubleClick?: React.MouseEventHandler;
   onMouseMove?: React.MouseEventHandler;
   onMouseEnter?: React.MouseEventHandler;
   onMouseLeave?: React.MouseEventHandler;
@@ -76,9 +79,11 @@ export const FocusRegion: React.FC<FocusRegionProps> = (props) => {
     compact,
     aside,
     toolbar,
+    toolbarStyle,
     negative,
     children,
     onClick,
+    onDoubleClick,
     onMouseMove,
     onMouseEnter,
     onMouseLeave,
@@ -116,6 +121,7 @@ export const FocusRegion: React.FC<FocusRegionProps> = (props) => {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
     >
       {children}
       {deleteButton}
@@ -125,7 +131,11 @@ export const FocusRegion: React.FC<FocusRegionProps> = (props) => {
         </span>
       )}
       {!!aside && <span className={asideClass}>{aside}</span>}
-      {!!focused && !!toolbar && <span className={toolbarClass}>{toolbar}</span>}
+      {!!focused && !!toolbar && (
+        <span className={toolbarClass} style={toolbarStyle}>
+          {toolbar}
+        </span>
+      )}
     </span>
   );
 };

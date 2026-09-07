@@ -10,6 +10,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {AnyCallee} from '@jsonjoy.com/rpc-calls';
 import type {RpcLogger} from '@jsonjoy.com/rpc-error';
 import type {Http1ConnectionContext} from './Http1ConnectionContext';
+import type {CorsOpts} from './Http1Cors';
 
 const DEFAULT_MAX_PAYLOAD = 4 * 1024 * 1024;
 
@@ -17,6 +18,7 @@ export interface RpcServerOpts {
   http1: Http1Server;
   callee: AnyCallee;
   logger?: RpcLogger;
+  cors?: CorsOpts;
 }
 
 export interface RpcServerStartOpts extends Omit<RpcServerOpts, 'http1'> {
@@ -36,6 +38,7 @@ export class RpcServer implements Printable {
       callee: opts.callee,
       http1,
       logger,
+      cors: opts.cors,
     });
     rpc.enableDefaults();
     await http1.start();
@@ -74,22 +77,8 @@ export class RpcServer implements Printable {
     http1.enableKamalPing();
   }
 
-  public enableCors(): void {
-    this.http1.route({
-      method: 'OPTIONS',
-      path: '/{::\n}',
-      handler: (ctx) => {
-        const res = ctx.res;
-        res.writeHead(200, 'OK', {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': 'true',
-          // 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          // 'Access-Control-Allow-Headers': 'Content-Type',
-          // 'Access-Control-Max-Age': '86400',
-        });
-        res.end();
-      },
-    });
+  public enableCors(opts: CorsOpts | undefined = this.opts.cors): void {
+    this.http1.enableCors(opts);
   }
 
   private processHttpRpcRequest = async (ctx: Http1ConnectionContext) => {

@@ -11,6 +11,7 @@ const blockClass = drule({
   bdrad: '16px',
   bg: 'transparent',
   bd: 0,
+  td: 'none',
   trs: 'background .2s',
   '&:hover': {
     transform: 'scale(1.02)',
@@ -34,6 +35,7 @@ export const PillButton: React.FC<PillButtonProps> = ({active, children, ...rest
     col: styles.g(0.1, 0.9),
     svg: {fill: styles.g(0.4)},
     '&:hover': {
+      td: 'none',
       bg: styles.g(0.12, 0.04),
       col: styles.g(0),
       svg: {fill: styles.g(0)},

@@ -1,13 +1,14 @@
 ## Quick clients
 
-Three factories cover the common WebSocket configurations. They differ only
-in which codecs they construct.
+Four factories cover the common configurations. Three speak WebSocket and one
+speaks HTTP; they otherwise differ only in which codecs they construct.
 
-| Factory | Message format | Value codec | Specifier sent |
-|---|---|---|---|
-| `createBinaryClient` | Binary | CBOR | `rpc.rx.binary.cbor` |
-| `createJsonClient` | Compact | JSON | `rpc.rx.compact.json` |
-| `createClient(codec, ...)` | --- you bring the `RpcCodec` --- | per `codec.specifier()` |
+| Factory | Transport | Message format | Value codec | Specifier sent |
+|---|---|---|---|---|
+| `createBinaryClient` | WebSocket | Binary | CBOR | `rpc.rx.binary.cbor` |
+| `createJsonClient` | WebSocket | Compact | JSON | `rpc.rx.compact.json` |
+| `createFetchClient` | HTTP | Compact | CBOR | `rpc.rx.compact.cbor` |
+| `createClient(codec, ...)` | WebSocket | --- you bring the `RpcCodec` --- | per `codec.specifier()` |
 
 
 ## `createBinaryClient(url, token?)`
@@ -36,6 +37,21 @@ DevTools.
 import {createJsonClient} from '@jsonjoy.com/rpc-client';
 
 const client = createJsonClient('wss://example.com/rx');
+```
+
+
+## `createFetchClient(url, token?)`
+
+For environments that cannot hold a socket open --- Tor Browser tears
+WebSockets down almost immediately, and some corporate proxies do the same.
+Each call becomes an HTTP `POST` to the endpoint.
+
+```ts
+import {createFetchClient} from '@jsonjoy.com/rpc-client';
+
+const client = createFetchClient('https://example.com/rx');
+
+const pong = await client.call('util.ping', undefined);
 ```
 
 
@@ -83,4 +99,5 @@ To tune, build the underlying `RxPersistentCaller` yourself --- see
 | Smallest payloads, default | `createBinaryClient` |
 | Debug-friendly, human-readable wire | `createJsonClient` |
 | MessagePack, JSON-RPC 2.0, or custom split codecs | `createClient` |
-| Fetch-style HTTP transport (no streaming) | [`FetchCaller`](/libs/rpc-calls/caller) from `rpc-calls` |
+| No WebSocket available (Tor, restrictive proxies) | `createFetchClient` |
+| HTTP with a codec of your own | [`FetchCaller`](/libs/rpc-calls/caller) from `rpc-calls` |

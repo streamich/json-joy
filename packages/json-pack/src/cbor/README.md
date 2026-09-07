@@ -65,6 +65,48 @@ shallow decoding features, like skipping, one level at-a-time decoding.
 - Half-precision `f16` floats are decoded to JavaScript `number`, however,
   encoder does not support half-precision floats&mdash;floats are encoded as
   `f32` or `f64`.
+- Tags are not interpreted, they are decoded to `JsonPackExtension` and encoded
+  back from it. This includes the bignum tags 2 and 3.
+- CBOR simple values other than `false`, `true`, `null` and `undefined` are
+  decoded to `JsonPackValue<number>` and encoded back from it.
+- `-0` is encoded as the integer `0`, the same normalization `JSON.stringify`
+  and `cborg` apply.
+
+### Decoding untrusted input
+
+The decoder is written to be safe against hostile input:
+
+- Reads cannot run past the end of the input. `Reader` bounds every read against
+  its `end` and throws `RangeError` past it, so a length header the input does
+  not back cannot make the decoder allocate a large buffer, loop for a long time,
+  or return a value assembled from bytes that are not there. This lives in
+  `@jsonjoy.com/buffers` rather than here, so every codec gets it.
+- Input that is not well-formed per RFC 8949 §3.3 is rejected rather than
+  guessed at, including the reserved additional information values 28 to 30.
+- `__proto__` is rejected as a map key on every path that builds a JavaScript
+  object. Use `decoder.readAsMap()` if you need to read such a map.
+- `decoder.validate()` accepts exactly what `decoder.decode()` accepts, plus it
+  rejects trailing bytes after the value.
+
+Two limits remain the caller's responsibility:
+
+- Nesting depth is bounded by the JavaScript stack. Deeply nested input throws a
+  `RangeError` rather than being rejected gracefully.
+- `decode()` ignores trailing bytes after a complete value. Call `validate()`
+  first if the value is expected to span the whole buffer.
+
+### Deterministic encoding
+
+`CborEncoderStable` (and `CborEncoderDag`, which extends it) implements the core
+deterministic encoding requirements of RFC 8949 §4.2.1: shortest length headers,
+and map keys sorted in the bytewise lexicographic order of their encodings. For
+text string keys that means UTF-8 byte length first, then UTF-8 bytes, which is
+not the same as JavaScript's `<` for non-ASCII keys. `Map` entries are sorted by
+their encoded keys too, whatever the key type.
+
+`CborEncoder` does not sort keys and picks a string length header from an upper
+bound on the UTF-8 size, so it may use a wider header than needed. Use
+`CborEncoderStable` when the bytes have to be reproducible.
 
 
 ## Benchmarks

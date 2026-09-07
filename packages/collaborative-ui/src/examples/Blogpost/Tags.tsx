@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Pill} from '@jsonjoy.com/ui/lib/1-inline/Pill';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Row} from './Row';
 import {s} from 'json-joy/lib/json-crdt';
@@ -19,7 +19,7 @@ export const Tags: React.FC<TagsProps> = ({arr}) => {
       <Flex style={{alignItems: 'center', width: '100%', flexWrap: 'wrap'}}>
         {list.map((tag: any, i: number) => (
           <span key={String(tag)} onClick={() => arr.del(i, 1)} onKeyDown={() => {}}>
-            <Label>{tag}</Label>
+            <Pill>{tag}</Pill>
           </span>
         ))}
         <div style={{padding: '5px 0 5px 4px'}}>

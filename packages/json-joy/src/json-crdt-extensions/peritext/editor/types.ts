@@ -8,7 +8,13 @@ import type {ChunkSlice} from '../util/ChunkSlice';
 export type CharIterator<T> = UndEndNext<ChunkSlice<T>>;
 export type CharPredicate<T> = (char: T) => boolean;
 
-export type EditorPosition<T = string> = Point<T> | number | [at: number, anchor: 0 | 1];
+export type PointDto = [
+  sid: number,
+  time: number,
+  /** Zero means point is anchored to the left of the character, one means right. */
+  anchor?: 0 | 1,
+];
+export type EditorPosition<T = string> = Point<T> | PointDto | number | [at: number, anchor: 0 | 1];
 export type EditorSelection<T = string> = Range<T> | [start: EditorPosition<T>, end?: EditorPosition<T>];
 
 export type TextRangeUnit = 'point' | 'char' | 'vchar' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all';

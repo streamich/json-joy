@@ -38,7 +38,7 @@
     "tslib": "*"
   },
   "devDependencies": {
-    "thingies": "^2.6.0"
+    "thingies": "^2.6.1"
   },
   "engines": {
     "node": ">=10.0"

@@ -14,8 +14,8 @@ export const page: LibPage = {
   children: [
     {
       name: 'Quick clients',
-      subtitle: 'createBinaryClient, createJsonClient, createClient.',
-      // @ts-ignore raw markdown, loaded by the site's webpack raw-loader
+      subtitle: 'createBinaryClient, createJsonClient, createFetchClient, createClient.',
+      // @ts-ignore
       src: async () => (await import('./quick-clients.md')).default,
     },
     {

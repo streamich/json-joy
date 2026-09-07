@@ -1,4 +1,4 @@
-import {runBenchmark} from '../__bench__/runBenchmark';
+import {runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {CborDecoder} from '../cbor/CborDecoder';
 import {CborEncoder} from '../cbor/CborEncoder';
 import {MsgPackEncoderFast} from '../msgpack';

@@ -7,6 +7,11 @@ const clamp = (value: number, min: number, max: number): number => {
 };
 
 export class ThemeColor {
+  public static from(source: string | HslColor, bg: HslColor = DEFAULT_BG): ThemeColor | undefined {
+    const fg = HslColor.from(source);
+    return fg ? new ThemeColor(fg, bg) : undefined;
+  }
+
   constructor(
     public readonly fg: HslColor,
     public readonly bg: HslColor = DEFAULT_BG,
@@ -45,6 +50,12 @@ export class ThemeColor {
 
   public lerp(other: ThemeColor, t: number): ThemeColor {
     return new ThemeColor(this.fg.mix(other.fg, t), this.bg.mix(other.bg, t));
+  }
+
+  /** A soft, translucent tint of this color — its hue/saturation/lightness at a low `alpha`. */
+  public softTint(alpha: number = 0.14): string {
+    const {h, s, l} = this.fg;
+    return new HslColor(h, s, l, alpha).toString();
   }
 
   public toString(): string {

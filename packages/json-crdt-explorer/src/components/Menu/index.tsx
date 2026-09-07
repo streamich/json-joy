@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Pill} from '@jsonjoy.com/ui/lib/1-inline/Pill';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import JsonJoyLogo from '@jsonjoy.com/ui/lib/icons/svg/JsonJoyLogo';
@@ -74,7 +74,7 @@ export const Menu: React.FC<MenuProps> = ({toggle}) => {
           rounder
           compact
         >
-          JSON CRDT&nbsp;<Label>Spec</Label>
+          JSON CRDT&nbsp;<Pill>Spec</Pill>
         </BasicButton>
       )}
       {width > 600 && (
@@ -88,7 +88,7 @@ export const Menu: React.FC<MenuProps> = ({toggle}) => {
           rounder
           compact
         >
-          JSON CRDT Patch&nbsp;<Label>Spec</Label>
+          JSON CRDT Patch&nbsp;<Pill>Spec</Pill>
         </BasicButton>
       )}
       <PwaInstallButton />

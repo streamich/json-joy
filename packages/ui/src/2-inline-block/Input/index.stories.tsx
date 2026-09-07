@@ -1,5 +1,5 @@
-import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
+import * as React from 'react';
 import {Input as Component, type InputProps} from '.';
 
 const meta: Meta<typeof Component> = {
@@ -89,6 +89,57 @@ const DemoSizes: React.FC<InputProps> = (props) => {
 
 export const SizeScale: StoryObj<typeof meta> = {
   render: (args: any) => <DemoSizes {...args} />,
+};
+
+const DemoMultiline: React.FC<InputProps> = (props) => {
+  const [value, setValue] = React.useState('Roses are red,\nviolets are blue.');
+
+  return (
+    <div style={{width: 320}}>
+      <Component
+        multiline
+        label={'Notes'}
+        value={value}
+        onChange={setValue}
+        onEnter={() => console.log('submit')}
+        {...props}
+      />
+      <br />
+      <Component
+        multiline
+        rows={3}
+        maxRows={6}
+        placeholder={'Grows up to 6 rows...'}
+        value={value}
+        onChange={setValue}
+        {...props}
+      />
+    </div>
+  );
+};
+
+export const Multiline: StoryObj<typeof meta> = {
+  render: (args: any) => <DemoMultiline {...args} />,
+};
+
+const DemoInvalid: React.FC<InputProps> = (props) => {
+  const [value, setValue] = React.useState('not-an-email');
+
+  return (
+    <div style={{width: 320}}>
+      <Component invalid label={'Email'} value={value} onChange={setValue} {...props} />
+      <br />
+      <Component invalid value={value} onChange={setValue} {...props} />
+      <br />
+      <Component invalid ghost value={value} onChange={setValue} {...props} />
+      <br />
+      <Component invalid multiline label={'Notes'} value={value} onChange={setValue} {...props} />
+    </div>
+  );
+};
+
+export const Invalid: StoryObj<typeof meta> = {
+  render: (args: any) => <DemoInvalid {...args} />,
 };
 
 const DemoColor: React.FC<InputProps> = (props) => {

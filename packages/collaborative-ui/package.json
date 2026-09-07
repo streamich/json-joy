@@ -61,7 +61,7 @@
     "quill-delta": "^5.1.0",
     "react-use": "^17.6.0",
     "sonic-forest": "^1.2.1",
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "use-t": "^1.6.4"
   },
   "peerDependencies": {

@@ -1,3 +1,7 @@
+import {bestSplit, deadlineLimits, type DiffLimits} from './limits';
+
+export type {DiffLimits} from './limits';
+
 export const enum PATCH_OP_TYPE {
   DEL = -1,
   EQL = 0,
@@ -12,7 +16,8 @@ export type PatchOperationInsert = [type: PATCH_OP_TYPE.INS, txt: string];
 
 export const normalize = (patch: Patch): Patch => {
   const length = patch.length;
-  if (length < 2) return patch;
+  if (!length) return patch;
+  if (length === 1) return patch[0][1] ? patch : [];
   let i: number = 0;
   CHECK_IS_NORMALIZED: {
     if (!patch[0][1]) break CHECK_IS_NORMALIZED;
@@ -31,7 +36,7 @@ export const normalize = (patch: Patch): Patch => {
     const op = patch[j];
     if (!op[1]) continue;
     const last = normalized.length > 0 ? normalized[normalized.length - 1] : null;
-    if (last && last[0] === op[0]) last[1] += op[1];
+    if (last && last[0] === op[0]) normalized[normalized.length - 1] = [last[0], last[1] + op[1]] as PatchOperation;
     else normalized.push(op);
   }
   return normalized;
@@ -105,18 +110,17 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
                 diff.splice(prevEq, 1);
                 pointer--;
                 let k = prevEq - 1;
-                const dk = diff[k];
-                if (dk) {
-                  const type = dk[0];
-                  if (type === PATCH_OP_TYPE.INS) {
-                    insCnt++;
-                    k--;
-                    insTxt = dk[1] + insTxt;
-                  } else if (type === PATCH_OP_TYPE.DEL) {
-                    delCnt++;
-                    k--;
-                    delTxt = dk[1] + delTxt;
-                  }
+                let dk = diff[k];
+                if (dk && dk[0] === PATCH_OP_TYPE.INS) {
+                  insCnt++;
+                  insTxt = dk[1] + insTxt;
+                  k--;
+                  dk = diff[k];
+                }
+                if (dk && dk[0] === PATCH_OP_TYPE.DEL) {
+                  delCnt++;
+                  delTxt = dk[1] + delTxt;
+                  k--;
                 }
                 prevEq = k;
               }
@@ -210,13 +214,17 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
       const d1 = diff[pointer];
       const str1 = d1[1];
       const str2 = d2[1];
-      if (str1.slice(str1.length - str0.length) === str0) {
+      // With fixUnicode, skip a shift that would recreate the exact shape the
+      // first pass shaves (an equality ending with a pair start or starting
+      // with a pair end), otherwise ill-formed inputs oscillate between the
+      // two passes and the trailing re-sweep recursion never terminates.
+      if ((!fixUnicode || !startsWithPairEnd(str0)) && str1.slice(str1.length - str0.length) === str0) {
         // Shift the edit over the previous equality.
         diff[pointer][1] = str0 + str1.slice(0, str1.length - str0.length);
         d2[1] = str0 + str2;
         diff.splice(pointer - 1, 1);
         changes = true;
-      } else if (str1.slice(0, str2.length) === str2) {
+      } else if ((!fixUnicode || !endsWithPairStart(str2)) && str1.slice(0, str2.length) === str2) {
         // Shift the edit over the next equality.
         d0[1] += d2[1];
         d1[1] = str1.slice(str2.length) + str2;
@@ -238,9 +246,10 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
  * @param text2 New string to be diffed.
  * @param x Index of split point in text1.
  * @param y Index of split point in text2.
+ * @param limits Optional bounds, carried into both halves.
  * @return Array of diff tuples.
  */
-const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch => {
+const bisectSplit = (text1: string, text2: string, x: number, y: number, limits?: DiffLimits): Patch => {
   // Adjust split points to avoid breaking surrogate pairs.
   // The bisect algorithm uses .charAt() which operates on UTF-16 code units,
   // so the split points (x, y) might fall in the middle of a surrogate pair.
@@ -264,11 +273,38 @@ const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch 
     }
   }
 
+  // A degenerate split (possible with ill-formed inputs) would recurse on the
+  // same pair of strings forever; bail out with a trivial diff instead.
+  if ((x === 0 && y === 0) || (x === text1.length && y === text2.length)) {
+    return [
+      [PATCH_OP_TYPE.DEL, text1],
+      [PATCH_OP_TYPE.INS, text2],
+    ];
+  }
+
   // Use fixUnicode: true to ensure the recursive diffs also handle Unicode properly.
   // This prevents issues where surrogate pairs might be split at diff boundaries.
-  const diffsA = diff_(text1.slice(0, x), text2.slice(0, y), false);
-  const diffsB = diff_(text1.slice(x), text2.slice(y), false);
+  const diffsA = diff_(text1.slice(0, x), text2.slice(0, y), false, limits);
+  const diffsB = diff_(text1.slice(x), text2.slice(y), false, limits);
   return diffsA.concat(diffsB);
+};
+
+// A bound was hit: split at the best diagonal reached instead of searching on.
+// A degenerate split point is `bisectSplit`'s trivial case, which terminates.
+// `sub` is what the two halves are diffed under, which is the caller's own
+// limits except when an expired clock hands them a cost bound instead.
+const degrade = (
+  text1: string,
+  text2: string,
+  v1: number[],
+  v2: number[],
+  vOffset: number,
+  limits?: DiffLimits,
+  sub: DiffLimits | undefined = limits,
+): Patch => {
+  if (limits) limits.hitLimit = true;
+  const [x, y] = bestSplit(v1, v2, vOffset, text1.length, text2.length);
+  return bisectSplit(text1, text2, x, y, sub);
 };
 
 /**
@@ -282,9 +318,10 @@ const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch 
  *
  * @param text1 Old string to be diffed.
  * @param text2 New string to be diffed.
+ * @param limits Optional bounds on the `d` loop.
  * @return A {@link Patch} - an array of patch operations.
  */
-const bisect = (text1: string, text2: string): Patch => {
+const bisect = (text1: string, text2: string, limits?: DiffLimits): Patch => {
   const text1Length = text1.length;
   const text2Length = text2.length;
   const maxD = Math.ceil((text1Length + text2Length) / 2);
@@ -308,7 +345,14 @@ const bisect = (text1: string, text2: string): Patch => {
   let k1end = 0;
   let k2start = 0;
   let k2end = 0;
-  for (let d = 0; d < maxD; d++) {
+  const maxCost = limits?.maxCost;
+  const deadline = limits?.deadline;
+  // NaN and negative budgets collapse to zero: a bad budget must still bound.
+  const bound = maxCost === undefined || maxCost >= maxD ? maxD : maxCost > 0 ? maxCost : 0;
+  for (let d = 0; d < bound; d++) {
+    // The ranges below inherit a cost bound rather than the dead clock.
+    if (deadline !== undefined && !deadline.isValid())
+      return degrade(text1, text2, v1, v2, vOffset, limits, deadlineLimits(text1Length, text2Length));
     for (let k1 = -d + k1start; k1 <= d - k1end; k1 += 2) {
       const k1_offset = vOffset + k1;
       let x1: number = 0;
@@ -328,7 +372,7 @@ const bisect = (text1: string, text2: string): Patch => {
         const k2Offset = vOffset + delta - k1;
         const v2Offset = v2[k2Offset];
         if (k2Offset >= 0 && k2Offset < vLength && v2Offset !== -1) {
-          if (x1 >= text1Length - v2Offset) return bisectSplit(text1, text2, x1, y1);
+          if (x1 >= text1Length - v2Offset) return bisectSplit(text1, text2, x1, y1, limits);
         }
       }
     }
@@ -355,11 +399,12 @@ const bisect = (text1: string, text2: string): Patch => {
         if (k1_offset >= 0 && k1_offset < vLength && x1 !== -1) {
           const y1 = vOffset + x1 - k1_offset;
           x2 = text1Length - x2;
-          if (x1 >= x2) return bisectSplit(text1, text2, x1, y1);
+          if (x1 >= x2) return bisectSplit(text1, text2, x1, y1, limits);
         }
       }
     }
   }
+  if (bound < maxD) return degrade(text1, text2, v1, v2, vOffset, limits);
   return [
     [PATCH_OP_TYPE.DEL, text1],
     [PATCH_OP_TYPE.INS, text2],
@@ -374,7 +419,7 @@ const bisect = (text1: string, text2: string): Patch => {
  * @param dst New string to be diffed.
  * @return A {@link Patch} - an array of patch operations.
  */
-const diffNoCommonAffix = (src: string, dst: string): Patch => {
+const diffNoCommonAffix = (src: string, dst: string, limits?: DiffLimits): Patch => {
   if (!src) return [[PATCH_OP_TYPE.INS, dst]];
   if (!dst) return [[PATCH_OP_TYPE.DEL, src]];
   const text1Length = src.length;
@@ -403,7 +448,7 @@ const diffNoCommonAffix = (src: string, dst: string): Patch => {
       [PATCH_OP_TYPE.DEL, src],
       [PATCH_OP_TYPE.INS, dst],
     ];
-  return bisect(src, dst);
+  return bisect(src, dst, limits);
 };
 
 /**
@@ -426,9 +471,15 @@ export const pfx = (txt1: string, txt2: string): number => {
     } else max = mid;
     mid = Math.floor((max - min) / 2 + min);
   }
+  // Back off only when the boundary actually splits a surrogate pair: the
+  // prefix ends with a high surrogate and either string continues with a low
+  // surrogate. A lone high surrogate (ill-formed input) is left alone.
   const code = txt1.charCodeAt(mid - 1);
-  const isSurrogatePairStart = code >= 0xd800 && code <= 0xdbff;
-  if (isSurrogatePairStart) mid--;
+  if (code >= 0xd800 && code <= 0xdbff) {
+    const next1 = txt1.charCodeAt(mid);
+    const next2 = txt2.charCodeAt(mid);
+    if ((next1 >= 0xdc00 && next1 <= 0xdfff) || (next2 >= 0xdc00 && next2 <= 0xdfff)) mid--;
+  }
   return mid;
 };
 
@@ -458,25 +509,29 @@ export const sfx = (txt1: string, txt2: string): number => {
   if (mid > 0 && mid < txt1.length) {
     const boundaryPos = txt1.length - mid - 1;
     const code = txt1.charCodeAt(boundaryPos);
-    const isHighSurrogate = code >= 0xd800 && code <= 0xdbff;
+    const next = txt1.charCodeAt(boundaryPos + 1);
+    // Back off only when the boundary actually splits a surrogate pair: a
+    // high surrogate right before a low surrogate. A lone high surrogate
+    // (ill-formed input) is left alone.
+    const isSplitPair = code >= 0xd800 && code <= 0xdbff && next >= 0xdc00 && next <= 0xdfff;
     const isCombining =
       code === 0x200d || // ZWJ
       (code >= 0xfe00 && code <= 0xfe0f) || // Variation selectors
       (code >= 0x0300 && code <= 0x036f); // Combining diacritical marks
 
-    if (isHighSurrogate || isCombining) {
+    if (isSplitPair || isCombining) {
       // We're splitting a grapheme cluster. Walk backwards to include the full cluster.
       mid--;
       while (mid > 0) {
         const pos = txt1.length - mid - 1;
-        if (pos < 0) break;
         const prevCode = txt1.charCodeAt(pos);
-        const isPrevHighSurrogate = prevCode >= 0xd800 && prevCode <= 0xdbff;
+        const prevNext = txt1.charCodeAt(pos + 1);
+        const isPrevSplitPair = prevCode >= 0xd800 && prevCode <= 0xdbff && prevNext >= 0xdc00 && prevNext <= 0xdfff;
         const isPrevCombining =
           prevCode === 0x200d ||
           (prevCode >= 0xfe00 && prevCode <= 0xfe0f) ||
           (prevCode >= 0x0300 && prevCode <= 0x036f);
-        if (!isPrevHighSurrogate && !isPrevCombining) break;
+        if (!isPrevSplitPair && !isPrevCombining) break;
         mid--;
       }
     }
@@ -525,9 +580,10 @@ export const overlap = (str1: string, str2: string): number => {
  * @param src Old string to be diffed.
  * @param dst New string to be diffed.
  * @param fixUnicode Whether to apply semantic cleanup before returning.
+ * @param limits Optional bounds on the Myers search.
  * @return A {@link Patch} - an array of patch operations.
  */
-const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
+const diff_ = (src: string, dst: string, fixUnicode: boolean, limits?: DiffLimits): Patch => {
   if (src === dst) return src ? [[PATCH_OP_TYPE.EQL, src]] : [];
 
   // Trim off common prefix (speedup).
@@ -543,7 +599,7 @@ const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
   dst = dst.slice(0, dst.length - suffixLength);
 
   // Compute the diff on the middle block.
-  const diff: Patch = diffNoCommonAffix(src, dst);
+  const diff: Patch = diffNoCommonAffix(src, dst, limits);
   if (prefix) diff.unshift([PATCH_OP_TYPE.EQL, prefix]);
   if (suffix) diff.push([PATCH_OP_TYPE.EQL, suffix]);
   cleanupMerge(diff, fixUnicode);
@@ -555,9 +611,12 @@ const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
  *
  * @param src Old string to be diffed.
  * @param dst New string to be diffed.
+ * @param limits Optional bounds; without them the patch is minimal. When a
+ *     bound is hit the patch is near-minimal instead, and
+ *     {@link DiffLimits.hitLimit} is set on the passed object.
  * @return A {@link Patch} - an array of patch operations.
  */
-export const diff = (src: string, dst: string): Patch => diff_(src, dst, true);
+export const diff = (src: string, dst: string, limits?: DiffLimits): Patch => diff_(src, dst, true, limits);
 
 /**
  * Considers simple insertion and deletion cases around the caret position in
@@ -571,16 +630,24 @@ export const diff = (src: string, dst: string): Patch => diff_(src, dst, true);
  *
  * @param src Old string to be diffed.
  * @param dst New string to be diffed.
- * @param caret The position of the caret in the new string. Set to -1 to
- *     ignore the caret position.
+ * @param caret The position of the caret in the new string (`dst`).
+ *     Out-of-range values are tolerated; a caret pointing inside a surrogate
+ *     pair is rounded down to the pair boundary. Set to -1 to ignore the
+ *     caret position.
+ * @param limits Optional bounds, used only when the fast path does not apply.
  * @return A {@link Patch} - an array of patch operations.
  */
-export const diffEdit = (src: string, dst: string, caret: number) => {
+export const diffEdit = (src: string, dst: string, caret: number, limits?: DiffLimits) => {
   edit: {
     if (caret < 0) break edit;
     const srcLen = src.length;
     const dstLen = dst.length;
     if (srcLen === dstLen) break edit;
+    if (caret > 0 && caret < dstLen) {
+      // Round a caret inside a surrogate pair down to the pair boundary.
+      const code = dst.charCodeAt(caret);
+      if (code >= 0xdc00 && code <= 0xdfff) caret--;
+    }
     const dstSfx = dst.slice(caret);
     const sfxLen = dstSfx.length;
     if (sfxLen > srcLen) break edit;
@@ -592,10 +659,11 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
       const srcPfx = src.slice(0, pfxLen);
       const dstPfx = dst.slice(0, pfxLen);
       if (srcPfx !== dstPfx) break edit;
+      // insert.length === dstLen - srcLen > 0
       const insert = dst.slice(pfxLen, caret);
       const patch: Patch = [];
       if (srcPfx) patch.push([PATCH_OP_TYPE.EQL, srcPfx]);
-      if (insert) patch.push([PATCH_OP_TYPE.INS, insert]);
+      patch.push([PATCH_OP_TYPE.INS, insert]);
       if (dstSfx) patch.push([PATCH_OP_TYPE.EQL, dstSfx]);
       return patch;
     } else {
@@ -603,15 +671,16 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
       const dstPfx = dst.slice(0, pfxLen);
       const srcPfx = src.slice(0, pfxLen);
       if (srcPfx !== dstPfx) break edit;
+      // del.length === srcLen - dstLen > 0
       const del = src.slice(pfxLen, srcLen - sfxLen);
       const patch: Patch = [];
       if (srcPfx) patch.push([PATCH_OP_TYPE.EQL, srcPfx]);
-      if (del) patch.push([PATCH_OP_TYPE.DEL, del]);
+      patch.push([PATCH_OP_TYPE.DEL, del]);
       if (dstSfx) patch.push([PATCH_OP_TYPE.EQL, dstSfx]);
       return patch;
     }
   }
-  return diff(src, dst);
+  return diff(src, dst, limits);
 };
 
 export const src = (patch: Patch): string => {
@@ -637,7 +706,7 @@ export const dst = (patch: Patch): string => {
 const invertOp = (op: PatchOperation): PatchOperation => {
   const type = op[0];
   return type === PATCH_OP_TYPE.EQL
-    ? op
+    ? [PATCH_OP_TYPE.EQL, op[1]]
     : type === PATCH_OP_TYPE.INS
       ? [PATCH_OP_TYPE.DEL, op[1]]
       : [PATCH_OP_TYPE.INS, op[1]];

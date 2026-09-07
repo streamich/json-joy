@@ -1,11 +1,11 @@
 // npx ts-node src/__bench__/bench.bson.encoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {BsonEncoder} from '../bson/BsonEncoder';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
-import {payloads as payloads_} from '../__bench__/payloads';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {BSON, EJSON} from 'bson';
+import {payloads as payloads_} from '../__bench__/payloads';
+import {BsonEncoder} from '../bson/BsonEncoder';
 
 const payloads = payloads_.map((p) => ({...p, data: {data: p.data}}));
 

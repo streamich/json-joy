@@ -3,7 +3,7 @@ import {rule, theme} from 'nano-theme';
 import {ColorTokens, type DecorateToken} from 'code-colors-react';
 import {useStyles} from '../../styles/context';
 import {CopyButton} from '../../2-inline-block/CopyButton';
-import {Label} from '../../1-inline/Label';
+import {Pill} from '../../1-inline/Pill';
 import Paper from '../../4-card/Paper';
 import {CodeAnnotation, annotationGroupContext, type AnnotationGroupContext} from '../../4-card/CodeAnnotation';
 import type {Token} from 'code-colors/lib';
@@ -259,7 +259,7 @@ export const CodeCard: React.FC<CodeCardProps> = ({
               {!!fileName && <span className={fileNameClass}>{fileName}</span>}
             </span>
             <span className={metaRightClass}>
-              {chip && <Label>{lang}</Label>}
+              {chip && <Pill>{lang}</Pill>}
               {copy && <CopyButton onCopy={getCode} width={28} height={28} rounder />}
             </span>
           </div>

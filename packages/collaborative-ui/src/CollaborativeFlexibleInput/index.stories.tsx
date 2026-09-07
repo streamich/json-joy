@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {CollaborativeFlexibleInput} from '.';
 import {Model, s} from 'json-joy/lib/json-crdt';
 import {JsonCrdtModel} from '../JsonCrdtModel';
+import {CollaborativeFlexibleInput} from '.';
 
 export default {
   component: CollaborativeFlexibleInput,

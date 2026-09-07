@@ -9,10 +9,12 @@ import {AddAction} from '../buttons/Action/AddAction';
 export interface ObjectInsertProps {
   visible?: boolean;
   withType?: boolean;
+  /** Bumping this counter opens the insert editor (e.g. from a node toolbar). */
+  openSignal?: number;
   onSubmit: (key: string, value: string, type: string) => void;
 }
 
-export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, onSubmit}) => {
+export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, openSignal, onSubmit}) => {
   const [t] = useT();
   const [editing, setEditing] = React.useState(false);
   const [property, setProperty] = React.useState('');
@@ -21,6 +23,10 @@ export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, on
   const inputPropertyRef = React.useRef<HTMLInputElement>(null);
   const inputValueRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
+
+  React.useEffect(() => {
+    if (openSignal) setEditing(true);
+  }, [openSignal]);
 
   const handleSubmit = (value: string, type: string) => {
     if (inputValueRef.current) inputValueRef.current.blur();

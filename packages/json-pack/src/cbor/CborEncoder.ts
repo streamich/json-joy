@@ -38,14 +38,19 @@ export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
           case JsonPackExtension:
             return this.writeTag((<JsonPackExtension>value).tag, (<JsonPackExtension>value).val);
           case JsonPackValue: {
-            const buf = (value as JsonPackValue).val;
+            const val = (value as JsonPackValue<unknown>).val;
+            if (typeof val === 'number') return this.writeTkn(val);
+            const buf = val as Uint8Array;
             return this.writer.buf(buf, buf.length);
           }
-          default:
+          default: {
             if (value instanceof Uint8Array) return this.writeBin(value);
             if (Array.isArray(value)) return this.writeArr(value);
             if (value instanceof Map) return this.writeMap(value);
+            const proto = Object.getPrototypeOf(value);
+            if (proto === Object.prototype || proto === null) return this.writeObj(value as Record<string, unknown>);
             return this.writeUnknown(value);
+          }
         }
       }
       case 'undefined':

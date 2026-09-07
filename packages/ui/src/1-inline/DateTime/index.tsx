@@ -1,5 +1,5 @@
+import {drule, lightTheme, rule} from 'nano-theme';
 import * as React from 'react';
-import {lightTheme, rule, drule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 
 const blockClass = rule({
@@ -43,6 +43,8 @@ export interface DateTimeProps {
   long?: boolean;
   /** Override the user's locale. */
   locale?: string | string[];
+  /** Track the surrounding font size (slightly reduced) instead of the fixed 13/12px. */
+  inherit?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -59,6 +61,7 @@ export const DateTime: React.FC<DateTimeProps> = ({
   seconds,
   long,
   locale,
+  inherit,
   className,
   style,
 }) => {
@@ -92,9 +95,23 @@ export const DateTime: React.FC<DateTimeProps> = ({
 
   return (
     <span className={blockClass + (className ? ` ${className}` : '')} style={style} title={iso} data-iso={iso}>
-      {!timeOnly && <span className={dateClass({col: styles.g(0.2)})}>{dateLabel}</span>}
+      {!timeOnly && (
+        <span
+          className={dateClass({col: styles.g(0.2)})}
+          style={inherit ? {fontSize: '1em', lineHeight: '1.4em'} : undefined}
+        >
+          {dateLabel}
+        </span>
+      )}
       {!timeOnly && !dateOnly && <span className={sepClass({bg: styles.g(0, 0.25)})} aria-hidden="true" />}
-      {!dateOnly && <span className={timeClass({col: styles.g(0.5)})}>{timeLabel}</span>}
+      {!dateOnly && (
+        <span
+          className={timeClass({col: styles.g(0.5)})}
+          style={inherit ? {fontSize: '0.95em', lineHeight: '1.4em'} : undefined}
+        >
+          {timeLabel}
+        </span>
+      )}
     </span>
   );
 };

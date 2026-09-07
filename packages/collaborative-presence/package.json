@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "json-joy": "workspace:*",
-    "thingies": "^2.6.0"
+    "thingies": "^2.6.1"
   },
   "peerDependencies": {
     "tslib": "*"

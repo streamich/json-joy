@@ -1,17 +1,17 @@
 // npx ts-node src/__bench__/bench.encoders.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {payloads} from '../__bench__/payloads';
+import {CborDecoder} from '../cbor/CborDecoder';
 import {CborEncoder} from '../cbor/CborEncoder';
 import {CborEncoderFast} from '../cbor/CborEncoderFast';
-import {MsgPackEncoderFast} from '../msgpack/MsgPackEncoderFast';
-import {MsgPackEncoder} from '../msgpack/MsgPackEncoder';
-import {JsonEncoder} from '../json/JsonEncoder';
-import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 import {IonEncoderFast} from '../ion/IonEncoderFast';
-import {CborDecoder} from '../cbor/CborDecoder';
-import {payloads} from '../__bench__/payloads';
-import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import {JsonEncoder} from '../json/JsonEncoder';
+import {MsgPackEncoder} from '../msgpack/MsgPackEncoder';
+import {MsgPackEncoderFast} from '../msgpack/MsgPackEncoderFast';
+import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

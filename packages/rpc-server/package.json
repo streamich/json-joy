@@ -54,7 +54,7 @@
     "json-joy": "workspace:*",
     "memory-level": "^1.0.0",
     "sonic-forest": "^1.2.1",
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.61.0",
     "ws": "^8.0.0"
   },

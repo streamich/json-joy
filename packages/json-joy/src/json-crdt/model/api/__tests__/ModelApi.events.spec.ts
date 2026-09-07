@@ -1,5 +1,6 @@
 import {Patch} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
+import type {ChangeEvent} from '../events';
 
 describe('FanOut event API', () => {
   test('dispatches "change" events on document change', async () => {
@@ -229,6 +230,37 @@ describe('fanout', () => {
       api.obj([]).set({gg: true});
       await Promise.resolve();
       expect(cnt).toBe(2);
+    });
+  });
+});
+
+describe('ChangeEvent', () => {
+  describe('.paths()', () => {
+    test('resolves the root-relative path of a changed nested node', () => {
+      const doc = Model.create();
+      const api = doc.api;
+      api.set({a: {b: {c: 1}}});
+      const events: ChangeEvent[] = [];
+      api.onChange.listen((event) => events.push(event));
+      api.obj(['a', 'b']).set({c: 2});
+      expect(events.length).toBe(1);
+      expect(events[0].paths()).toEqual([['a', 'b']]);
+    });
+
+    test('resolves paths for a remotely applied patch, including "arr" indices', () => {
+      const doc = Model.create();
+      doc.api.set({list: [{x: 1}], s: ''});
+      const fork = doc.fork();
+      fork.api.obj(['list', 0]).set({x: 2});
+      fork.api.str(['s']).ins(0, 'hi');
+      const patch = fork.api.flush();
+      const events: ChangeEvent[] = [];
+      doc.api.onChange.listen((event) => events.push(event));
+      doc.applyPatch(patch);
+      expect(events.length).toBe(1);
+      const paths = events[0].paths();
+      expect(paths).toContainEqual(['list', 0]);
+      expect(paths).toContainEqual(['s']);
     });
   });
 });
