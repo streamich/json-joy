@@ -1,11 +1,11 @@
 // npx ts-node src/__bench__/bench.msgpack.decoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {MsgPackEncoderFast} from '../msgpack/MsgPackEncoderFast';
-import {MsgPackDecoderFast} from '../msgpack/MsgPackDecoderFast';
-import {MsgPackDecoder} from '../msgpack/MsgPackDecoder';
-import {payloads} from '../__bench__/payloads';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {payloads} from '../__bench__/payloads';
+import {MsgPackDecoder} from '../msgpack/MsgPackDecoder';
+import {MsgPackDecoderFast} from '../msgpack/MsgPackDecoderFast';
+import {MsgPackEncoderFast} from '../msgpack/MsgPackEncoderFast';
 
 const encoder = new MsgPackEncoderFast();
 

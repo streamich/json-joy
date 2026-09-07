@@ -1,17 +1,17 @@
-import * as React from 'react';
+import {CollaborativeInput} from '@jsonjoy.com/collaborative-input-react';
+import {useNodeView} from '@jsonjoy.com/collaborative-react';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
+import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
-import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {UrlDisplayCard} from '../../../../components/UrlDisplayCard';
+import * as React from 'react';
 import {useT} from 'use-t';
-import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
-import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
-import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {useNodeView} from '@jsonjoy.com/collaborative-react';
+import {UrlDisplayCard} from '../../../../components/UrlDisplayCard';
 import type {EditProps} from '../../../SpanBehavior';
 import type {Data} from '../index';
-import type {CollaborativeStr} from 'collaborative-editor';
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const [t] = useT();

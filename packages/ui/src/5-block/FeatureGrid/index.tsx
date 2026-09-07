@@ -3,7 +3,7 @@ import {lightTheme as theme, rule, drule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {Link} from '../../1-inline/Link';
-import {Label} from '../../1-inline/Label';
+import {Pill} from '../../1-inline/Pill';
 import {Tilt} from '../../4-card/Tilt';
 import {Iconista} from '../../icons/Iconista';
 
@@ -190,7 +190,6 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({columns, density = 'com
         const linked = !!card.href;
         const span = cols > 1 ? Math.min(card.colSpan ?? 1, cols) : 1;
         const rowSpan = cols > 1 ? (card.rowSpan ?? 1) : 1;
-        const tinted = !card.badge?.tone || card.badge.tone === 'roadmap' || card.badge.tone === 'neutral';
         const hasCorner = !!card.icon || !!card.kbd || !!card.badge;
 
         const iconNode = React.isValidElement(card.icon)
@@ -207,11 +206,7 @@ export const FeatureGrid: React.FC<FeatureGridProps> = ({columns, density = 'com
                     {card.kbd}
                   </span>
                 )}
-                {!!card.badge && (
-                  <Label tint={tinted} className={badgeLabelClass}>
-                    {card.badge.label}
-                  </Label>
-                )}
+                {!!card.badge && <Pill className={badgeLabelClass}>{card.badge.label}</Pill>}
               </div>
             )}
             <h3>{card.title}</h3>

@@ -29,7 +29,7 @@ export const JsonValue: React.FC<JsonValueProps> = (props) => {
       {!onChange || isBinary ? (
         <JsonAtom value={doc} />
       ) : (
-        <ValueInput key={String(parentCollapsed)} value={doc} onChange={handleChange} />
+        <ValueInput key={String(parentCollapsed)} value={doc} pointer={pointer} onChange={handleChange} />
       )}
       {!!comma && ','}
     </>

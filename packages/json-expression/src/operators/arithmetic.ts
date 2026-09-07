@@ -236,7 +236,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return num ** base;
     },
     (ctx: types.OperatorCodegenCtx<types.ExprPow>): ExpressionResult => {
-      return new Expression(`Math.pow(+(${ctx.operands[0]})||0,+(${ctx.operands[0]})||0)`);
+      return new Expression(`Math.pow(+(${ctx.operands[0]})||0,+(${ctx.operands[1]})||0)`);
     },
   ] as types.OperatorDefinition<types.ExprPow>,
 ];

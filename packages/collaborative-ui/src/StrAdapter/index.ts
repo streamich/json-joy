@@ -1,8 +1,8 @@
-import * as React from 'react';
-import {StoreStrFacade} from 'collaborative-editor/lib/replicated-str/StoreStrFacade';
-import {ReplicatedStr} from 'collaborative-editor/lib/replicated-str/ReplicatedStr';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
+import {ReplicatedStr} from '@jsonjoy.com/collaborative-str/lib/replicated-str/ReplicatedStr';
+import {StoreStrFacade} from '@jsonjoy.com/collaborative-str/lib/replicated-str/StoreStrFacade';
 import type {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
-import type {CollaborativeStr} from 'collaborative-editor';
+import * as React from 'react';
 
 export interface StrAdapterProps {
   store: JsonPatchStore<any>;

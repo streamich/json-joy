@@ -1,4 +1,12 @@
-import {compare, type ITimestampStruct, printTs, equal, tick, containsId} from '../../../json-crdt-patch/clock';
+import {
+  compare,
+  type ITimestampStruct,
+  printTs,
+  equal,
+  tick,
+  containsId,
+  Timestamp,
+} from '../../../json-crdt-patch/clock';
 import {Anchor} from './constants';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {hashId, updateId} from '../../../json-crdt/hash';
@@ -6,6 +14,7 @@ import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
+import type {PointDto} from '../editor/types';
 
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a
@@ -24,6 +33,12 @@ import type {Printable} from 'tree-dump/lib/types';
  * of the string.
  */
 export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
+  public static fromDto<T = string>(rga: AbstractRga<T>, dto: PointDto): Point<T> {
+    const [idSid, idTime, anchor = 0] = dto;
+    const id = new Timestamp(idSid, idTime);
+    return new Point(rga, id, anchor);
+  }
+
   constructor(
     protected readonly rga: AbstractRga<T>,
     public id: ITimestampStruct,
@@ -652,6 +667,11 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
 
   public key(): number {
     return hashId(this.id) + (this.anchor ? 0 : 1);
+  }
+
+  public toDto(): PointDto {
+    const id = this.id;
+    return [id.sid, id.time, this.anchor];
   }
 
   // ----------------------------------------------------------------- Stateful

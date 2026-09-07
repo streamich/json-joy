@@ -39,4 +39,6 @@ export const enum ERROR {
   KEY_NOT_FOUND,
   INDEX_OUT_OF_BOUNDS,
   UNEXPECTED_STR_MAJOR,
+  /** Value claims more bytes than the input buffer holds. */
+  UNEXPECTED_EOF,
 }

@@ -91,9 +91,9 @@
     "nano-css": "^5.6.2",
     "pojo-dump": "^1.4.0",
     "sonic-forest": "^1.2.1",
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "tree-dump": "^1.1.0",
-    "very-small-parser": "^1.14.0"
+    "very-small-parser": "^1.15.0"
   },
   "devDependencies": {
     "@jsonjoy.com/json-random": "workspace:*",
@@ -102,9 +102,6 @@
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "clipboard-copy": "^4.0.1",
-    "collaborative-editor": "^2.9.0",
-    "collaborative-input": "^1.7.0",
-    "collaborative-ui": "^1.7.1",
     "editing-traces": "https://github.com/streamich/editing-traces#71c6d732956dbe08a490f8cd9764214bd3d4c9b7",
     "fast-json-patch": "^3.1.1",
     "html-webpack-plugin": "^5.6.0",

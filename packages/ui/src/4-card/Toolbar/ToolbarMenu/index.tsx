@@ -1,15 +1,15 @@
 import * as React from 'react';
-import {ToolbarPane} from '../ToolbarPane';
-import {ExpandChildren} from './ExpandChildren';
-import {ToolbarSep} from '../ToolbarSep';
-import {ExpandSubChildren} from './ExpandSubChildren';
-import {ToolbarMenuItem} from './ToolbarMenuItem';
-import {context} from './context';
-import {ToolbarExpandBtn} from './ToolbarExpandBtn';
-import {context as popupContext} from '../../Popup/context';
-import {ClickAway} from '../../../utils/ClickAway';
 import {useBehaviorSubject} from '../../../hooks/useBehaviorSubject';
+import {ClickAway} from '../../../utils/ClickAway';
+import {context as popupContext} from '../../Popup/context';
+import {ToolbarPane} from '../ToolbarPane';
+import {ToolbarSep} from '../ToolbarSep';
+import {context} from './context';
+import {ExpandChildren} from './ExpandChildren';
+import {ExpandSubChildren} from './ExpandSubChildren';
 import {ToolbarMenuState} from './state';
+import {ToolbarExpandBtn} from './ToolbarExpandBtn';
+import {ToolbarMenuItem} from './ToolbarMenuItem';
 import type {ToolbarMenuProps} from './types';
 
 export {ToolbarMenuState};
@@ -27,7 +27,20 @@ export interface StatefulToolbarMenuProps extends ToolbarMenuProps {
 }
 
 export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) => {
-  const {state, menu, disabled, more, before, after, pane = true, onPopupClose, onClickAway, compact, maxWidth} = props;
+  const {
+    state,
+    menu,
+    disabled,
+    more,
+    before,
+    after,
+    pane = true,
+    onPopupClose,
+    onClickAway,
+    compact,
+    small,
+    maxWidth,
+  } = props;
   state.props = props;
   const openPanel = state.openPanel;
   const selected = useBehaviorSubject(openPanel.selected$);
@@ -65,7 +78,7 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
   const max = menu?.maxToolbarItems ?? 1e3;
   let cnt = 0;
 
-  const itemWidth = compact ? 28 : 32;
+  const itemWidth = compact || small ? 28 : 32;
   const sepLineWidth = compact ? 6 : 10;
   const moreWidth = more?.small === false ? 64 : itemWidth;
   const widthBudget = maxWidth ?? Number.POSITIVE_INFINITY;
@@ -117,15 +130,15 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
     if (isSepOnly) continue;
     if (child.expand && !child?.children?.[0]?.iconBig) {
       cnt++;
-      nodes.push(<ExpandChildren key={key} item={child} disabled={disabled} />);
+      nodes.push(<ExpandChildren key={key} item={child} disabled={disabled} small={small} />);
     } else if (typeof child.expandChild === 'number') {
       cnt++;
       const subChild = child.children?.[child.expandChild];
       if (!subChild) continue;
-      nodes.push(<ExpandSubChildren key={key} item={subChild} parent={child} disabled={disabled} />);
+      nodes.push(<ExpandSubChildren key={key} item={subChild} parent={child} disabled={disabled} small={small} />);
     } else {
       cnt++;
-      nodes.push(<ToolbarMenuItem key={key} item={child} disabled={disabled} />);
+      nodes.push(<ToolbarMenuItem key={key} item={child} disabled={disabled} small={small} />);
     }
     lastWasSep = false;
   }
@@ -147,7 +160,11 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
   );
 
   if (pane) {
-    element = <ToolbarPane {...(typeof pane === 'object' ? pane : {})}>{element}</ToolbarPane>;
+    element = (
+      <ToolbarPane small={small} {...(typeof pane === 'object' ? pane : {})}>
+        {element}
+      </ToolbarPane>
+    );
   }
 
   return <ClickAway onClickAway={handleClickAway}>{element}</ClickAway>;

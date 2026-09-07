@@ -1,10 +1,11 @@
 // npx ts-node src/__bench__/bench.json.encoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {JsonEncoder} from '../json/JsonEncoder';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
-import {payloads} from '../__bench__/payloads';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {payloads} from '../__bench__/payloads';
+import {JsonEncoder} from '../json/JsonEncoder';
+
 const safeStringify = require('fast-safe-stringify');
 
 const benchmark: IBenchmark = {

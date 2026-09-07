@@ -1,15 +1,15 @@
+import {escapeComponent} from '@jsonjoy.com/json-pointer';
 import * as React from 'react';
-import * as css from '../css';
-import {context} from './context';
-import {JsonProperty} from './JsonProperty';
-import {JsonValue} from './JsonValue';
-import {JsonHoverable} from './JsonHoverable';
-import {JsonObjectInsert} from './JsonObjectInsert';
-import {JsonArrayInsert} from './JsonArrayInsert';
-import {ObjectLayout} from '../ObjectLayout';
 import {useFocus} from '../context/focus';
 import {useStyles} from '../context/style';
-import {escapeComponent} from '@jsonjoy.com/json-pointer';
+import * as css from '../css';
+import {ObjectLayout} from '../ObjectLayout';
+import {context, useExpandAll} from './context';
+import {JsonArrayInsert} from './JsonArrayInsert';
+import {JsonHoverable} from './JsonHoverable';
+import {JsonObjectInsert} from './JsonObjectInsert';
+import {JsonProperty} from './JsonProperty';
+import {JsonValue} from './JsonValue';
 import type {OnChange} from './types';
 
 interface JsonObjectProps {
@@ -30,6 +30,7 @@ const JsonObject: React.FC<JsonObjectProps> = ({property, doc, pointer, parentCo
     return keepOrder ? k : k.sort();
   }, [doc, keepOrder]);
   const [collapsed, setCollapsed] = React.useState(startsCollapsed);
+  useExpandAll(pointer, (open) => setCollapsed(!open));
 
   const handleBracketClick = () => {
     if (!collapsed && pfx + pointer === focused) setCollapsed(true);
@@ -39,7 +40,7 @@ const JsonObject: React.FC<JsonObjectProps> = ({property, doc, pointer, parentCo
     const itemPointer = `${pointer}/${escapeComponent(key)}`;
     return (
       <span key={key} className={css.line}>
-        <JsonHoverable pointer={itemPointer}>
+        <JsonHoverable pointer={itemPointer} value={(doc as Record<string, unknown>)[key]} property={key}>
           <span className={css.lineInner}>
             <JsonDoc
               property={key}
@@ -91,6 +92,7 @@ const JsonArray: React.FC<JsonArrayProps> = ({property, doc, pointer, parentColl
   const {focused} = useFocus();
   const {formal: selectable, collapsed: startsCollapsed} = useStyles();
   const [collapsed, setCollapsed] = React.useState(startsCollapsed);
+  useExpandAll(pointer, (open) => setCollapsed(!open));
 
   const handleBracketClick = () => {
     if (!collapsed && pfx + pointer === focused) setCollapsed(true);
@@ -102,7 +104,7 @@ const JsonArray: React.FC<JsonArrayProps> = ({property, doc, pointer, parentColl
       <React.Fragment key={index}>
         <JsonArrayInsert pointer={`${pointer}/${index}`} visible={focused === pfx + pointer} />
         <span className={css.line}>
-          <JsonHoverable pointer={itemPointer}>
+          <JsonHoverable pointer={itemPointer} value={doc[index]} property={index}>
             <span className={css.lineInner}>
               <JsonDoc
                 doc={doc[index]}

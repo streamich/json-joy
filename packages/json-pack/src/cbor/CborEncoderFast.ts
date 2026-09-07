@@ -269,6 +269,12 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
     else writer.u8u64(0xdb, tag);
   }
 
+  /**
+   * Writes a CBOR simple value. Values 24 to 31 are not well-formed CBOR and
+   * values above 255 are not representable, do not pass them in.
+   *
+   * @param value Simple value in the range 0 to 255.
+   */
   public writeTkn(value: number): void {
     const writer = this.writer;
     if (value <= 23) writer.u8(MAJOR_OVERLAY.TKN + value);

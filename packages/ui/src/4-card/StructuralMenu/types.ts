@@ -134,12 +134,12 @@ export interface MenuItem {
   /**
    * Small icon displayed next to the item.
    */
-  icon?: () => React.ReactNode;
+  icon?: (props?: React.SVGProps<SVGSVGElement>) => React.ReactNode;
 
   /**
    * Large icon, typically over 64px in size.
    */
-  iconBig?: () => React.ReactNode;
+  iconBig?: (props?: React.SVGProps<SVGSVGElement>) => React.ReactNode;
 
   /** Something to display on the right side. */
   right?: () => React.ReactNode;
@@ -166,6 +166,25 @@ export interface MenuItem {
 
   /** Children of this item. */
   children?: MenuItem[];
+
+  /**
+   * Lazily-loaded children. Resolved on first expand by renderers that support it
+   * (e.g. the file tree); other renderers ignore it. Pair with {@link hasChildren}
+   * to show an expand affordance before the loader has run.
+   */
+  lazyChildren?: () => Promise<MenuItem[]>;
+
+  /**
+   * Hint that the item has children before they are loaded, so an expand
+   * affordance can be shown for a {@link lazyChildren} item.
+   */
+  hasChildren?: boolean;
+
+  /**
+   * Render the item de-emphasized (lowered opacity) without disabling it, e.g. a
+   * gitignored / hidden file, or a less-relevant menu entry.
+   */
+  dim?: boolean;
 
   /**
    * Whether to render children of children in the current panel, specifies the
@@ -200,6 +219,20 @@ export interface MenuItem {
    * a titled panel.
    */
   noHeader?: boolean;
+
+  /**
+   * For an item rendered with a submenu chevron (e.g. in a toolbar), render
+   * only the chevron and omit the item's own `icon`. Useful for a compact
+   * single-button menu trigger where an icon + chevron would be redundant.
+   */
+  chevronOnly?: boolean;
+
+  /**
+   * The complement of `chevronOnly`: when the item has children (or a
+   * `pane`) and is rendered in a toolbar, show only the item's `icon` at the
+   * standard square item size — no expand chevron.
+   */
+  iconOnly?: boolean;
 
   /**
    * Whether to show ellipsis "..." after the display name. Used in case when
@@ -287,10 +320,23 @@ export interface MenuItem {
 
 // -------------------------------------- Parameters for argument configuration
 
-export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select' | 'enum' | 'char' | 'btn' | 'code' | 'info';
+export type ParamKind =
+  | 'str'
+  | 'num'
+  | 'date'
+  | 'bool'
+  | 'color'
+  | 'select'
+  | 'enum'
+  | 'char'
+  | 'btn'
+  | 'code'
+  | 'info'
+  | 'external';
 
 export type Param =
   | ParamStr
+  | ParamDate
   | ParamNum
   | ParamBool
   | ParamColor
@@ -299,11 +345,23 @@ export type Param =
   | ParamChar
   | ParamBtn
   | ParamCode
-  | ParamInfo;
+  | ParamInfo
+  | ParamExternal;
 
 export interface ParamBase<K extends ParamKind = ParamKind, V = string | number | boolean> extends MenuItem {
   kind: K;
+  /**
+   * Row action buttons shown on the right of the field row,
+   * rendered as a `ToolbarMenu` and revealed on hover.
+   */
+  actions?: MenuItem[];
   optional?: boolean;
+  /**
+   * Display-only field: renders the resting value view in every edit mode,
+   * with no editor, popup, or hover surface. Colors stay full-strength —
+   * read-only data is not disabled data.
+   */
+  readonly?: boolean;
   default?: V;
   /**
    * When `true`, the arg can be left in "auto" mode (using an inherited or
@@ -333,6 +391,24 @@ export interface ParamBase<K extends ParamKind = ParamKind, V = string | number 
 export interface ParamStr extends ParamBase<'str', string> {
   placeholder?: string;
   /**
+   * Render the resting value in the technical voice (mono with
+   * per-character-class tinting) — for ids, hashes, paths and similar
+   * machine-facing strings.
+   */
+  technical?: boolean;
+  /**
+   * Multiline value. Always edits in a popup . The object form bounds the editor's
+   * visible rows; defaults to 3..10.
+   */
+  multiline?: boolean | {min?: number; max?: number};
+  /** Accepted value length, in characters. Violations mark the field invalid. */
+  min?: number;
+  max?: number;
+  /** Format check (regex or predicate), applied on top of `min`/`max`. */
+  validate?: RegExp | ((value: string) => boolean);
+  /** Short name of the expected format (e.g. 'URL', 'email'), shown in the key hint. */
+  format?: string;
+  /**
    * Fires when the user presses Enter inside the input. Independent of the
    * pane-level `onSubmit` (which is reserved for the "Apply" button and
    * enables canSubmit checks).
@@ -340,8 +416,33 @@ export interface ParamStr extends ParamBase<'str', string> {
   onSubmit?: () => void;
 }
 
+/**
+ * Calendar date (or date + time) field. Values are ISO 8601 local strings —
+ * `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm` when `time` — the exact format the
+ * native date inputs speak; lexicographic order is chronological order.
+ */
+export interface ParamDate extends ParamBase<'date', string> {
+  /** Include a time component (`datetime-local` editor). */
+  time?: boolean;
+  /** Inclusive ISO bounds, same format as the value. */
+  min?: string;
+  max?: string;
+  /** Resting view shows relative time ("3 days ago") instead of the date. */
+  relative?: boolean;
+}
+
 export interface ParamNum extends ParamBase<'num', number> {
   placeholder?: string;
+  /** Unit rendered after the value (e.g. 'px', 'ms'). */
+  unit?: string;
+  /**
+   * Resting presentation of the number: `bytes` scales a byte count
+   * ("348 kB"), `percent` renders a 0..1 fraction as a progress donut plus
+   * percentage, `duration` formats milliseconds ("1h 23m"). Editing is
+   * unaffected and works on the raw number. (Named `view` because `display`
+   * is `MenuItem`'s rich-label renderer.)
+   */
+  view?: 'bytes' | 'percent' | 'duration';
   min?: number;
   max?: number;
   step?: number;
@@ -357,7 +458,15 @@ export interface ParamNum extends ParamBase<'num', number> {
   dragAxis?: 'x' | 'y' | 'both';
 }
 
-export interface ParamBool extends ParamBase<'bool', boolean> {}
+export interface ParamBool extends ParamBase<'bool', boolean | null> {
+  variant: 'check' | 'switch';
+  /**
+   * Renders a short state description next to the checkbox — usually text,
+   * e.g. "Yes" / "No" or something more descriptive. Receives the current
+   * effective state (`null` when unset/indeterminate).
+   */
+  label?: (state: boolean | null) => React.ReactNode;
+}
 
 export interface ParamColor extends ParamBase<'color', string> {
   placeholder?: string;
@@ -367,7 +476,7 @@ export interface ParamColor extends ParamBase<'color', string> {
   alpha?: boolean;
 }
 
-export interface ParamSelect extends ParamBase<'select', string> {
+export interface ParamSelect extends ParamBase<'select', string | string[]> {
   options: MenuItem[];
   /**
    * Placeholder text for the search input inside the dropdown. Defaults to
@@ -380,6 +489,19 @@ export interface ParamSelect extends ParamBase<'select', string> {
    * hidden for shorter lists.
    */
   showSearch?: boolean;
+  /**
+   * Maximum number of options selectable. Default `1` — single-select, value is
+   * a plain `string`. `> 1` makes it **multi-select** (value is a `string[]` of
+   * option ids); use `Infinity` for no cap. At capacity, unselected options are
+   * disabled in the dropdown.
+   */
+  max?: number;
+  /**
+   * Minimum number of options that must be selected. Default `0` (optional);
+   * `>= 1` marks the field required. Enforced *softly* — a validity marker is
+   * shown when below `min`; deselection is not blocked.
+   */
+  min?: number;
 }
 
 /**
@@ -436,6 +558,18 @@ export interface ParamInfo extends ParamBase<'info', never> {
   value?: string | number | Date;
   /** Render arbitrary content instead of `value`. */
   render?: () => React.ReactNode;
+}
+
+/**
+ * A field whose value type `@jsonjoy.com/ui` does not implement itself — the
+ * host supplies rendering via an `ExternalFieldRenderer` registered under the
+ * `external` key.
+ */
+export interface ParamExternal extends ParamBase<'external', unknown> {
+  /** Registry key the host resolves to a renderer, e.g. `'thing.ref'`, `'status'`. */
+  external: string;
+  /** Opaque per-field configuration passed through to the renderer. */
+  externalConfig?: unknown;
 }
 
 /**

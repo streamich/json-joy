@@ -29,7 +29,7 @@
     "binding"
   ],
   "dependencies": {
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "tree-dump": "^1.1.0"
   },
   "peerDependencies": {

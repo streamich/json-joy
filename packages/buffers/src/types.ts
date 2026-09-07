@@ -92,6 +92,12 @@ export interface IReaderBase {
 
   subarray(start?: number, end?: number): Uint8Array;
 
+  /**
+   * Number of octets left to read. Reads past it throw, so a caller that
+   * borrows the underlying buffer directly can check against this first.
+   */
+  size(): number;
+
   /** Get current byte value without advancing the cursor. */
   peek(): number;
 

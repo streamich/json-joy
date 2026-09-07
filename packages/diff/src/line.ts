@@ -74,7 +74,7 @@ export const agg = (patch: str.Patch): str.Patch[] => {
       continue LINES;
     } else {
       push(type, str.slice(0, index + 1));
-      if (line.length) lines.push(line);
+      lines.push(line);
       line = [];
     }
     let prevIndex = index;
@@ -101,10 +101,11 @@ export const agg = (patch: str.Patch): str.Patch[] => {
         const firstOp = line[0];
         const secondOp = line[1];
         const secondOpType = secondOp[0];
+        // After normalize, line[1] following an EQL is always DEL or INS, and
+        // a third op always differs from line[1], so only [EQL, edit] lines
+        // qualify for the shift.
         if (firstOp[0] !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_START;
-        if (secondOpType !== str.PATCH_OP_TYPE.DEL && secondOpType !== str.PATCH_OP_TYPE.INS)
-          break NORMALIZE_LINE_START;
-        for (let j = 2; j < lineLength; j++) if (line[j][0] !== secondOpType) break NORMALIZE_LINE_START;
+        if (lineLength > 2) break NORMALIZE_LINE_START;
         for (let j = i + 1; j < length; j++) {
           const targetLine = (lines[j] = str.normalize(lines[j]));
           const targetLineLength = targetLine.length;
@@ -156,7 +157,6 @@ export const agg = (patch: str.Patch): str.Patch[] => {
           const targetLine = (lines[j] = str.normalize(lines[j]));
           const targetLineLength = targetLine.length;
           let targetLineLastOp: str.PatchOperation;
-          if (targetLineLength === 0) continue NEXT_LINE;
           if (targetLineLength === 1) {
             targetLineLastOp = targetLine[0];
             const targetLineLastOpType = targetLineLastOp[0];
@@ -168,9 +168,9 @@ export const agg = (patch: str.Patch): str.Patch[] => {
             const first = targetLine[0];
             if (first[0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_END;
           }
-          const targetLineLastOpType = targetLineLastOp[0];
-          if (targetLineLastOpType === str.PATCH_OP_TYPE.DEL) continue NEXT_LINE;
-          if (targetLineLastOpType !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_END;
+          // DEL is impossible here: length-1 lines continued above, and a
+          // normalized [DEL, x] line cannot have x === DEL.
+          if (targetLineLastOp[0] !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_END;
           const moveStr = targetLineLastOp[1];
           if (moveStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
           if (!lastOpStr.endsWith(moveStr)) break NORMALIZE_LINE_END;
@@ -189,6 +189,17 @@ export const agg = (patch: str.Patch): str.Patch[] => {
   return lines;
 };
 
+/**
+ * Computes a line-level patch between two arrays of lines.
+ *
+ * Precondition: elements of `src` and `dst` are newline-free lines. The arrays
+ * are joined with `'\n'` internally, so an element containing `'\n'` would
+ * corrupt the offset-to-line mapping.
+ *
+ * @param src Source lines
+ * @param dst Destination lines
+ * @returns Line-level patch
+ */
 export const diff = (src: string[], dst: string[]): LinePatch => {
   if (!dst.length) return src.map((_, i) => [LINE_PATCH_OP_TYPE.DEL, i, -1]);
   if (!src.length) return dst.map((_, i) => [LINE_PATCH_OP_TYPE.INS, -1, i]);
@@ -206,18 +217,12 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
   for (let i = 0; i < length; i++) {
     const line = lines[i];
     let lineLength = line.length;
-    if (!lineLength) continue;
     const lastOp = line[lineLength - 1];
     const lastOpType = lastOp[0];
     const txt = lastOp[1];
+    // The joined text ends with '\n', so every line's last op ends with '\n'.
     if (txt === '\n') line.splice(lineLength - 1, 1);
-    else {
-      const strLength = txt.length;
-      if (txt[strLength - 1] === '\n') {
-        if (strLength === 1) line.splice(lineLength - 1, 1);
-        else lastOp[1] = txt.slice(0, strLength - 1);
-      }
-    }
+    else lastOp[1] = txt.slice(0, txt.length - 1);
     let lineType: LINE_PATCH_OP_TYPE = LINE_PATCH_OP_TYPE.EQL;
     lineLength = line.length;
     if (!lineLength) {
@@ -228,7 +233,7 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
       } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
         lineType = LINE_PATCH_OP_TYPE.INS;
         dstIdx++;
-      } else if (lastOpType === str.PATCH_OP_TYPE.DEL) {
+      } else {
         lineType = LINE_PATCH_OP_TYPE.DEL;
         srcIdx++;
       }
@@ -263,7 +268,7 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
         } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
           lineType = LINE_PATCH_OP_TYPE.INS;
           dstIdx++;
-        } else if (lastOpType === str.PATCH_OP_TYPE.DEL) {
+        } else {
           lineType = LINE_PATCH_OP_TYPE.DEL;
           srcIdx++;
         }

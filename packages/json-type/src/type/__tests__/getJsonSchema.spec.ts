@@ -202,3 +202,32 @@ test('exports "ref" type to JSON Schema "$defs"', () => {
   const schema = typeToJsonSchema(type) as any;
   expect(schema.properties.user.$ref).toBe('#/$defs/User');
 });
+
+test('converts a fixed tuple ("head" only) to "prefixItems" with no extra items', () => {
+  const type = t.import({kind: 'arr', head: [{kind: 'num'}, {kind: 'num'}], title: 'Point'} as any);
+  expect(typeToJsonSchema(type)).toEqual({
+    type: 'array',
+    prefixItems: [{type: 'number'}, {type: 'number'}],
+    items: false,
+    title: 'Point',
+  });
+});
+
+test('converts a tuple with a variadic rest ("head" + "type") to "prefixItems" + "items"', () => {
+  const type = t.import({kind: 'arr', head: [{kind: 'str'}], type: {kind: 'num'}} as any);
+  expect(typeToJsonSchema(type)).toEqual({
+    type: 'array',
+    prefixItems: [{type: 'string'}],
+    items: {type: 'number'},
+  });
+});
+
+test('converts a plain array to "items"', () => {
+  const type = t.import({kind: 'arr', type: {kind: 'str'}, min: 1, max: 3} as any);
+  expect(typeToJsonSchema(type)).toEqual({
+    type: 'array',
+    items: {type: 'string'},
+    minItems: 1,
+    maxItems: 3,
+  });
+});

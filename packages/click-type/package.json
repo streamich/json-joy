@@ -1,0 +1,74 @@
+{
+  "name": "@jsonjoy.com/click-type",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.1",
+  "description": "Interactive JSON Type schema explorer and editor",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/click-type",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/click-type"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json",
+    "json-type",
+    "schema",
+    "type",
+    "viewer",
+    "editor",
+    "tree",
+    "structured",
+    "react",
+    "json-joy",
+    "click-type",
+    "click-json",
+    "clickable",
+    "interactive",
+    "ui"
+  ],
+  "dependencies": {
+    "@jsonjoy.com/click-json": "workspace:*",
+    "@jsonjoy.com/json-pointer": "workspace:*",
+    "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/ui": "workspace:*",
+    "nano-theme": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*",
+    "tslib": "2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.9",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tslib": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit"
+  }
+}

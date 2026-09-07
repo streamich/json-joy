@@ -1,3 +1,9 @@
-export * as str from './str';
-export * as line from './line';
 export * as bin from './bin';
+export * as format from './format';
+export * as limits from './limits';
+export * as line from './line';
+export * as lines from './lines';
+export * as optimize from './optimize';
+export * as str from './str';
+export * as tok from './tok';
+export * as word from './word';

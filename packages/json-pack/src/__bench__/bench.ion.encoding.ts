@@ -1,11 +1,11 @@
 // npx ts-node src/__bench__/bench.ion.encoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {IonEncoderFast} from '../ion/IonEncoderFast';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
-import {payloads} from '../__bench__/payloads';
-import {load, makeBinaryWriter, dom} from 'ion-js';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {dom, load, makeBinaryWriter} from 'ion-js';
+import {payloads} from '../__bench__/payloads';
+import {IonEncoderFast} from '../ion/IonEncoderFast';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

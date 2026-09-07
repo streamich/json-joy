@@ -10,6 +10,8 @@ export interface ToolbarMenuProps {
   after?: React.ReactNode;
   pane?: boolean | ContextPaneProps;
   compact?: boolean;
+  /** Render the toolbar buttons one size smaller (28px instead of 32px). */
+  small?: boolean;
 
   /**
    * Approximate horizontal pixel budget for rendered toolbar items. When the

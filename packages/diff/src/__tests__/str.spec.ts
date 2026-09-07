@@ -254,6 +254,40 @@ describe('normalize()', () => {
       [0, 'cd'],
     ]);
   });
+
+  test('does not mutate the input patch tuples', () => {
+    const input: Patch = [
+      [0, 'a'],
+      [0, 'b'],
+      [1, 'x'],
+    ];
+    const result = normalize(input);
+    expect(result).toEqual([
+      [0, 'ab'],
+      [1, 'x'],
+    ]);
+    expect(input).toEqual([
+      [0, 'a'],
+      [0, 'b'],
+      [1, 'x'],
+    ]);
+  });
+
+  test('removes a single empty operation', () => {
+    expect(normalize([[PATCH_OP_TYPE.EQL, '']])).toEqual([]);
+    expect(normalize([[PATCH_OP_TYPE.INS, '']])).toEqual([]);
+    expect(normalize([[PATCH_OP_TYPE.EQL, 'a']])).toEqual([[PATCH_OP_TYPE.EQL, 'a']]);
+  });
+
+  test('passes through empty and already-normalized patches', () => {
+    expect(normalize([])).toEqual([]);
+    const patch: Patch = [
+      [PATCH_OP_TYPE.EQL, 'a'],
+      [PATCH_OP_TYPE.DEL, 'b'],
+      [PATCH_OP_TYPE.INS, 'c'],
+    ];
+    expect(normalize(patch)).toEqual(patch);
+  });
 });
 
 describe('diff()', () => {
@@ -570,6 +604,45 @@ describe('diffEdit()', () => {
     const combining = 'e\u0301';
     assertDiffEdit('caf', combining, '');
     assertDiffEdit('', combining, ' accent');
+  });
+});
+
+describe('diffEdit() caret inside surrogate pair', () => {
+  const isWellFormed = (str: string): boolean => {
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      if (code >= 0xd800 && code <= 0xdbff) {
+        const next = str.charCodeAt(i + 1);
+        if (!(next >= 0xdc00 && next <= 0xdfff)) return false;
+        i++;
+      } else if (code >= 0xdc00 && code <= 0xdfff) return false;
+    }
+    return true;
+  };
+
+  const assertWellFormedOps = (patch: Patch) => {
+    for (const op of patch) expect(isWellFormed(op[1])).toBe(true);
+  };
+
+  test('insert with caret inside a surrogate pair emits well-formed ops', () => {
+    const patch = diffEdit('\ud83d\ude00', '\ud83d\ude00\ud83d\ude00', 3);
+    assertWellFormedOps(patch);
+    assertPatch('\ud83d\ude00', '\ud83d\ude00\ud83d\ude00', patch);
+  });
+
+  test('delete with caret inside a surrogate pair emits well-formed ops', () => {
+    const patch = diffEdit('\ud83d\ude00\ud83d\ude00', '\ud83d\ude00', 1);
+    assertWellFormedOps(patch);
+    assertPatch('\ud83d\ude00\ud83d\ude00', '\ud83d\ude00', patch);
+  });
+
+  test('caret at a pair boundary is unchanged', () => {
+    const patch = diffEdit('\ud83d\ude00', '\ud83d\ude00\ud83d\ude00', 2);
+    expect(patch).toEqual([
+      [PATCH_OP_TYPE.INS, '\ud83d\ude00'],
+      [PATCH_OP_TYPE.EQL, '\ud83d\ude00'],
+    ]);
+    assertPatch('\ud83d\ude00', '\ud83d\ude00\ud83d\ude00', patch);
   });
 });
 
@@ -924,6 +997,20 @@ describe('Invert function', () => {
     expect(inverted).toEqual([
       [PATCH_OP_TYPE.INS, 'old'],
       [PATCH_OP_TYPE.DEL, 'new'],
+    ]);
+  });
+
+  test('returns tuples not aliased to the input patch', () => {
+    const patch: Patch = [
+      [PATCH_OP_TYPE.EQL, 'keep'],
+      [PATCH_OP_TYPE.INS, 'add'],
+    ];
+    const inverted = invert(patch);
+    inverted[0][1] = 'X';
+    inverted[1][1] = 'Y';
+    expect(patch).toEqual([
+      [PATCH_OP_TYPE.EQL, 'keep'],
+      [PATCH_OP_TYPE.INS, 'add'],
     ]);
   });
 });

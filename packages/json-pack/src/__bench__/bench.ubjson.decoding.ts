@@ -1,11 +1,11 @@
 // npx ts-node src/__bench__/bench.ubjson.decoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
-import {UbjsonDecoder} from '../ubjson/UbjsonDecoder';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
-import {payloads} from '../__bench__/payloads';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {payloads} from '../__bench__/payloads';
+import {UbjsonDecoder} from '../ubjson/UbjsonDecoder';
+import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 
 const encoder = new UbjsonEncoder(new Writer());
 const encodedPayloads = payloads.map((payload) => {

@@ -1,7 +1,7 @@
-import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
-import {ClickableJson, type ClickableJsonProps} from '.';
 import {applyPatch, type Operation} from 'json-joy/lib/json-patch';
+import * as React from 'react';
+import {ClickableJson, type ClickableJsonProps} from '.';
 
 const meta: Meta<typeof Text> = {
   title: 'ClickableJson',
@@ -229,6 +229,53 @@ export const Collapsed: StoryObj<typeof meta> = {
 
 export const Binary: StoryObj<typeof meta> = {
   render: () => <Demo doc={{foo: new Uint8Array([1, 2, 3])}} />,
+  parameters: {
+    layout: 'fullscreen',
+  },
+};
+
+/**
+ * Uncontrolled isolation, opted in with `isolatable`: double-click any node — or
+ * pick "Isolate" from its toolbar — to render just that node with a breadcrumb
+ * trail back to the root. Click an ancestor crumb (or the root crumb) to walk back
+ * out. Without `isolatable` (and without the controlled `isolation` prop) the
+ * feature stays off.
+ */
+export const Isolation: StoryObj<typeof meta> = {
+  render: () => <Demo doc={doc2} isolatable />,
+  parameters: {
+    layout: 'fullscreen',
+  },
+};
+
+const ControlledIsolationDemo: React.FC = () => {
+  const [doc, setDoc] = React.useState<unknown>(doc2);
+  const [isolation, setIsolation] = React.useState<string | null>('/poster');
+  const onChange = (patch: Operation[]) => {
+    const result = applyPatch(doc, patch, {mutate: false});
+    setDoc(result.doc);
+  };
+  return (
+    <div style={{padding: '32px 64px'}}>
+      <div style={{marginBottom: 16, fontFamily: 'monospace', fontSize: 13}}>
+        isolation = {JSON.stringify(isolation)}{' '}
+        <button type="button" onClick={() => setIsolation(null)} disabled={isolation === null}>
+          clear
+        </button>
+      </div>
+      <ClickableJson doc={doc} onChange={onChange} isolation={isolation} onIsolation={setIsolation} />
+    </div>
+  );
+};
+
+/**
+ * Controlled isolation: the parent owns the isolated pointer via `isolation` and
+ * is notified of every change through `onIsolation`. Providing `isolation` (even
+ * as `null`) opts into controlled mode — the component renders exactly what the
+ * prop says and never tracks isolation on its own.
+ */
+export const IsolationControlled: StoryObj<typeof meta> = {
+  render: () => <ControlledIsolationDemo />,
   parameters: {
     layout: 'fullscreen',
   },

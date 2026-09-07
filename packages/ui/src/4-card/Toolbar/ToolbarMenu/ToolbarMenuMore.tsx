@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {useT} from 'use-t';
+import {useSubtleTrace} from '../../../context';
+import {useBehaviorSubjectOpt} from '../../../hooks/useBehaviorSubject';
+import {Iconista} from '../../../icons/Iconista';
 import type {MenuItem} from '../../StructuralMenu/types';
 import {ToolbarItem} from '../ToolbarItem';
-import {ToolbarMenuPopup} from './ToolbarMenuPopup';
 import {useToolbarMenu} from './context';
-import {Iconista} from '../../../icons/Iconista';
-import {useBehaviorSubjectOpt} from '../../../hooks/useBehaviorSubject';
-import {useSubtleTrace} from '../../../context';
+import {ToolbarMenuPopup} from './ToolbarMenuPopup';
 
 export interface ToolbarMenuMoreProps {
   item: MenuItem;

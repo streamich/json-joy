@@ -7,9 +7,10 @@
 - [`rpc-calls`](/libs/rpc-calls) --- the streaming caller (`RxPersistentCaller`).
 - [`rpc-codec`](/libs/rpc-codec) --- the message + value codec pair.
 
-Three exported factories build the most common combinations. For full
-control (custom codec, custom transport, custom auth), construct
-`RxPersistentCaller` directly --- see [Custom client](/libs/rpc-client/custom-client).
+Four exported factories build the most common combinations, three over
+WebSocket and one over plain HTTP. For full control (custom codec, custom
+transport, custom auth), construct `RxPersistentCaller` directly --- see
+[Custom client](/libs/rpc-client/custom-client).
 
 
 ## Installation
@@ -23,7 +24,7 @@ npm install @jsonjoy.com/rpc-client
 
 | Area | Surface |
 |---|---|
-| [Quick clients](/libs/rpc-client/quick-clients) | `createBinaryClient`, `createJsonClient`, `createClient` |
+| [Quick clients](/libs/rpc-client/quick-clients) | `createBinaryClient`, `createJsonClient`, `createFetchClient`, `createClient` |
 | [Custom client](/libs/rpc-client/custom-client) | Build your own `RxPersistentCaller` |
 
 
@@ -63,8 +64,9 @@ The returned object satisfies the [`Caller` interface](/libs/rpc-calls/caller):
 
 ## Auth tokens
 
-All three factories accept an optional `token` second argument. It is sent
-as a WebSocket subprotocol alongside the codec specifier:
+Every factory accepts an optional `token` second argument. The WebSocket
+factories send it as a subprotocol alongside the codec specifier;
+`createFetchClient` sends it as the `Authorization` header:
 
 ```ts
 const client = createBinaryClient('wss://example.com/rx', 'tkn.abc123');

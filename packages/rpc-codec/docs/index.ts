@@ -15,7 +15,7 @@ export const page: LibPage = {
     {
       name: 'RpcCodec',
       subtitle: 'One concrete codec: bundle of message + request/response value codecs.',
-      // @ts-ignore raw markdown, loaded by the site's webpack raw-loader
+      // @ts-ignore
       src: async () => (await import('./rpc-codec.md')).default,
     },
     {
@@ -25,8 +25,9 @@ export const page: LibPage = {
       src: async () => (await import('./rpc-codecs.md')).default,
     },
     {
-      name: 'Compact batch',
-      subtitle: 'Standalone string and binary BatchCodec implementations.',
+      name: 'Batch codecs',
+      slug: 'compact-batch',
+      subtitle: 'String and binary BatchCodec implementations for request/response transports.',
       // @ts-ignore
       src: async () => (await import('./compact-batch.md')).default,
     },

@@ -1,13 +1,13 @@
 // npx ts-node src/__bench__/bench.encoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {JsonEncoder} from '../json/JsonEncoder';
-import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
-import {CborEncoderFast} from '../cbor/CborEncoderFast';
-import {CborEncoder} from '../cbor/CborEncoder';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {payloads} from '../__bench__/payloads';
+import {CborEncoder} from '../cbor/CborEncoder';
+import {CborEncoderFast} from '../cbor/CborEncoderFast';
+import {JsonEncoder} from '../json/JsonEncoder';
 import {MsgPackEncoderFast} from '../msgpack';
+import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

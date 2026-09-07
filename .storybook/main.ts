@@ -21,6 +21,7 @@ function getAbsolutePath(value: string) {
 // List of packages that contain stories
 const packages = [
   'click-json',
+  'click-type',
   'collaborative-input-react',
   'collaborative-ace-react',
   'collaborative-codemirror',
@@ -68,12 +69,15 @@ const config: StorybookConfig = {
       'nice-ui': resolve(__dirname, '../packages/ui/src'),
       '@jsonjoy.com/ui/lib': resolve(__dirname, '../packages/ui/src'),
       '@jsonjoy.com/ui': resolve(__dirname, '../packages/ui/src'),
+      '@jsonjoy.com/diff/lib': resolve(__dirname, '../packages/diff/src'),
       'json-joy/lib': resolve(__dirname, '../packages/json-joy/src'),
       'json-joy': resolve(__dirname, '../packages/json-joy/src'),
       '@jsonjoy.com/base64/lib': resolve(__dirname, '../packages/base64/src'),
       '@jsonjoy.com/buffers/lib': resolve(__dirname, '../packages/buffers/src'),
       '@jsonjoy.com/click-json/lib': resolve(__dirname, '../packages/click-json/src'),
       '@jsonjoy.com/click-json': resolve(__dirname, '../packages/click-json/src'),
+      '@jsonjoy.com/click-type/lib': resolve(__dirname, '../packages/click-type/src'),
+      '@jsonjoy.com/click-type': resolve(__dirname, '../packages/click-type/src'),
       '@jsonjoy.com/codegen/lib': resolve(__dirname, '../packages/codegen/src'),
       '@jsonjoy.com/collaborative-str/lib': resolve(__dirname, '../packages/collaborative-str/src'),
       '@jsonjoy.com/collaborative-str': resolve(__dirname, '../packages/collaborative-str/src'),
@@ -118,6 +122,7 @@ const config: StorybookConfig = {
       '@jsonjoy.com/json-pointer': resolve(__dirname, '../packages/json-pointer/src'),
       '@jsonjoy.com/json-random/lib': resolve(__dirname, '../packages/json-random/src'),
       '@jsonjoy.com/json-type/lib': resolve(__dirname, '../packages/json-type/src'),
+      '@jsonjoy.com/json-type': resolve(__dirname, '../packages/json-type'),
       '@jsonjoy.com/util/lib': resolve(__dirname, '../packages/util/src'),
     };
     config.plugins = config.plugins || [];

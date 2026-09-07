@@ -1,8 +1,8 @@
-import * as React from 'react';
-import {EditorView, basicSetup} from 'codemirror';
 import {EditorState} from '@codemirror/state';
 import {bind} from '@jsonjoy.com/collaborative-codemirror';
-import type {CollaborativeStr} from 'collaborative-editor';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
+import {basicSetup, EditorView} from 'codemirror';
+import * as React from 'react';
 
 export type Config = ConstructorParameters<typeof EditorView>[0];
 

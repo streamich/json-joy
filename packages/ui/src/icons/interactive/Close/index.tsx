@@ -11,7 +11,7 @@ const className = rule(
     w: '32px',
     h: '32px',
     bdrad: '3px',
-    cur: 'pointer',
+    // cur: 'pointer',
     trs: 'all .3s',
     justifyContent: 'center',
     alignItems: 'center',

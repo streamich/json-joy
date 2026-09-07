@@ -234,11 +234,12 @@ export class CborDecoder<
    * @param size Expected size of the value.
    */
   public validate(value: Uint8Array, offset: number = 0, size: number = value.length): void {
-    this.reader.reset(value);
-    this.reader.x = offset;
+    const reader = this.reader;
+    reader.reset(value);
+    reader.x = offset;
     const start = offset;
     this.skipAny();
-    const end = this.reader.x;
+    const end = reader.x;
     if (end - start !== size) throw ERROR.INVALID_SIZE;
   }
 
@@ -306,6 +307,7 @@ export class CborDecoder<
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < length; i++) {
       const key = this.key();
+      if (key === '__proto__') throw ERROR.UNEXPECTED_OBJ_KEY;
       const value = this.readPrimitiveOrVal();
       obj[key] = value;
     }
@@ -316,6 +318,7 @@ export class CborDecoder<
     const obj: Record<string, unknown> = {};
     while (this.reader.peak() !== CONST.END) {
       const key = this.key();
+      if (key === '__proto__') throw ERROR.UNEXPECTED_OBJ_KEY;
       if (this.reader.peak() === CONST.END) throw ERROR.UNEXPECTED_OBJ_BREAK;
       const value = this.readPrimitiveOrVal();
       obj[key] = value;
@@ -381,19 +384,37 @@ export class CborDecoder<
   }
 
   public findKey(key: string): this {
+    const reader = this.reader;
     const size = this.readObjHdr();
-    for (let i = 0; i < size; i++) {
-      const k = this.key();
-      if (k === key) return this;
-      this.skipAny();
+    if (size >= 0) {
+      for (let i = 0; i < size; i++) {
+        const k = this.key();
+        if (k === key) return this;
+        this.skipAny();
+      }
+    } else {
+      while (reader.peak() !== CONST.END) {
+        const k = this.key();
+        if (k === key) return this;
+        this.skipAny();
+      }
     }
     throw ERROR.KEY_NOT_FOUND;
   }
 
   public findIndex(index: number): this {
+    const reader = this.reader;
     const size = this.readArrHdr();
-    if (index >= size) throw ERROR.INDEX_OUT_OF_BOUNDS;
-    for (let i = 0; i < index; i++) this.skipAny();
+    if (size >= 0) {
+      if (index >= size) throw ERROR.INDEX_OUT_OF_BOUNDS;
+      for (let i = 0; i < index; i++) this.skipAny();
+      return this;
+    }
+    for (let i = 0; i < index; i++) {
+      if (reader.peak() === CONST.END) throw ERROR.INDEX_OUT_OF_BOUNDS;
+      this.skipAny();
+    }
+    if (reader.peak() === CONST.END) throw ERROR.INDEX_OUT_OF_BOUNDS;
     return this;
   }
 

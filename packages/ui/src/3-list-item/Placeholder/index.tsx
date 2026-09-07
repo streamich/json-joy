@@ -8,7 +8,9 @@ const blockClass = rule({
   bdrad: '4px',
 });
 
-const defaultClass = drule({});
+const defaultClass = drule({
+  bg: 'var(--colBgHover)',
+});
 
 const buttonClass = drule({
   op: 0.45,
@@ -16,7 +18,7 @@ const buttonClass = drule({
 
 const LINE_RATIOS = [0.8, 0.65, 0.5, 0.72, 0.58];
 
-export type PlaceholderVariant = 'text' | 'button' | 'paragraph' | 'image' | 'card' | 'block';
+export type PlaceholderVariant = 'text' | 'button' | 'paragraph' | 'image' | 'card' | 'block' | 'avatar';
 
 const DEFAULTS: Record<PlaceholderVariant, {width: string; height: string; bdrad?: string}> = {
   text: {width: '60%', height: '12px', bdrad: '3px'},
@@ -25,6 +27,7 @@ const DEFAULTS: Record<PlaceholderVariant, {width: string; height: string; bdrad
   image: {width: '100%', height: '200px', bdrad: '6px'},
   card: {width: '100%', height: '300px', bdrad: '8px'},
   block: {width: '100%', height: '48px'},
+  avatar: {width: '32px', height: '32px', bdrad: '50%'},
 };
 
 export interface PlaceholderProps {
@@ -38,7 +41,8 @@ export interface PlaceholderProps {
 
 export const Placeholder: React.FC<PlaceholderProps> = ({variant = 'block', width, height, lines = 3, style}) => {
   const styles = useStyles();
-  const defaultCls = defaultClass({bg: styles.g(0, styles.light ? 0.09 : 0.14)});
+  // const defaultCls = defaultClass({bg: styles.g(0, styles.light ? 0.09 : 0.14)});
+  const defaultCls = defaultClass({});
   const buttonCls = buttonClass({bg: styles.col.get('link', 'solid-1')});
   const def = DEFAULTS[variant];
 

@@ -8,3 +8,5 @@ export * from './Thumb';
 export * from './Marker';
 export * from './Header';
 export * from './Footer';
+export * from './VirtualWindow';
+export * from './VirtualViewport';

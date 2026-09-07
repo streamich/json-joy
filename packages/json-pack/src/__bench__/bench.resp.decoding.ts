@@ -1,8 +1,8 @@
 // npx ts-node src/__bench__/bench.resp.decoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {RespEncoder} from '../resp/RespEncoder';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {RespDecoder} from '../resp/RespDecoder';
+import {RespEncoder} from '../resp/RespEncoder';
 import {RespStreamingDecoder} from '../resp/RespStreamingDecoder';
 
 const encoder = new RespEncoder();

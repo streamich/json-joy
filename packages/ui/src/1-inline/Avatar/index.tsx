@@ -1,9 +1,10 @@
-import * as React from 'react';
-import {lightTheme as theme, type Scale, rule} from 'nano-theme';
 import Svg from 'iconista';
+import {rule, type Scale, lightTheme as theme} from 'nano-theme';
+import * as React from 'react';
 import {useT} from 'use-t';
-import {Link} from '../Link';
+import {fonts} from '../../styles/font';
 import {useStyles} from '../../styles/context';
+import {Link} from '../Link';
 
 const {useState} = React;
 
@@ -12,8 +13,20 @@ const sizes = [10, 16, 20, 24, 32, 40, 48, 64, 128, 256, 512];
 const defaultSize = 4;
 const fontSizeFactor = 0.5;
 
+/** Selectable avatar outlines, indexed by the `shape` prop. */
+export const shapes = [
+  '42% 58% 70% 30% / 45% 45% 55% 55%',
+  '44% 44% 55% 55%',
+  '25% 50% 25% 50%',
+  '44% 33% 44% 33%',
+  '33% / 44%',
+  '40% / 50%',
+  '22% / 44%',
+  '40% / 333%',
+];
+
 const blockClass = rule({
-  ...theme.font.ui1.mid,
+  ...fonts.get('display', 'mid'),
   pos: 'relative',
   d: 'flex',
   flex: '0 0',
@@ -31,7 +44,6 @@ const blockClass = rule({
   mar: 0,
   pad: 0,
   bd: 0,
-  cur: 'pointer',
   userSelect: 'none',
   '&:hover': {
     col: '#fff',
@@ -61,7 +73,18 @@ const emojiClass = rule({
   lh: defaultWidth + 'px',
 });
 
-const renderImg = (width: number, src: string, onError: () => void) => {
+// Fluid wrapper: establishes a size container so the avatar can size
+// itself — the smaller of the parent's two dimensions
+const fluidWrapClass = rule({
+  d: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  w: '100%',
+  h: '100%',
+  containerType: 'size',
+});
+
+const renderImg = (width: number, src: string, onError: () => void, fill?: boolean) => {
   const props: any = {
     className: imgClass,
     src,
@@ -69,17 +92,16 @@ const renderImg = (width: number, src: string, onError: () => void) => {
   };
 
   if (width) {
-    props.style = {
-      width,
-      height: width,
-    };
+    props.style = {width, height: width};
+  } else if (fill) {
+    props.style = {width: '100%', height: '100%'};
   }
 
   // biome-ignore lint/a11y/useAltText: alt is spread from props
   return <img {...props} />;
 };
 
-export interface AvatarProps extends React.AllHTMLAttributes<any> {
+export interface AvatarProps extends Omit<React.AllHTMLAttributes<any>, 'shape'> {
   id?: string; // Used for hashing.
   href?: string;
   size?: Scale;
@@ -104,6 +126,21 @@ export interface AvatarProps extends React.AllHTMLAttributes<any> {
   noHover?: boolean;
   bold?: boolean;
   letters?: number;
+  /** When set and no `size`/`width` is given, the avatar stretches to fill its
+   * parent container while staying a square (width === height) box. */
+  fluid?: boolean;
+  /** Adds a faint background shade behind the content. Useful with `emoji` (which is
+   * otherwise transparent) so the underlying circle/square shape of the avatar is visible. */
+  fill?: boolean;
+  /** Draws a colored ring around the avatar (with a small gap, like a status
+   * ring). `true` uses the accent color, or pass a CSS color string. */
+  ring?: boolean | string;
+  /** Adds a soft colored glow/halo around the avatar. `true` uses the ring or
+   * accent color, or pass a CSS color string. */
+  glow?: boolean | string;
+  /** Selects an irregular/organic outline by index from the {@link shapes} list
+   * (blobs and squircle-like forms). Out-of-range values are ignored. */
+  shape?: number;
 }
 
 export const Avatar: React.FC<AvatarProps> = (allProps) => {
@@ -132,6 +169,11 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     noHover,
     bold,
     letters,
+    fluid,
+    fill,
+    ring,
+    glow,
+    shape,
     ...rest
   } = allProps;
 
@@ -161,8 +203,6 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     props.style.cursor = 'default';
   }
 
-  props.style.flex = `0 0 ${width || 32}px`;
-
   if (transparent) {
     props.style.background = 'transparent';
   } else if (lightGrey) {
@@ -175,18 +215,33 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     props.style.fill = styles.g(0.9);
   } else if (color) {
     props.style.background = color;
+  } else if (fill) {
+    props.style.background = styles.g(0.45, 0.1);
   }
 
   const computedWidth: number = width || (size ? sizes[defaultSize + (size || 0)] : 0);
+  const stretch = !!fluid && !computedWidth;
 
-  if (computedWidth) {
-    props.style.width = computedWidth;
-    props.style.height = computedWidth;
-    props.style.lineHeight = emoji ? `${computedWidth * 1.07}px` : `${computedWidth}px`;
-    props.style.fontSize = emoji ? `${computedWidth * 0.85}px` : `${computedWidth * fontSizeFactor}px`;
-    if (computedWidth < 24) {
-      props.style.fontWeight = 'bold';
-      props.style.lineHeight = computedWidth + 1 + 'px';
+  if (stretch) {
+    // `100cqmin` resolves against the fluid wrapper's size container, so the
+    // box is always a square sized to the smaller parent dimension and never
+    // stretches into an ellipse in a non-square container.
+    props.style.flex = '0 0 auto';
+    props.style.width = '100cqmin';
+    props.style.height = '100cqmin';
+  } else {
+    props.style.flex = `0 0 ${computedWidth || 32}px`;
+    if (computedWidth) {
+      props.style.width = computedWidth;
+      props.style.height = computedWidth;
+      props.style.lineHeight = emoji ? `${computedWidth * 1.07}px` : `${computedWidth}px`;
+      props.style.fontSize = emoji
+        ? `${computedWidth * 0.85}px`
+        : `${styles.easing.saturate(computedWidth * 0.015) * 42}px`;
+      if (computedWidth < 24) {
+        props.style.fontWeight = 'bold';
+        props.style.lineHeight = computedWidth + 1 + 'px';
+      }
     }
   }
 
@@ -198,19 +253,42 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     props.style.borderRadius = '25%';
   }
 
+  if (shape !== undefined && shapes[shape]) {
+    props.style.borderRadius = shapes[shape];
+  }
+
+  if (ring || glow) {
+    const ringColor = typeof ring === 'string' ? ring : styles.accent + '';
+    const glowColor = typeof glow === 'string' ? glow : ringColor;
+    const shadows: string[] = [];
+    if (ring) shadows.push(`0 0 0 2px ${styles.bg}`, `0 0 0 4px ${ringColor}`);
+    if (glow) shadows.push(`0 0 12px 1px ${glowColor}`);
+    props.style.boxShadow = shadows.join(', ');
+  }
+
   if ((grey || del || lightGrey) && !name) {
     props.style.opacity = 0.3;
   }
 
-  let element = icon
-    ? icon
-    : showText
-      ? emoji
-        ? emoji
-        : typeof name === 'string' && name.length > 0
-          ? name.slice(0, letters || 2).trim()
-          : ''
-      : renderImg(computedWidth, src, () => setError(true));
+  const initials = typeof name === 'string' && name.length > 0 ? name.slice(0, letters || 2).trim() : '';
+  const nudgeInitials = !!computedWidth && computedWidth < 28;
+  let element = icon ? (
+    icon
+  ) : showText ? (
+    emoji ? (
+      emoji
+    ) : initials ? (
+      nudgeInitials ? (
+        <span style={{position: 'relative', top: '.05em'}}>{initials}</span>
+      ) : (
+        initials
+      )
+    ) : (
+      ''
+    )
+  ) : (
+    renderImg(computedWidth, src, () => setError(true), stretch)
+  );
 
   if (href) {
     element = (
@@ -306,6 +384,10 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
         {subAvatarElement}
       </span>
     );
+  }
+
+  if (stretch) {
+    element = <span className={fluidWrapClass}>{element}</span>;
   }
 
   return element;

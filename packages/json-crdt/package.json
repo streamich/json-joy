@@ -1,0 +1,91 @@
+{
+  "name": "@jsonjoy.com/json-crdt",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.28.0",
+  "description": "JSON CRDT: a JSON-like conflict-free replicated data type, its patch format, and rich-text extensions",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-crdt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/json-crdt"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json-crdt",
+    "crdt",
+    "rdt",
+    "replicated",
+    "local-first",
+    "localfirst",
+    "collaborative",
+    "multiplayer",
+    "sync",
+    "synchronization",
+    "distributed-state",
+    "rga",
+    "peritext",
+    "rich-text"
+  ],
+  "peerDependencies": {
+    "tslib": "*"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./lib/*": {
+      "types": "./lib/*.d.ts",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}

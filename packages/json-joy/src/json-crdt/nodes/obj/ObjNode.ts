@@ -60,6 +60,22 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   }
 
   /**
+   * Returns an array of visible (non-deleted) keys in the object.
+   *
+   * @returns An array of visible keys.
+   */
+  public keyArray(): string[] {
+    const keys: string[] = [];
+    const index = this.doc.index;
+    this.keys.forEach((id, key) => {
+      const valueNode = index.get(id);
+      if (!valueNode || (valueNode instanceof ConNode && valueNode.val === void 0)) return;
+      keys.push(key);
+    });
+    return keys;
+  }
+
+  /**
    * Iterate over all key-value pairs in the object.
    *
    * @param callback Callback to call for each key-value pair.

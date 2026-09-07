@@ -1,7 +1,7 @@
-import * as React from 'react';
 import {useTheme} from 'nano-theme';
-import * as css from '../css';
+import * as React from 'react';
 import {useStyles} from '../context/style';
+import * as css from '../css';
 
 export interface ObjectLayoutProps {
   property?: React.ReactNode;

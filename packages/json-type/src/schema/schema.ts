@@ -44,6 +44,8 @@ export interface SchemaBase<Value = unknown> extends Display {
   /**
    * Custom metadata that can be attached to the type. This is useful for
    * documentation generation, and for custom code generators.
+   *
+   * @deprecated Use the `meta` field instead.
    */
   metadata?: Record<string, unknown>;
 }

@@ -1,8 +1,8 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.encoding.json.ts
 
-import {payloads} from '../../__bench__/payloads';
-import {type IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {type IBenchmark, runBenchmarkAndSave} from '@jsonjoy.com/util/lib/bench/runBenchmark';
+import {payloads} from '../../__bench__/payloads';
 import {Model} from '../model';
 
 const benchmark: IBenchmark = {

@@ -1,5 +1,5 @@
+import {drule, rule} from 'nano-theme';
 import * as React from 'react';
-import {rule, drule} from 'nano-theme';
 import {Iconista} from '../../icons/Iconista';
 import {useStyles} from '../../styles/context';
 
@@ -45,7 +45,7 @@ const blockClass = drule({
 });
 
 export interface CheckboxProps {
-  on: boolean;
+  on?: boolean | null;
   as?: 'button' | string;
   small?: boolean;
   disabled?: boolean;
@@ -54,6 +54,7 @@ export interface CheckboxProps {
 
 export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const {on, as = 'button', small, disabled} = props;
+  const undecided = on === null || on === undefined;
   const styles = useStyles();
   const light = styles.light;
 
@@ -78,11 +79,16 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
   });
 
   const style: any = {
-    background: on ? styles.positive.fg.toString() : styles.g(light ? 0.4 : 0.7),
+    background: on
+      ? styles.positive.fg.toString()
+      : undecided
+        ? styles.g(light ? 0.4 : 0.7, 0.4)
+        : styles.g(light ? 0.4 : 0.7),
   };
 
   const styleSpan: any = {
-    left: on ? (active ? 17 : 23) : 3,
+    // Thumb is centered when the state is undecided.
+    left: undecided ? (active ? 10 : 13) : on ? (active ? 17 : 23) : 3,
     width: small ? (active ? 20 : 14) : active ? 30 : 24,
   };
 
@@ -117,34 +123,38 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       className: cls,
       style,
       role: 'checkbox',
-      'aria-checked': on,
+      'aria-checked': undecided ? 'mixed' : on,
       type: 'button',
       onMouseLeave,
       onMouseDown,
       onMouseUp,
     },
-    h(
-      'span',
-      {className: labelClass, style: styleLabelOn, 'aria-hidden': true},
-      h(Iconista, {
-        color: styles.bg.fg.copy(0, 0, 0, -0.4).toString(),
-        set: 'bootstrap',
-        icon: 'check',
-        width: small ? 12 : 14,
-        height: small ? 12 : 14,
-      }),
-    ),
-    h(
-      'span',
-      {className: labelClass, style: styleLabelOff, 'aria-hidden': true},
-      h(Iconista, {
-        color: styles.bg.fg.copy(0, 0, 0, -0.4).toString(),
-        set: 'bootstrap',
-        icon: 'x',
-        width: small ? 12 : 14,
-        height: small ? 12 : 14,
-      }),
-    ),
+    undecided
+      ? null
+      : h(
+          'span',
+          {className: labelClass, style: styleLabelOn, 'aria-hidden': true},
+          h(Iconista, {
+            color: styles.bg.fg.copy(0, 0, 0, -0.4).toString(),
+            set: 'bootstrap',
+            icon: 'check',
+            width: small ? 12 : 14,
+            height: small ? 12 : 14,
+          }),
+        ),
+    undecided
+      ? null
+      : h(
+          'span',
+          {className: labelClass, style: styleLabelOff, 'aria-hidden': true},
+          h(Iconista, {
+            color: styles.bg.fg.copy(0, 0, 0, -0.4).toString(),
+            set: 'bootstrap',
+            icon: 'x',
+            width: small ? 12 : 14,
+            height: small ? 12 : 14,
+          }),
+        ),
     h('span', {className: thumbClass, style: styleSpan}, ' '),
   );
 };

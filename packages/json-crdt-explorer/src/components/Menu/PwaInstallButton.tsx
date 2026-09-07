@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Pill} from '@jsonjoy.com/ui/lib/1-inline/Pill';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -71,7 +71,7 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = () => {
       compact
       onClick={() => void handleInstallClick()}
     >
-      Install&nbsp;<Label>App</Label>
+      Install&nbsp;<Pill>App</Pill>
     </BasicButton>
   );
 };

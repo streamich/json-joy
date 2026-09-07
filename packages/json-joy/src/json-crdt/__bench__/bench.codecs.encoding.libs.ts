@@ -1,7 +1,7 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.encoding.libs.ts
 
+import {type IBenchmark, runBenchmarkAndSave} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {payloads} from '../../__bench__/payloads';
-import {type IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
 import {type StructuralEditors, structuralEditors} from './util/structural-editors';
 import type {StructuralEditor} from './util/types';
 

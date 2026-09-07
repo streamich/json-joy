@@ -1,10 +1,10 @@
+import {rule} from 'nano-theme';
 import * as React from 'react';
 import useClickAway from 'react-use/lib/useClickAway';
 import useMountedState from 'react-use/lib/useMountedState';
-import {useStyles} from '../context/style';
 import {useFocus} from '../context/focus';
 import {InputProvider} from '../context/input';
-import {rule} from 'nano-theme';
+import {useStyles} from '../context/style';
 
 const blockClass = rule({
   d: 'inline-block',
@@ -14,9 +14,11 @@ const blockClass = rule({
 export interface RootProps {
   children: React.ReactNode;
   onFocus?: (pointer: string | null) => void;
+  /** Extra inline styles merged onto the root element (e.g. theme CSS variables). */
+  style?: React.CSSProperties;
 }
 
-export const Root: React.FC<RootProps> = ({children, onFocus}) => {
+export const Root: React.FC<RootProps> = ({children, onFocus, style}) => {
   const isMounted = useMountedState();
   const styles = useStyles();
   const {focused, focus, point} = useFocus();
@@ -35,7 +37,7 @@ export const Root: React.FC<RootProps> = ({children, onFocus}) => {
 
   return (
     <InputProvider>
-      <span ref={ref} className={blockClass} style={{fontSize: styles.fontSize || '13.4px'}}>
+      <span ref={ref} className={blockClass} style={{fontSize: styles.fontSize || '13.4px', ...style}}>
         {children}
       </span>
     </InputProvider>

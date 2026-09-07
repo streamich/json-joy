@@ -667,6 +667,15 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
     return this.node.keys.has(key);
   }
 
+  /**
+   * Returns an array of visible (non-deleted) keys in the object.
+   *
+   * @returns An array of visible keys.
+   */
+  public keys(): string[] {
+    return this.node.keyArray();
+  }
+
   /** Diffs only keys present in `dst` object. */
   diffKeys(dst: Record<string, unknown>): Patch | undefined {
     const diff = new JsonCrdtDiff(this.api.model);

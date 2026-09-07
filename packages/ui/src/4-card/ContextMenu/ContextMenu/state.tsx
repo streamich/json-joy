@@ -163,7 +163,7 @@ export class ContextMenuState {
         this.selectBack();
         return;
       }
-      onEsc?.();
+      (onEsc ?? this.onclose)?.();
       return;
     }
     if (!rows.length) return;

@@ -46,7 +46,7 @@
     "codemirror": "^6.0.1",
     "emoji-js": "^3.9.0",
     "emoji-picker-react": "^4.19.1",
-    "iconista": "^2.26.0",
+    "iconista": "^3.0.0",
     "libreact": "^2.13.3",
     "load-script": "^2.0.0",
     "mdast-flat": "^1.7.0",
@@ -61,10 +61,10 @@
     "react-use": "^17.6.0",
     "rx-use": "^1.9.0",
     "slugify": "^1.6.6",
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "use-t": "^1.6.4",
     "vaul": "^1.1.2",
-    "very-small-parser": "^1.14.0"
+    "very-small-parser": "^1.15.0"
   },
   "peerDependencies": {
     "react": "*",

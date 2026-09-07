@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {ReplicatedStr} from 'collaborative-editor/lib/replicated-str/ReplicatedStr';
+import {ReplicatedStr} from '@jsonjoy.com/collaborative-str/lib/replicated-str/ReplicatedStr';
 import {FanOut} from 'thingies/lib/fanout';
-import type {ReplicatedStrFacade} from 'collaborative-editor/lib/replicated-str/types';
-import type {CollaborativeStr} from 'collaborative-editor';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
+import type {ReplicatedStrFacade} from '@jsonjoy.com/collaborative-str/lib/replicated-str/types';
 
 class StrFacade implements ReplicatedStrFacade {
   constructor(protected value: string = '') {}

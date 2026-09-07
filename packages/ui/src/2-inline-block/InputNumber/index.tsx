@@ -151,17 +151,22 @@ export const InputNumber: React.FC<InputNumberProps> = ({
     onChange?.(clamped);
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    let final: number;
-    if (text === '' || !Number.isFinite(Number(text))) {
-      final = round(clamp(numeric, min, max), decimals);
-    } else {
-      final = round(clamp(Number(text), min, max), decimals);
-    }
+  const commitText = () => {
+    const parsed = text === '' || !Number.isFinite(Number(text)) ? numeric : Number(text);
+    const final = round(clamp(parsed, min, max), decimals);
     setText(String(final));
     lastEmittedRef.current = final;
     onChangeEnd?.(final);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    commitText();
     inputProps?.onBlur?.(e);
+  };
+
+  const handleEnter = (e: React.KeyboardEvent) => {
+    commitText();
+    inputProps?.onEnter?.(e);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -254,6 +259,7 @@ export const InputNumber: React.FC<InputNumberProps> = ({
           disabled={disabled}
           onChange={handleChange}
           onBlur={handleBlur}
+          onEnter={handleEnter}
           onKeyDown={handleKeyDown}
           right={dragRight}
         />

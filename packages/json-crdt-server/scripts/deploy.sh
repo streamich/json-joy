@@ -58,6 +58,36 @@ $SSH "${DEPLOY_USER}@${HOST}" "
 
 # 4. smoke test
 sleep 2
+
+echo "==> Ping"
 curl -sf "https://${DOMAIN}/rpc" \
   -H 'Content-Type: rpc.rx.compact.json' \
   -d '[1,1,"util.ping"]' && echo "OK"
+
+echo "==> CORS"
+ORIGIN='https://jsonjoy.com'
+preflight=$(curl -sf -o /dev/null -D- -X OPTIONS "https://${DOMAIN}/rx" \
+  -H "Origin: ${ORIGIN}" \
+  -H 'Access-Control-Request-Method: POST' \
+  -H 'Access-Control-Request-Headers: content-type')
+actual=$(curl -sf -o /dev/null -D- -X POST "https://${DOMAIN}/rx" \
+  -H "Origin: ${ORIGIN}" \
+  -H 'Content-Type: application/x.rpc.rx.compact.json' \
+  -d '[[1,1,"util.ping"]]')
+
+cors_ok=1
+grep -qi '^access-control-allow-headers:.*content-type' <<<"$preflight" || {
+  echo "FAIL: preflight does not allow the Content-Type header"
+  cors_ok=0
+}
+grep -qi '^access-control-allow-origin:' <<<"$actual" || {
+  echo "FAIL: the POST response carries no Access-Control-Allow-Origin"
+  cors_ok=0
+}
+if [[ "$cors_ok" == 1 ]]; then
+  echo "OK"
+else
+  echo "The browser client cannot use this server. Publish @jsonjoy.com/rpc-server"
+  echo "and @jsonjoy.com/rpc-codec at the version this tree pins, then deploy again."
+  exit 1
+fi

@@ -2,10 +2,17 @@ import {assertDiff, randomMixedArray, randomObject, randomNestedStructure, creat
 import {RandomJson} from '@jsonjoy.com/json-random';
 import {JsonPatchDiff} from '../JsonPatchDiff';
 
+/**
+ * Sizes below are cut by default so a full `yarn test` stays quick; the diff of
+ * two arrays where every element changed is superlinear in their length, and
+ * that shape shows at any size. `RUN_SLOW_TESTS=1` runs the full sizes.
+ */
+const slow = !!process.env.RUN_SLOW_TESTS && process.env.RUN_SLOW_TESTS !== '0';
+
 describe('Performance and Stress Tests', () => {
   describe('large document handling', () => {
     test('very large arrays', () => {
-      const large1 = Array.from({length: 2000}, (_, i) => ({
+      const large1 = Array.from({length: slow ? 2000 : 400}, (_, i) => ({
         id: i,
         name: `item-${i}`,
         value: Math.random(),

@@ -15,7 +15,7 @@ export interface ToolbarItemProps extends BasicButtonProps {
 }
 
 export const ToolbarItem: React.FC<ToolbarItemProps> = ({narrow, small, outline, autowidth, tooltip, ...rest}) => {
-  const size = small ? 28 : 32;
+  const size = small ? 24 : 32;
 
   let element: React.ReactNode = (
     <BasicButton skewed width={autowidth ? 'auto' : narrow ? 20 : size} height={size} border={outline} {...rest} />

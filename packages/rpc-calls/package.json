@@ -40,7 +40,7 @@
     "@jsonjoy.com/rpc-codec-base": "workspace:*",
     "@jsonjoy.com/rpc-error": "workspace:*",
     "@jsonjoy.com/rpc-messages": "workspace:*",
-    "thingies": "^2.6.0",
+    "thingies": "^2.6.1",
     "tree-dump": "^1.1.0"
   },
   "engines": {

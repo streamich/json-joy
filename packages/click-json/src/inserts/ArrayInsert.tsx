@@ -8,12 +8,18 @@ import {CancelAction} from '../buttons/Action/CancelAction';
 export interface ArrayInsertProps {
   visible?: boolean;
   withType?: boolean;
+  /** Bumping this counter opens the insert editor (e.g. from a node toolbar). */
+  openSignal?: number;
   onSubmit: (value: string, type: string) => void;
 }
 
-export const ArrayInsert: React.FC<ArrayInsertProps> = ({visible, withType, onSubmit}) => {
+export const ArrayInsert: React.FC<ArrayInsertProps> = ({visible, withType, openSignal, onSubmit}) => {
   const [t] = useT();
   const [editing, setEditing] = React.useState(false);
+
+  React.useEffect(() => {
+    if (openSignal) setEditing(true);
+  }, [openSignal]);
 
   const handleSubmit = (value: string, type: string) => {
     setEditing(false);

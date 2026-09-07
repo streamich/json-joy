@@ -1,24 +1,5 @@
 import * as React from 'react';
-import {lightTheme, rule, drule} from 'nano-theme';
-import {useStyles} from '../../styles/context';
-
-const blockClass = rule({
-  ...lightTheme.font.ui1.mid,
-  d: 'inline-flex',
-  ai: 'baseline',
-  gap: '4px',
-  fz: '13px',
-  lh: '18px',
-  whiteSpace: 'nowrap',
-});
-
-const valueClass = drule({});
-
-const unitClass = drule({
-  fz: '11px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-});
+import {Num} from '../Num';
 
 const SI_UNITS = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'];
 const BIN_UNITS = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
@@ -47,18 +28,10 @@ export interface BytesProps {
   style?: React.CSSProperties;
 }
 
+/** Human-scaled byte size: unit scaling and zero-trimming here, {@link Num} renders. */
 export const Bytes: React.FC<BytesProps> = ({value, binary = false, precision = 1, className, style}) => {
-  const styles = useStyles();
   const {n, unit} = React.useMemo(() => format(value, binary, precision), [value, binary, precision]);
-
   return (
-    <span
-      className={blockClass + (className ? ` ${className}` : '')}
-      style={style}
-      title={`${value.toLocaleString()} bytes`}
-    >
-      <span className={valueClass({col: styles.g(0.25)})}>{n}</span>
-      <span className={unitClass({col: styles.g(0.5)})}>{unit}</span>
-    </span>
+    <Num value={Number(n)} unit={unit} title={`${value.toLocaleString()} bytes`} className={className} style={style} />
   );
 };

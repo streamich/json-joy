@@ -37,6 +37,55 @@ const server = await RpcServer.startWithDefaults({
 | `/{::\n}` | OPTIONS | CORS preflight (allow all origins) |
 
 
+## CORS
+
+`enableCors()` does two things: it answers the `OPTIONS` preflight on every
+path, and it attaches the cross-origin headers to *every* response the server
+sends --- including 404s and internal errors. Browsers refuse to hand a
+response body to the page unless `Access-Control-Allow-Origin` is on the real
+response, not just on the preflight.
+
+The defaults allow any origin and no credentials:
+
+| Header | Default |
+|---|---|
+| `Access-Control-Allow-Origin` | `*` |
+| `Access-Control-Allow-Methods` | `GET, POST, PUT, DELETE, PATCH, OPTIONS` |
+| `Access-Control-Allow-Headers` | `Content-Type, Authorization` |
+| `Access-Control-Max-Age` | `86400` |
+
+`Content-Type` has to be in `Allow-Headers`: the `application/x.rpc.*` media
+types this server negotiates are not CORS-safelisted, so an RPC `POST` always
+triggers a preflight and fails without it.
+
+Pass options to change any of it:
+
+```ts
+rpc.enableCors({
+  origin: 'https://app.example.com',
+  methods: 'POST, OPTIONS',
+  headers: 'Content-Type, Authorization, X-Trace',
+  expose: 'X-Trace',
+  maxAge: 600,
+});
+```
+
+`origin: true` echoes the request `Origin` header back and adds `Vary: Origin`.
+Set `credentials: true` to send `Access-Control-Allow-Credentials`, which
+switches the origin to echo mode automatically --- browsers reject a credentialed
+response whose origin is `*`.
+
+`startWithDefaults` takes the same options under a `cors` key:
+
+```ts
+await RpcServer.startWithDefaults({
+  port: 9999,
+  callee: myCallee,
+  cors: {origin: 'https://app.example.com', credentials: true},
+});
+```
+
+
 ## Custom routing
 
 Skip `startWithDefaults` if you want to opt-in to individual features or add
@@ -97,7 +146,7 @@ await RpcServer.startWithDefaults({
 
 | Method | Default path | Description |
 |---|---|---|
-| `enableCors()` | `OPTIONS *` | Allow any origin, any method |
+| `enableCors(opts?)` | `OPTIONS *` | Preflight + CORS headers on every response |
 | `enableHttpPing()` | `/ping`, `/up` | Liveness + Kamal probes |
 | `enableHttpRpc(path?)` | `/rx` | Reactive RPC over HTTP (Compact by default) |
 | `enableJsonRcp2HttpRpc(path?)` | `/rpc` | JSON-RPC 2.0 over HTTP |

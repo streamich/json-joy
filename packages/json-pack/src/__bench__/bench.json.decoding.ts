@@ -1,9 +1,9 @@
 // npx ts-node src/__bench__/bench.json.decoding.ts
 
-import {runBenchmark, type IBenchmark} from '../__bench__/runBenchmark';
-import {JsonDecoder} from '../json/JsonDecoder';
-import {payloads} from '../__bench__/payloads';
+import {type IBenchmark, runBenchmark} from '@jsonjoy.com/util/lib/bench/runBenchmark';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {payloads} from '../__bench__/payloads';
+import {JsonDecoder} from '../json/JsonDecoder';
 
 const encodedPayloads = payloads.map((payload) => {
   return {

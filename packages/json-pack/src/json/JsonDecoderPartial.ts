@@ -41,7 +41,7 @@ export class JsonDecoderPartial extends JsonDecoder {
 
   public readArr(): unknown[] {
     const reader = this.reader;
-    if (reader.u8() !== 0x5b /* [ */) throw new Error('Invalid JSON');
+    if (reader.uint8[reader.x++] !== 0x5b /* [ */) throw new Error('Invalid JSON');
     const arr: unknown[] = [];
     const uint8 = reader.uint8;
     let first = true;
@@ -65,7 +65,7 @@ export class JsonDecoderPartial extends JsonDecoder {
 
   public readObj(): PackValue | Record<string, unknown> | unknown {
     const reader = this.reader;
-    if (reader.u8() !== 0x7b /* { */) throw new Error('Invalid JSON');
+    if (reader.uint8[reader.x++] !== 0x7b /* { */) throw new Error('Invalid JSON');
     const obj: Record<string, unknown> = {};
     const uint8 = reader.uint8;
     while (true) {
@@ -82,7 +82,7 @@ export class JsonDecoderPartial extends JsonDecoder {
         const key = readKey(reader);
         if (key === '__proto__') throw new Error('Invalid JSON');
         this.skipWhitespace();
-        if (reader.u8() !== 0x3a /* : */) throw new Error('Invalid JSON');
+        if (uint8[reader.x++] !== 0x3a /* : */) throw new Error('Invalid JSON');
         this.skipWhitespace();
         try {
           obj[key] = this.readAny();
