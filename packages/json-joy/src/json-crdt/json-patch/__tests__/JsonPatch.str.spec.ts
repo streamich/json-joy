@@ -73,6 +73,12 @@ const testCases: TestCase[] = [
     doc2: '',
   },
   {
+    name: 'can delete characters by value',
+    doc1: 'hello world!',
+    patches: [[{op: 'str_del', path: [], pos: 5, str: ' world'}]],
+    doc2: 'hello!',
+  },
+  {
     name: 'can delete from already empty string',
     doc1: '',
     patches: [[{op: 'str_del', path: [], pos: 0, len: 1}]],
