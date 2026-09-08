@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">29.03% </span>
+                <span class="strong">32.14% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/31</span>
+                <span class='fraction'>9/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">26.92% </span>
+                <span class="strong">29.16% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/26</span>
+                <span class='fraction'>7/24</span>
             </div>
         
             
@@ -104,29 +104,11 @@
 <a name='L39'></a><a href='#L39'>39</a>
 <a name='L40'></a><a href='#L40'>40</a>
 <a name='L41'></a><a href='#L41'>41</a>
-<a name='L42'></a><a href='#L42'>42</a>
-<a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a>
-<a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a>
-<a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L42'></a><a href='#L42'>42</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -167,17 +149,8 @@
 import {WebSocketChannel} from '@jsonjoy.com/channel/lib/WebSocketChannel';
 import {RxPersistentCaller} from '@jsonjoy.com/rpc-calls/lib/caller/RxPersistentCaller';
 import {FetchCaller} from '@jsonjoy.com/rpc-calls/lib/caller/FetchCaller';
-import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
+import {RpcBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/RpcBinBatchCodec';
 import type {RpcCodec} from '@jsonjoy.com/rpc-codec/lib/RpcCodec';
-import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base';
-&nbsp;
-/** Adapts an {@link RpcCodec} to the {@link BinBatchCodec} interface for use with {@link FetchCaller}. */
-const rpcCodecToBinBatchCodec = <span class="fstat-no" title="function not covered" >(r</span>pcCodec: RpcCodec&lt;any&gt;): BinBatchCodec&lt;any&gt; =&gt; (<span class="cstat-no" title="statement not covered" >{</span>
-  id: rpcCodec.specifier(),
-  format: rpcCodec.msg.format ?? RpcMessageFormat.Compact,
-  toChunk: <span class="fstat-no" title="function not covered" >(m</span>essages: any[]) =&gt; <span class="cstat-no" title="statement not covered" >rpcCodec.encode(messages, rpcCodec.req),</span>
-  fromChunk: <span class="fstat-no" title="function not covered" >(c</span>hunk: Uint8Array) =&gt; <span class="cstat-no" title="statement not covered" >rpcCodec.decode(chunk, rpcCodec.res),</span>
-});
 &nbsp;
 export const setupRpcPersistentClient = <span class="fstat-no" title="function not covered" >(c</span>odec: RpcCodec&lt;any&gt;) =&gt; {
   const port = <span class="cstat-no" title="statement not covered" >+(process.env.PORT || 9999);</span>
@@ -203,7 +176,7 @@ export const setupFetchRpcClient = <span class="fstat-no" title="function not co
   const url = <span class="cstat-no" title="statement not covered" >`http://localhost:${port}/rx`;</span>
   const caller = <span class="cstat-no" title="statement not covered" >new FetchCaller({</span>
     url,
-    codec: rpcCodecToBinBatchCodec(codec),
+    codec: new RpcBinBatchCodec(codec),
     headers: {
       'Content-Type': `application/x.${codec.specifier()}`,
     },
@@ -220,7 +193,7 @@ export const setupFetchRpcClient = <span class="fstat-no" title="function not co
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-02T11:51:27.828Z
+                at 2026-09-08T08:21:49.445Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
