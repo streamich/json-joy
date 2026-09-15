@@ -5,7 +5,9 @@ import {JsonCodegen} from '../JsonCodegen';
 import {Random} from '../../../../random';
 import {allSerializableTypes} from '../../../../__tests__/fixtures';
 
-const encoder = new JsonEncoder(new Writer(16));
+// Reduced buffer size from 16 to 1 byte to stress-test capacity estimation
+// This will expose any bugs where the capacity estimator underestimates the required buffer size
+const encoder = new JsonEncoder(new Writer(1));
 const decoder = new JsonDecoder();
 
 for (const [name, type] of Object.entries(allSerializableTypes)) {
