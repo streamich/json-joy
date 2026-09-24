@@ -6,6 +6,7 @@ export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
   if (op instanceof OpStrIns) {
     if (!isPathEqual(ins.path, op.path)) return op;
     if (ins.pos > op.pos) return op;
+    if (ins.pos === op.pos && ins.str === op.str) return null;
     return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
   } else if (op instanceof OpStrDel) {
     if (!isPathEqual(ins.path, op.path)) return op;
