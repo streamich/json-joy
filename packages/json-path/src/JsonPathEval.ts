@@ -304,17 +304,6 @@ export class JsonPathEval {
     const leftValue = this.evalValueExpression(expression.left, currentNode);
     const rightValue = this.evalValueExpression(expression.right, currentNode);
 
-    // JSONPath semantics: comparisons involving Nothing (undefined) evaluate to false,
-    // except when both sides are Nothing and operator is equality.
-    // BUT: functions can return valid values including 0, false, "", etc. Only treat
-    // actual undefined (meaning "no result") as Nothing.
-    if (leftValue === undefined || rightValue === undefined) {
-      if (expression.operator === '==' && leftValue === undefined && rightValue === undefined) {
-        return true;
-      }
-      return false;
-    }
-
     switch (expression.operator) {
       case '==':
         return this.compareEqual(leftValue, rightValue);
@@ -381,12 +370,12 @@ export class JsonPathEval {
     return result != null;
   }
 
-  private evalValueExpression(expression: types.IValueExpression, currentNode: Value): any {
+  private evalValueExpression(expression: types.IValueExpression, currentNode: Value, asNodes = false): any {
     switch (expression.type) {
       case 'current':
-        return currentNode.data;
+        return asNodes ? [currentNode.data] : currentNode.data;
       case 'root':
-        return this.data;
+        return asNodes ? [this.data] : this.data;
       case 'literal':
         return expression.value;
       case 'path': {
@@ -400,8 +389,9 @@ export class JsonPathEval {
           if (currentResults.length === 0) break; // No results, early exit
         }
 
-        // For function arguments, we want the actual data, not Value objects
-        return currentResults.map((v) => v.data);
+        // NodesType arguments retain the nodelist; ValueType uses its single node or Nothing.
+        if (asNodes) return currentResults.map((v) => v.data);
+        return currentResults.length === 1 ? currentResults[0].data : undefined;
       }
       case 'function':
         return this.evaluateFunction(expression, currentNode);
@@ -415,13 +405,6 @@ export class JsonPathEval {
     if (left === undefined && right === undefined) return true;
     if (left === undefined || right === undefined) return false;
 
-    // Auto-unwrap single-element arrays for comparison (JSONPath behavior)
-    if (Array.isArray(left) && left.length === 1) left = left[0];
-    if (Array.isArray(right) && right.length === 1) right = right[0];
-
-    // After unwrapping, check for undefined again
-    if (left === undefined || right === undefined) return false;
-
     // Strict equality for primitives
     if (left === right) return true;
 
@@ -429,7 +412,8 @@ export class JsonPathEval {
     if (typeof left !== typeof right) return false;
 
     // Array comparison
-    if (Array.isArray(left) && Array.isArray(right)) {
+    if (Array.isArray(left) || Array.isArray(right)) {
+      if (!Array.isArray(left) || !Array.isArray(right)) return false;
       if (left.length !== right.length) return false;
       for (let i = 0; i < left.length; i++) {
         if (!this.compareEqual(left[i], right[i])) return false;
@@ -454,13 +438,6 @@ export class JsonPathEval {
 
   private compareLess(left: any, right: any): boolean {
     // Handle empty nodelist/Nothing cases
-    if (left === undefined || right === undefined) return false;
-
-    // Auto-unwrap single-element arrays for comparison (JSONPath behavior)
-    if (Array.isArray(left) && left.length === 1) left = left[0];
-    if (Array.isArray(right) && right.length === 1) right = right[0];
-
-    // After unwrapping, check for undefined again
     if (left === undefined || right === undefined) return false;
 
     // Both numbers
@@ -506,15 +483,7 @@ export class JsonPathEval {
     if (args.length !== 1) return undefined;
 
     const [arg] = args;
-    const result = this.getValueFromArg(arg, currentNode, evaluator);
-
-    // For length() function, we need the single value
-    let value: any;
-    if (Array.isArray(result)) {
-      value = result.length === 1 ? result[0] : undefined;
-    } else {
-      value = result;
-    }
+    const value = this.getValueFromArg(arg, currentNode, evaluator);
 
     if (typeof value === 'string') {
       // Count Unicode scalar values
@@ -543,7 +512,7 @@ export class JsonPathEval {
     if (args.length !== 1) return 0;
 
     const [arg] = args;
-    const result = this.getValueFromArg(arg, currentNode, evaluator);
+    const result = this.getValueFromArg(arg, currentNode, evaluator, true);
 
     // Count logic based on RFC 9535:
     // For count(), we count the number of nodes selected by the expression
@@ -571,12 +540,8 @@ export class JsonPathEval {
 
     const [stringArg, regexArg] = args;
 
-    const strResult = this.getValueFromArg(stringArg, currentNode, evaluator);
-    const regexResult = this.getValueFromArg(regexArg, currentNode, evaluator);
-
-    // Handle array results (get single value)
-    const str = Array.isArray(strResult) ? (strResult.length === 1 ? strResult[0] : undefined) : strResult;
-    const regex = Array.isArray(regexResult) ? (regexResult.length === 1 ? regexResult[0] : undefined) : regexResult;
+    const str = this.getValueFromArg(stringArg, currentNode, evaluator);
+    const regex = this.getValueFromArg(regexArg, currentNode, evaluator);
 
     if (typeof str !== 'string' || typeof regex !== 'string') {
       return false;
@@ -605,12 +570,8 @@ export class JsonPathEval {
 
     const [stringArg, regexArg] = args;
 
-    const strResult = this.getValueFromArg(stringArg, currentNode, evaluator);
-    const regexResult = this.getValueFromArg(regexArg, currentNode, evaluator);
-
-    // Handle array results (get single value)
-    const str = Array.isArray(strResult) ? (strResult.length === 1 ? strResult[0] : undefined) : strResult;
-    const regex = Array.isArray(regexResult) ? (regexResult.length === 1 ? regexResult[0] : undefined) : regexResult;
+    const str = this.getValueFromArg(stringArg, currentNode, evaluator);
+    const regex = this.getValueFromArg(regexArg, currentNode, evaluator);
 
     if (typeof str !== 'string' || typeof regex !== 'string') {
       return false;
@@ -638,7 +599,7 @@ export class JsonPathEval {
     if (args.length !== 1) return undefined;
 
     const [nodeArg] = args;
-    const result = this.getValueFromArg(nodeArg, currentNode, evaluator);
+    const result = this.getValueFromArg(nodeArg, currentNode, evaluator, true);
 
     // For value() function, return single value if exactly one result,
     // otherwise undefined (following RFC 9535 value() semantics)
@@ -656,13 +617,15 @@ export class JsonPathEval {
     arg: types.IValueExpression | types.IFilterExpression | types.IJSONPath,
     currentNode: Value,
     evaluator: JsonPathEval,
+    asNodes = false,
   ): any {
     if (this.isValueExpression(arg)) {
-      return evaluator.evalValueExpression(arg, currentNode);
+      return evaluator.evalValueExpression(arg, currentNode, asNodes);
     } else if (this.isJSONPath(arg)) {
       // Regular $ expression - evaluate from root
       const evalInstance = new JsonPathEval(arg, currentNode.data);
       const result = evalInstance.eval();
+      if (asNodes) return result.map((node) => node.data);
       return result.length === 1 ? result[0].data : undefined;
     }
     return undefined;

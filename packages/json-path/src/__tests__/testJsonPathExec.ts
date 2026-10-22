@@ -606,10 +606,152 @@ export const testJsonPathExec = (run: typeof JsonPathEval.run) => {
           expect(result.length).toBe(0);
         });
 
-        test('value with specific property', () => {
+        test('missing value differs from null', () => {
           const expr = '$.store.book[?value(@.isbn) != null]';
           const result = run(expr, testData);
+          expect(result.length).toBe(4); // Nothing and a present string both differ from null
+        });
+
+        test('existence and value comparison select present properties', () => {
+          const expr = '$.store.book[?@.isbn && value(@.isbn) != null]';
+          const result = run(expr, testData);
           expect(result.length).toBe(2);
+        });
+      });
+
+      describe('value and node-list conversion', () => {
+        test.each([
+          ['==', true],
+          ['!=', false],
+          ['<', false],
+          ['<=', true],
+          ['>', false],
+          ['>=', true],
+        ])('missing values compare consistently with %s', (operator, matches) => {
+          const data = [{}];
+          for (const left of ['@.missing', 'value(@.missing)']) {
+            for (const right of ['@.other', 'value(@.other)']) {
+              expect(run(`$[?${left} ${operator} ${right}]`, data).map((node) => node.data)).toEqual(
+                matches ? data : [],
+              );
+            }
+          }
+        });
+
+        test.each([
+          ['==', false],
+          ['!=', true],
+          ['<', false],
+          ['<=', false],
+          ['>', false],
+          ['>=', false],
+        ])('missing values remain distinct from null with %s', (operator, matches) => {
+          const data = [{a: null}];
+          for (const missing of ['@.missing', 'value(@.missing)']) {
+            for (const present of ['null', '@.a', 'value(@.a)']) {
+              for (const [left, right] of [
+                [missing, present],
+                [present, missing],
+              ]) {
+                expect(run(`$[?${left} ${operator} ${right}]`, data).map((node) => node.data)).toEqual(
+                  matches ? data : [],
+                );
+              }
+            }
+          }
+        });
+
+        test.each([
+          [[], []],
+          [[1], [1]],
+          [
+            [1, 2],
+            [1, 2],
+          ],
+          [[[1]], [[1]]],
+          [{a: [1]}, {a: [1]}],
+        ])('preserves JSON values when comparing %j and %j', (a, b) => {
+          const data = [{a, b}];
+          for (const left of ['@.a', 'value(@.a)']) {
+            for (const right of ['@.b', 'value(@.b)']) {
+              expect(run(`$[?${left} == ${right}]`, data).map((node) => node.data)).toEqual(data);
+            }
+          }
+        });
+
+        test.each([
+          [[], null],
+          [[], {}],
+          [[1], {0: 1}],
+          [[1], 1],
+          [[[1]], [1]],
+          [{a: [1]}, {a: 1}],
+          [{a: [[1]]}, {a: [1]}],
+        ])('does not unwrap JSON array values %j and %j', (a, b) => {
+          const data = [{a, b}];
+          for (const left of ['@.a', 'value(@.a)']) {
+            for (const right of ['@.b', 'value(@.b)']) {
+              expect(run(`$[?${left} == ${right}]`, data)).toEqual([]);
+            }
+          }
+        });
+
+        test('distinguishes an empty JSON array from Nothing', () => {
+          const data = [{a: []}];
+          for (const left of ['@.missing', 'value(@.missing)']) {
+            for (const right of ['@.a', 'value(@.a)']) {
+              expect(run(`$[?${left} == ${right}]`, data)).toEqual([]);
+              expect(run(`$[?${right} == ${left}]`, data)).toEqual([]);
+            }
+          }
+        });
+
+        test.each([
+          [[]],
+          [[1]],
+          [[1, 2]],
+          [[[1]]],
+          [['abc']],
+        ])('passes the JSON array %j through nested value functions', (a) => {
+          const data = [{a}];
+          expect(run(`$[?length(value(@.a)) == ${a.length}]`, data).map((node) => node.data)).toEqual(data);
+          expect(run(`$[?length(@.a) == ${a.length}]`, data).map((node) => node.data)).toEqual(data);
+        });
+
+        test('current array nodes are one node rather than a node list of their elements', () => {
+          const data = [[], [1], [1, 2]];
+          expect(run('$[?count(@) == 1]', data).map((node) => node.data)).toEqual(data);
+          expect(run('$[?length(value(@)) == length(@)]', data).map((node) => node.data)).toEqual(data);
+        });
+
+        test.each([false, 0, '', null])('preserves the present value %j', (a) => {
+          const data = [{a}];
+          expect(run('$[?value(@.a) == @.a]', data).map((node) => node.data)).toEqual(data);
+          expect(run('$[?value(@.a) != @.missing]', data).map((node) => node.data)).toEqual(data);
+        });
+
+        test('does not order JSON arrays as their only element', () => {
+          const data = [{a: [1], b: 2}];
+          for (const a of ['@.a', 'value(@.a)']) {
+            for (const operator of ['<', '<=', '>', '>=']) {
+              expect(run(`$[?${a} ${operator} @.b]`, data)).toEqual([]);
+              expect(run(`$[?@.b ${operator} ${a}]`, data)).toEqual([]);
+            }
+          }
+        });
+
+        test('count and value retain node-list cardinality', () => {
+          const data = [{a: []}, {a: [1]}, {a: [1, 2]}];
+          expect(run('$[?count(@.a) == 1]', data).map((node) => node.data)).toEqual(data);
+          expect(run('$[?count(@.a[*]) == 2]', data).map((node) => node.data)).toEqual([data[2]]);
+          expect(run('$[?value(@.a[*]) == @.missing]', data).map((node) => node.data)).toEqual([data[0], data[2]]);
+          expect(run('$[?value(@.a[*]) == 1]', data).map((node) => node.data)).toEqual([data[1]]);
+        });
+
+        test('string functions do not unwrap arrays returned by value', () => {
+          const data = [{a: ['abc']}, {a: 'abc'}];
+          expect(run('$[?match(value(@.a), "abc")]', data).map((node) => node.data)).toEqual([data[1]]);
+          expect(run('$[?search(value(@.a), "b")]', data).map((node) => node.data)).toEqual([data[1]]);
         });
       });
 
