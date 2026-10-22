@@ -298,38 +298,25 @@ export class JsonPathCodegen {
     const resultVar = codegen.var();
     const leftTempVar = codegen.var(leftVar);
     const rightTempVar = codegen.var(rightVar);
-    codegen.if(
-      `${leftTempVar} === undefined || ${rightTempVar} === undefined`,
-      () => {
-        if (expression.operator === '==') {
-          codegen.js(`${resultVar} = ${leftTempVar} === undefined && ${rightTempVar} === undefined;`);
-        } else {
-          codegen.js(`${resultVar} = false;`);
-        }
-      },
-      () => {
-        // Generate comparison based on operator
-        const compareExpr = (() => {
-          switch (expression.operator) {
-            case '==':
-              return this.generateCompareEqual(leftTempVar, rightTempVar);
-            case '!=':
-              return `!(${this.generateCompareEqual(leftTempVar, rightTempVar)})`;
-            case '<':
-              return this.generateCompareLess(leftTempVar, rightTempVar);
-            case '<=':
-              return `${this.generateCompareLess(leftTempVar, rightTempVar)} || ${this.generateCompareEqual(leftTempVar, rightTempVar)}`;
-            case '>':
-              return this.generateCompareLess(rightTempVar, leftTempVar);
-            case '>=':
-              return `${this.generateCompareLess(rightTempVar, leftTempVar)} || ${this.generateCompareEqual(leftTempVar, rightTempVar)}`;
-            default:
-              return 'false';
-          }
-        })();
-        codegen.js(`${resultVar} = ${compareExpr};`);
-      },
-    );
+    const compareExpr = (() => {
+      switch (expression.operator) {
+        case '==':
+          return this.generateCompareEqual(leftTempVar, rightTempVar);
+        case '!=':
+          return `!(${this.generateCompareEqual(leftTempVar, rightTempVar)})`;
+        case '<':
+          return this.generateCompareLess(leftTempVar, rightTempVar);
+        case '<=':
+          return `${this.generateCompareLess(leftTempVar, rightTempVar)} || ${this.generateCompareEqual(leftTempVar, rightTempVar)}`;
+        case '>':
+          return this.generateCompareLess(rightTempVar, leftTempVar);
+        case '>=':
+          return `${this.generateCompareLess(rightTempVar, leftTempVar)} || ${this.generateCompareEqual(leftTempVar, rightTempVar)}`;
+        default:
+          return 'false';
+      }
+    })();
+    codegen.js(`${resultVar} = ${compareExpr};`);
     return resultVar;
   }
 
@@ -343,22 +330,16 @@ export class JsonPathCodegen {
     codegen.if(`left === undefined || right === undefined`, () => {
       codegen.js(`return false;`);
     });
-    codegen.if(`Array.isArray(left) && left.length === 1`, () => {
-      codegen.js(`left = left[0];`);
-    });
-    codegen.if(`Array.isArray(right) && right.length === 1`, () => {
-      codegen.js(`right = right[0];`);
-    });
-    codegen.if(`left === undefined || right === undefined`, () => {
-      codegen.js(`return false;`);
-    });
     codegen.if(`left === right`, () => {
       codegen.js(`return true;`);
     });
     codegen.if(`typeof left !== typeof right`, () => {
       codegen.js(`return false;`);
     });
-    codegen.if(`Array.isArray(left) && Array.isArray(right)`, () => {
+    codegen.if(`Array.isArray(left) || Array.isArray(right)`, () => {
+      codegen.if(`!Array.isArray(left) || !Array.isArray(right)`, () => {
+        codegen.js(`return false;`);
+      });
       codegen.if(`left.length !== right.length`, () => {
         codegen.js(`return false;`);
       });
@@ -396,15 +377,6 @@ export class JsonPathCodegen {
     const codegen = this.codegen;
     const fnName = this.codegen.r();
     codegen.js(`var ${fnName} = function(left, right) {`);
-    codegen.if(`left === undefined || right === undefined`, () => {
-      codegen.js(`return false;`);
-    });
-    codegen.if(`Array.isArray(left) && left.length === 1`, () => {
-      codegen.js(`left = left[0];`);
-    });
-    codegen.if(`Array.isArray(right) && right.length === 1`, () => {
-      codegen.js(`right = right[0];`);
-    });
     codegen.if(`left === undefined || right === undefined`, () => {
       codegen.js(`return false;`);
     });
@@ -460,9 +432,6 @@ export class JsonPathCodegen {
           const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar);
           const valueVar = codegen.r();
           codegen.js(`var ${valueVar} = ${argVar};`);
-          codegen.if(`Array.isArray(${valueVar})`, () => {
-            codegen.js(`${valueVar} = ${valueVar}.length === 1 ? ${valueVar}[0] : undefined;`);
-          });
           codegen.if(
             `typeof ${valueVar} === "string"`,
             () => {
@@ -495,7 +464,7 @@ export class JsonPathCodegen {
         if (expression.args.length !== 1) {
           codegen.js(`var ${resultVar} = 0;`);
         } else {
-          const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar);
+          const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar, true);
           const resVar = codegen.r();
           codegen.js(`var ${resVar} = ${argVar};`);
           codegen.if(
@@ -529,12 +498,6 @@ export class JsonPathCodegen {
           const regexVar = codegen.r();
           codegen.js(`var ${strVar} = ${arg1Var};`);
           codegen.js(`var ${regexVar} = ${arg2Var};`);
-          codegen.if(`Array.isArray(${strVar})`, () => {
-            codegen.js(`${strVar} = ${strVar}.length === 1 ? ${strVar}[0] : undefined;`);
-          });
-          codegen.if(`Array.isArray(${regexVar})`, () => {
-            codegen.js(`${regexVar} = ${regexVar}.length === 1 ? ${regexVar}[0] : undefined;`);
-          });
           codegen.if(
             `typeof ${strVar} !== "string" || typeof ${regexVar} !== "string"`,
             () => {
@@ -560,7 +523,7 @@ export class JsonPathCodegen {
         if (expression.args.length !== 1) {
           codegen.js(`var ${resultVar} = undefined;`);
         } else {
-          const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar);
+          const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar, true);
           const resVar = codegen.r();
           codegen.js(`var ${resVar} = ${argVar};`);
           codegen.if(
@@ -617,36 +580,37 @@ export class JsonPathCodegen {
   protected generateFunctionArg(
     arg: types.IValueExpression | types.IFilterExpression | types.IJSONPath,
     currentNodeVar: string,
+    asNodes = false,
   ): string {
-    const codegen = this.codegen;
-    if ('segments' in arg) {
-      const tempCodegen = new JsonPathCodegen(arg as types.IJSONPath);
-      const argFn = tempCodegen.compile();
-      const argFnVar = this.codegen.linkDependency(argFn);
-      const resultVar = codegen.r();
-      codegen.js(`var ${resultVar} = ${argFnVar}(${currentNodeVar}.data).map(function(v) { return v.data; });`);
-      return resultVar;
-    }
-    return this.generateValueExpression(arg as types.IValueExpression, currentNodeVar);
+    if ('segments' in arg) return this.generatePathExpression(arg, currentNodeVar, asNodes);
+    return this.generateValueExpression(arg as types.IValueExpression, currentNodeVar, asNodes);
   }
 
-  protected generateValueExpression(expression: types.IValueExpression, currentNodeVar: string): string {
+  protected generatePathExpression(path: types.IJSONPath, currentNodeVar: string, asNodes: boolean): string {
     const codegen = this.codegen;
+    const pathFn = new JsonPathCodegen(path).compile();
+    const pathFnVar = codegen.linkDependency(pathFn);
+    const resultVar = codegen.r();
+    codegen.js(`var ${resultVar} = ${pathFnVar}(${currentNodeVar}.data);`);
+    return asNodes
+      ? `${resultVar}.map(function(v) { return v.data; })`
+      : `(${resultVar}.length === 1 ? ${resultVar}[0].data : undefined)`;
+  }
+
+  protected generateValueExpression(
+    expression: types.IValueExpression,
+    currentNodeVar: string,
+    asNodes = false,
+  ): string {
     switch (expression.type) {
       case 'current':
-        return currentNodeVar + '.data';
+        return asNodes ? `[${currentNodeVar}.data]` : currentNodeVar + '.data';
       case 'root':
-        return 'data';
+        return asNodes ? '[data]' : 'data';
       case 'literal':
         return JSON.stringify(expression.value);
-      case 'path': {
-        const tempCodegen = new JsonPathCodegen(expression.path);
-        const pathFn = tempCodegen.compile();
-        const pathFnVar = this.codegen.linkDependency(pathFn);
-        const resultVar = this.codegen.r();
-        codegen.js(`var ${resultVar} = ${pathFnVar}(${currentNodeVar}.data).map(function(v) { return v.data; });`);
-        return resultVar;
-      }
+      case 'path':
+        return this.generatePathExpression(expression.path, currentNodeVar, asNodes);
       case 'function':
         return this.generateFunctionExpression(expression, currentNodeVar, false);
       default:
