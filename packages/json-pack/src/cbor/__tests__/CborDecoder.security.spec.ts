@@ -20,7 +20,7 @@ describe('prototype pollution', () => {
     ['nested inside an array', `81a1${PROTO_KEY}a1616101`, false],
     ['nested inside a map value', `a16161a1${PROTO_KEY}a1616101`, false],
     ['nested inside an indefinite array', `9fa1${PROTO_KEY}a1616101ff`, false],
-    ['key split across indefinite chunks', `a17f655f5f70726f656f746f5f5fffa0`, true],
+    ['key split across indefinite chunks', `a17f655f5f70726f64746f5f5fffa0`, true],
   ];
 
   for (const [name, hex, topLevel] of inputs) {

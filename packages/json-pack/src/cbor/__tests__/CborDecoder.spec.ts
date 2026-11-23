@@ -318,6 +318,35 @@ describe('objects', () => {
     const decoded = decoder.decode(encoded);
     expect(decoded).toStrictEqual({foo: 123, bar: 4});
   });
+
+  test('indefinite length string as key', () => {
+    encoder.writer.reset();
+    encoder.writeObjHdr(2);
+    encoder.writeStartStr();
+    encoder.writeStr('fo');
+    encoder.writeStr('o');
+    encoder.writeEnd();
+    encoder.writeAny(123);
+    encoder.writeStartStr();
+    encoder.writeEnd();
+    encoder.writeAny(4);
+    const encoded = encoder.writer.flush();
+    const decoded = decoder.decode(encoded);
+    expect(decoded).toStrictEqual({foo: 123, '': 4});
+  });
+
+  test('indefinite length string as key in indefinite length object', () => {
+    encoder.writer.reset();
+    encoder.writeStartMap();
+    encoder.writeStartStr();
+    encoder.writeStr('foo');
+    encoder.writeEnd();
+    encoder.writeAny(123);
+    encoder.writeEnd();
+    const encoded = encoder.writer.flush();
+    const decoded = decoder.decode(encoded);
+    expect(decoded).toStrictEqual({foo: 123});
+  });
 });
 
 describe('tags', () => {

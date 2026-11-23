@@ -294,6 +294,7 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
     const major = octet >> 5;
     const minor = octet & CONST.MINOR_MASK;
     if (major !== MAJOR.STR) return String(this.readAnyRaw(octet));
+    if (minor === 31) return this.readStr(minor);
     const length = this.readStrLen(minor);
     if (length > 31) return reader.utf8(length);
     if (length > reader.size()) throw ERROR.UNEXPECTED_EOF;
